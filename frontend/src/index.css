@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased font-sans selection:bg-brand-500 selection:text-white min-h-screen relative overflow-x-hidden;
+    background-color: #030712;
+  }
+}
+
+/* Ambient Glossy Mesh / Aurora Backgrounds */
+.aurora-canvas {
+  position: relative;
+}
+
+.aurora-canvas::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, rgba(99, 102, 241, 0.08) 35%, rgba(3, 7, 18, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aurora-canvas::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, rgba(14, 165, 233, 0.04) 40%, rgba(3, 7, 18, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* High-End Glossy Glassmorphism Utilities */
+.glass-panel {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(9, 13, 24, 0.9) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: linear-gradient(180deg, rgba(17, 27, 49, 0.9) 0%, rgba(10, 16, 30, 0.95) 100%);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), 0 20px 40px -15px rgba(14, 165, 233, 0.22);
+  transform: translateY(-3px);
+}
+
+/* Glossy Badge Pill */
+.glass-badge {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Glossy Button Style */
+.btn-glossy-primary {
+  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 40%, #0284c7 100%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.45), 0 8px 25px -4px rgba(14, 165, 233, 0.45);
+  transition: all 0.25s ease;
+}
+
+.btn-glossy-primary:hover {
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 40%, #0ea5e9 100%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.6), 0 12px 30px -4px rgba(14, 165, 233, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-glossy-primary:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 4px 12px -2px rgba(14, 165, 233, 0.3);
+}
+
+/* Glassy Input Focus */
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.35), inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+/* Custom animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ============================================================ */
+/* HIGH-FIDELITY RESUME DOCUMENT & EXPORT STYLES                */
+/* ============================================================ */
+.resume-section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.resume-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.printable-resume-root {
+  background-color: #ffffff;
+  color: #0f172a;
+  box-sizing: border-box;
+}
+
+/* ============================================================ */
+/* HIGH-FIDELITY PRINT STYLESHEET (100% PREVIEW === DOWNLOAD)   */
+/* ============================================================ */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide navigation, modals, buttons, backgrounds, and side panels */
+  nav, footer, header, .no-print, button, .aurora-canvas::before, .aurora-canvas::after {
+    display: none !important;
+  }
+
+  /* Only show the resume document */
+  body * {
+    visibility: hidden;
+  }
+
+  #printable-resume-container, #printable-resume-container * {
+    visibility: visible;
+  }
+
+  #printable-resume-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+  }
+
+  .preview-zoom-wrapper {
+    zoom: 1 !important;
+    transform: none !important;
+    height: auto !important;
+  }
+
+  .resume-document {
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    box-sizing: border-box !important;
+  }
+}
