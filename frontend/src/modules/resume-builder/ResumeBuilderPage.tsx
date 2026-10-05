@@ -5,6 +5,8 @@ import { api, getErrorMessage } from '../../services/api';
 import { IResumeData, IATSScoreBreakdown } from '../../types';
 import { calculateClientATS } from './utils/atsCalculator';
 import { ResumePreview } from './templates/ResumePreview';
+import { CommaSeparatedInput } from './components/CommaSeparatedInput';
+import { MultiLineTextarea } from './components/MultiLineTextarea';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { Badge } from '../../components/common/Badge';
@@ -762,52 +764,52 @@ export const ResumeBuilderPage: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">Programming Languages</label>
-                <input
-                  type="text"
+                <CommaSeparatedInput
+                  category="languages"
                   placeholder="e.g. TypeScript, JavaScript, Python, Java, SQL, Go, C++"
-                  value={resumeData.skills.programmingLanguages.join(', ')}
-                  onChange={e => setResumeData(p => ({
+                  value={resumeData.skills?.programmingLanguages || []}
+                  onChange={items => setResumeData(p => ({
                     ...p,
-                    skills: { ...p.skills, programmingLanguages: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }
+                    skills: { ...p.skills, programmingLanguages: items }
                   }))}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">Frameworks & Libraries</label>
-                <input
-                  type="text"
+                <CommaSeparatedInput
+                  category="frameworks"
                   placeholder="e.g. React, Node.js, Express, Next.js, Redux Toolkit, Tailwind CSS, Jest"
-                  value={resumeData.skills.frameworks.concat(resumeData.skills.libraries || []).join(', ')}
-                  onChange={e => setResumeData(p => ({
+                  value={(resumeData.skills?.frameworks || []).concat(resumeData.skills?.libraries || [])}
+                  onChange={items => setResumeData(p => ({
                     ...p,
-                    skills: { ...p.skills, frameworks: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }
+                    skills: { ...p.skills, frameworks: items, libraries: [] }
                   }))}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">Databases & Cloud Infrastructure</label>
-                <input
-                  type="text"
+                <CommaSeparatedInput
+                  category="databases"
                   placeholder="e.g. PostgreSQL, MongoDB Atlas, Redis, AWS (ECS, S3, Lambda), Docker, Kubernetes, GCP"
-                  value={resumeData.skills.databases.concat(resumeData.skills.cloud || []).join(', ')}
-                  onChange={e => setResumeData(p => ({
+                  value={(resumeData.skills?.databases || []).concat(resumeData.skills?.cloud || [])}
+                  onChange={items => setResumeData(p => ({
                     ...p,
-                    skills: { ...p.skills, databases: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }
+                    skills: { ...p.skills, databases: items, cloud: [] }
                   }))}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">Tools & Methodologies</label>
-                <input
-                  type="text"
+                <CommaSeparatedInput
+                  category="tools"
                   placeholder="e.g. Git, GitHub Actions, CI/CD, Postman, Linux, Agile/Scrum, Microservices"
-                  value={resumeData.skills.tools.concat(resumeData.skills.otherTechnologies || []).join(', ')}
-                  onChange={e => setResumeData(p => ({
+                  value={(resumeData.skills?.tools || []).concat(resumeData.skills?.otherTechnologies || [])}
+                  onChange={items => setResumeData(p => ({
                     ...p,
-                    skills: { ...p.skills, tools: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }
+                    skills: { ...p.skills, tools: items, otherTechnologies: [] }
                   }))}
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
@@ -888,18 +890,42 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1">Technologies Used (comma separated)</label>
-                    <input
-                      type="text"
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-medium text-slate-300">Technologies Used (comma separated)</label>
+                      <span className="text-[10px] text-slate-400">Type freely or click tags below</span>
+                    </div>
+                    <CommaSeparatedInput
                       placeholder="e.g. React, TypeScript, Node.js, WebSockets, Redis, PostgreSQL, AWS"
-                      value={proj.technologies.join(', ')}
-                      onChange={e => {
+                      value={proj.technologies || []}
+                      onChange={items => {
                         const updated = [...resumeData.projects];
-                        updated[idx].technologies = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                        updated[idx].technologies = items;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
                       className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                     />
+                    {/* Quick Stack Suggestion Pills */}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <span className="text-[10px] text-slate-400 font-medium">Quick Add:</span>
+                      {['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS', 'Redis', 'GraphQL', 'Tailwind CSS', 'Python', 'Next.js', 'MongoDB'].map(tech => {
+                        const isAlreadyAdded = (proj.technologies || []).some(t => t.toLowerCase() === tech.toLowerCase());
+                        if (isAlreadyAdded) return null;
+                        return (
+                          <button
+                            key={tech}
+                            type="button"
+                            onClick={() => {
+                              const updated = [...resumeData.projects];
+                              updated[idx].technologies = [...(updated[idx].technologies || []), tech];
+                              setResumeData(p => ({ ...p, projects: updated }));
+                            }}
+                            className="text-[10px] px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700/80 hover:border-brand-400 text-slate-300 hover:text-white transition-colors"
+                          >
+                            + {tech}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Smart Bullet Suggestions for Project */}
@@ -936,13 +962,13 @@ export const ResumeBuilderPage: React.FC = () => {
                     <label className="block text-xs font-medium text-slate-300 mb-1">
                       Bullet Point Responsibilities & Impact (1 per line)
                     </label>
-                    <textarea
+                    <MultiLineTextarea
                       rows={3}
                       placeholder="e.g. Architected modular REST backend with WebSockets handling 20k+ concurrent connections.&#10;Integrated Redis caching layer, decreasing database query latency by 35%.&#10;Automated CI/CD build pipelines with GitHub Actions and AWS ECS."
-                      value={proj.responsibilities.join('\n')}
-                      onChange={e => {
+                      value={proj.responsibilities || []}
+                      onChange={items => {
                         const updated = [...resumeData.projects];
-                        updated[idx].responsibilities = e.target.value.split('\n').filter(Boolean);
+                        updated[idx].responsibilities = items;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
                       className="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 font-sans leading-relaxed"
@@ -1105,13 +1131,13 @@ export const ResumeBuilderPage: React.FC = () => {
                     <label className="block text-xs font-medium text-slate-300 mb-1">
                       Key Accomplishments & Responsibilities (1 per line)
                     </label>
-                    <textarea
+                    <MultiLineTextarea
                       rows={3}
                       placeholder="e.g. Led design of customer-facing dashboard features used by 50k+ daily users.&#10;Refactored core services into TypeScript, increasing code maintainability and test coverage.&#10;Partnered with DevOps to reduce AWS cloud infrastructure expenses by 22%."
-                      value={exp.responsibilities.join('\n')}
-                      onChange={e => {
+                      value={exp.responsibilities || []}
+                      onChange={items => {
                         const updated = [...resumeData.experience];
-                        updated[idx].responsibilities = e.target.value.split('\n').filter(Boolean);
+                        updated[idx].responsibilities = items;
                         setResumeData(p => ({ ...p, experience: updated }));
                       }}
                       className="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 font-sans leading-relaxed"
