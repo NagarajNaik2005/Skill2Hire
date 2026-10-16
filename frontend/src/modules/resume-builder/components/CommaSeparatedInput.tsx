@@ -177,7 +177,7 @@ export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
     return (
       <span>
         {before}
-        <span className="text-brand-300 font-extrabold bg-brand-500/20 px-0.5 rounded">{match}</span>
+        <span className="text-brand-700 font-extrabold bg-brand-100 px-0.5 rounded">{match}</span>
         {after}
       </span>
     );
@@ -201,7 +201,7 @@ export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
         />
 
         {activeToken && isOpen && (
-          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-brand-400 bg-brand-500/10 border border-brand-500/20 px-1.5 py-0.5 rounded flex items-center gap-1 pointer-events-none">
+          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-brand-700 bg-brand-50 border border-brand-200 px-1.5 py-0.5 rounded-md flex items-center gap-1 pointer-events-none font-semibold">
             <Sparkles className="w-3 h-3" />
             Suggestions
           </span>
@@ -210,14 +210,14 @@ export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
 
       {/* Autocomplete Dropdown Popup */}
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-xl bg-slate-900/95 border border-brand-500/40 backdrop-blur-md shadow-2xl animate-fadeIn">
+        <div className="absolute left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-xl bg-white border border-purple-200 shadow-xl animate-fadeIn">
           <div className="p-1.5 space-y-0.5">
-            <div className="px-2.5 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 mb-1">
-              <span className="flex items-center gap-1.5 text-brand-400">
+            <div className="px-2.5 py-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider flex items-center justify-between border-b border-purple-100 mb-1">
+              <span className="flex items-center gap-1.5 text-brand-700 font-bold">
                 <Sparkles className="w-3 h-3" />
                 Matching Skills ({suggestions.length})
               </span>
-              <span className="text-[9px] text-slate-500 lowercase font-mono">Press ↵ / Tab to apply</span>
+              <span className="text-[9px] text-slate-400 lowercase font-mono">Press ↵ / Tab to apply</span>
             </div>
 
             {suggestions.map((skill, sIdx) => {
@@ -234,15 +234,15 @@ export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
                   onMouseEnter={() => setHighlightedIndex(sIdx)}
                   className={`w-full text-left px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors ${
                     isSelected
-                      ? 'bg-brand-500/20 text-white border border-brand-500/40 shadow-sm'
-                      : 'text-slate-300 hover:bg-slate-800/80 hover:text-white border border-transparent'
+                      ? 'bg-brand-50 text-brand-800 border border-brand-200 shadow-xs'
+                      : 'text-slate-700 hover:bg-slate-50 border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-400" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
                     <span className="font-medium">{renderHighlightedSkill(skill, activeToken)}</span>
                   </div>
-                  <span className="text-[10px] text-brand-400 opacity-80 flex items-center gap-0.5">
+                  <span className="text-[10px] text-brand-700 font-semibold opacity-90 flex items-center gap-0.5">
                     <Plus className="w-3 h-3" /> Add
                   </span>
                 </button>
@@ -250,9 +250,9 @@ export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
             })}
           </div>
 
-          <div className="px-3 py-1 bg-slate-950/80 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
+          <div className="px-3 py-1 bg-slate-50 border-t border-purple-100 text-[10px] text-slate-500 flex items-center justify-between">
             <span>💡 Start typing or separate with commas</span>
-            <span className="font-mono text-slate-500">↑↓ to navigate</span>
+            <span className="font-mono text-slate-400">↑↓ to navigate</span>
           </div>
         </div>
       )}
@@ -263,13 +263,13 @@ export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
           {value.map((item, tagIdx) => (
             <span
               key={tagIdx}
-              className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-brand-500/15 border border-brand-500/30 text-brand-300 font-medium group transition-all hover:border-brand-400"
+              className="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-lg bg-purple-50 border border-purple-200/80 text-purple-700 font-semibold group transition-all hover:border-brand-300 shadow-xs"
             >
               <span>{item}</span>
               <button
                 type="button"
                 onClick={() => handleRemoveTag(tagIdx)}
-                className="text-slate-400 hover:text-rose-400 focus:outline-none transition-colors ml-0.5"
+                className="text-slate-400 hover:text-rose-600 focus:outline-none transition-colors ml-0.5"
                 title={`Remove ${item}`}
               >
                 <X className="w-3 h-3" />

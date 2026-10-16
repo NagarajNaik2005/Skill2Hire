@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
@@ -125,24 +125,24 @@ export const LandingPage: React.FC = () => {
       {/* HERO SECTION */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10 relative z-10">
         
-        {/* Glossy Top Pill */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-white/15 text-xs text-brand-300 font-semibold mb-8 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_10px_25px_-5px_rgba(14,165,233,0.15)] backdrop-blur-xl">
+        {/* Soft Lavender Pill Badge */}
+        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-purple-100/80 border border-purple-200/90 text-xs text-brand-700 font-semibold mb-8 shadow-xs backdrop-blur-xl">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-400" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <span className="tracking-wide">AI Career Intelligence Platform</span>
+          <span className="tracking-wide uppercase text-[11px]">AI Career Intelligence Platform</span>
         </div>
 
         {/* Hero Title */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.08] max-w-4xl mx-auto">
-          Skill<span className="text-brand-400">2</span>Hire
-          <span className="block text-2xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-brand-300 to-indigo-300 mt-4 leading-tight">
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-900 tracking-tight leading-[1.08] max-w-4xl mx-auto">
+          Skill<span className="text-brand-600">2</span>Hire
+          <span className="block text-2xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-purple-600 to-fuchsia-600 mt-4 leading-tight">
             Intelligent AI Career Companion & Placement Suite
           </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto mt-6 leading-relaxed">
+        <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mt-6 leading-relaxed">
           Comprehensive, AI-powered career acceleration tools designed to help you craft ATS-optimized resumes, tailor applications, discover matching roles, and excel in technical interviews.
         </p>
 
@@ -167,34 +167,34 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Value Prop Trust Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-8 mt-16 text-xs text-slate-300 border-y border-white/[0.08] py-5 max-w-4xl mx-auto backdrop-blur-md bg-slate-950/30 rounded-2xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+        <div className="flex flex-wrap items-center justify-center gap-8 mt-14 text-xs text-slate-700 border border-purple-100/90 py-4 px-6 max-w-4xl mx-auto backdrop-blur-xl bg-white/85 rounded-2xl shadow-sm">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span className="font-medium">Single-Column ATS Standard</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <span className="font-semibold">Single-Column ATS Standard</span>
           </div>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-sky-400" />
-            <span className="font-medium">Zero Fake Skills Integrity</span>
+            <ShieldCheck className="w-4 h-4 text-brand-600" />
+            <span className="font-semibold">Zero Fake Skills Integrity</span>
           </div>
           <div className="flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-indigo-400" />
-            <span className="font-medium">Adaptive 4-Stage Interview AI</span>
+            <Cpu className="w-4 h-4 text-purple-600" />
+            <span className="font-semibold">Adaptive 4-Stage Interview AI</span>
           </div>
           <div className="flex items-center gap-2">
-            <Search className="w-4 h-4 text-amber-400" />
-            <span className="font-medium">Live Opportunity Radar</span>
+            <Search className="w-4 h-4 text-amber-500" />
+            <span className="font-semibold">Live Opportunity Radar</span>
           </div>
         </div>
       </section>
 
-      {/* MODULE CARDS PRESENTATION (GLOSSY CARDS WITH RICH EXPLANATIONS) */}
+      {/* MODULE CARDS PRESENTATION (GLOSSY WHITE CARDS WITH PURPLE ACCENTS) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="primary" size="sm">Career Acceleration Suite</Badge>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3">
             Specialized Career Intelligence Modules
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 mt-2">
+          <p className="text-sm sm:text-base text-slate-600 mt-2">
             Access dedicated, independent tools designed for every phase of your job search and technical interview preparation.
           </p>
         </div>
@@ -212,7 +212,7 @@ export const LandingPage: React.FC = () => {
                 <div>
                   {/* Top Bar: Icon & Category Badge */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} flex items-center justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_20px_-4px_rgba(0,0,0,0.5)] text-white font-bold group-hover:scale-105 transition-transform duration-300`}>
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${m.color} flex items-center justify-center shadow-md text-white font-bold group-hover:scale-105 transition-transform duration-300`}>
                       <Icon className="w-6 h-6" />
                     </div>
                     <Badge variant="primary" size="sm">
@@ -221,23 +221,23 @@ export const LandingPage: React.FC = () => {
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-lg text-white tracking-tight mb-2.5 group-hover:text-brand-300 transition-colors">
+                  <h3 className="font-bold text-lg text-slate-900 tracking-tight mb-2.5 group-hover:text-brand-600 transition-colors">
                     {m.title}
                   </h3>
 
                   {/* Core Description */}
-                  <p className="text-xs text-slate-300 leading-relaxed mb-6">
+                  <p className="text-xs text-slate-600 leading-relaxed mb-6">
                     {m.description}
                   </p>
 
                   {/* Key Functionalities & Features */}
-                  <div className="space-y-2.5 pt-4 border-t border-white/[0.08] mb-6">
+                  <div className="space-y-2.5 pt-4 border-t border-purple-100 mb-6">
                     <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                       Key Functionalities:
                     </div>
                     {m.functionalities.map((func, idx) => (
-                      <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-300">
-                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-600">
+                        <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                         <span className="leading-relaxed">{func}</span>
                       </div>
                     ))}
@@ -245,9 +245,9 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Bottom Action CTA */}
-                <div className="pt-4 border-t border-white/[0.08]">
+                <div className="pt-4 border-t border-purple-100">
                   <Link to={m.path}>
-                    <Button variant="ghost" size="sm" className="w-full text-xs text-brand-300 hover:text-white hover:bg-brand-500/15 justify-between py-2.5 font-bold rounded-xl border border-transparent hover:border-brand-500/30">
+                    <Button variant="ghost" size="sm" className="w-full text-xs text-brand-700 hover:text-brand-800 hover:bg-brand-50 justify-between py-2.5 font-bold rounded-xl border border-transparent hover:border-brand-200">
                       <span>{m.actionText}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
@@ -261,12 +261,12 @@ export const LandingPage: React.FC = () => {
 
       {/* PLATFORM PILLARS / WHY CHOOSE SKILL2HIRE */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="p-8 sm:p-14 rounded-3xl bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_20px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+        <div className="p-8 sm:p-14 rounded-3xl bg-white border border-purple-100/90 shadow-sm backdrop-blur-xl">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Engineered for Placement Excellence
             </h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2">
+            <p className="text-xs sm:text-sm text-slate-600 mt-2">
               Every feature is built around real hiring metrics, objective ATS criteria, and verified interview methodologies.
             </p>
           </div>
@@ -275,12 +275,12 @@ export const LandingPage: React.FC = () => {
             {platformPillars.map((pillar, idx) => {
               const Icon = pillar.icon;
               return (
-                <div key={idx} className="p-6 rounded-2xl bg-slate-950/70 border border-white/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] space-y-3">
-                  <div className="w-11 h-11 rounded-xl bg-brand-500/10 border border-brand-500/30 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)] flex items-center justify-center text-brand-400 mb-4">
+                <div key={idx} className="p-6 rounded-2xl bg-purple-50/40 border border-purple-100/80 shadow-xs space-y-3">
+                  <div className="w-11 h-11 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center mb-4">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h4 className="font-bold text-sm text-white">{pillar.title}</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">{pillar.description}</p>
+                  <h4 className="font-bold text-sm text-slate-900">{pillar.title}</h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">{pillar.description}</p>
                 </div>
               );
             })}
@@ -290,20 +290,20 @@ export const LandingPage: React.FC = () => {
 
       {/* GLOSSY CALL TO ACTION BANNER */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <Card className="p-8 sm:p-14 bg-gradient-to-r from-slate-900 via-slate-900 to-brand-950/50 border border-brand-500/40 relative overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_20px_50px_rgba(14,165,233,0.15)]">
+        <Card className="p-8 sm:p-14 bg-gradient-to-r from-purple-50 via-white to-brand-50 border border-purple-200/90 relative overflow-hidden shadow-md">
           {/* Ambient Flare */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-brand-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-brand-200/30 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
             <div className="space-y-3">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-400 flex items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-700 flex items-center gap-2">
                 <Layers className="w-4 h-4" />
                 Accelerate Your Tech Career
               </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Ready to Optimize Your Career Trajectory?
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-xl leading-relaxed">
                 Join ambitious engineers and professionals leveraging AI to build ATS-compliant resumes, master interview rounds, and secure top offers.
               </p>
             </div>

@@ -16,12 +16,12 @@ export const Badge: React.FC<BadgeProps> = ({
   className
 }) => {
   const variants = {
-    primary: 'bg-brand-500/10 text-brand-300 border border-brand-500/30 shadow-[inset_0_1px_0_0_rgba(56,189,248,0.2)]',
-    success: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 shadow-[inset_0_1px_0_0_rgba(52,211,153,0.2)]',
-    warning: 'bg-amber-500/10 text-amber-300 border border-amber-500/30 shadow-[inset_0_1px_0_0_rgba(251,191,36,0.2)]',
-    danger: 'bg-rose-500/10 text-rose-300 border border-rose-500/30 shadow-[inset_0_1px_0_0_rgba(251,113,133,0.2)]',
-    neutral: 'bg-slate-900/80 text-slate-300 border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]',
-    purple: 'bg-purple-500/10 text-purple-300 border border-purple-500/30 shadow-[inset_0_1px_0_0_rgba(192,132,252,0.2)]'
+    primary: 'bg-brand-50/90 text-brand-700 border border-brand-200/90 shadow-[inset_0_1px_1px_0_rgba(255,255,255,1),0_1px_2px_0_rgba(124,58,237,0.06)]',
+    success: 'bg-emerald-50/90 text-emerald-700 border border-emerald-200/90 shadow-[inset_0_1px_1px_0_rgba(255,255,255,1),0_1px_2px_0_rgba(16,185,129,0.06)]',
+    warning: 'bg-amber-50/90 text-amber-700 border border-amber-200/90 shadow-[inset_0_1px_1px_0_rgba(255,255,255,1),0_1px_2px_0_rgba(245,158,11,0.06)]',
+    danger: 'bg-rose-50/90 text-rose-700 border border-rose-200/90 shadow-[inset_0_1px_1px_0_rgba(255,255,255,1),0_1px_2px_0_rgba(244,63,94,0.06)]',
+    neutral: 'bg-slate-50/90 text-slate-700 border border-slate-200/80 shadow-[inset_0_1px_1px_0_rgba(255,255,255,1),0_1px_2px_0_rgba(15,23,42,0.03)]',
+    purple: 'bg-purple-50/90 text-purple-700 border border-purple-200/90 shadow-[inset_0_1px_1px_0_rgba(255,255,255,1),0_1px_2px_0_rgba(168,85,247,0.06)]'
   };
 
   const sizes = {

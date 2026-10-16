@@ -432,16 +432,16 @@ export const MockInterviewPage: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-purple-100 mb-8">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="primary" size="sm">AI Interview Studio</Badge>
             <Badge variant="success" size="sm">4-Stage Simulation</Badge>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             AI interactive Mock Interview
           </h1>
-          <p className="text-sm text-slate-300 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             4-Round Comprehensive Placement Simulation: Eligibility ➔ Aptitude MCQ ➔ Technical AI ➔ HR Round.
           </p>
         </div>
@@ -452,7 +452,7 @@ export const MockInterviewPage: React.FC = () => {
             <div
               key={s}
               className={`h-2 rounded-full transition-all ${
-                stage === s ? 'w-8 bg-brand-400 shadow-md shadow-brand-500/30' : 'w-2 bg-slate-800'
+                stage === s ? 'w-8 bg-brand-600 shadow-md shadow-brand-500/30' : 'w-2 bg-slate-200'
               }`}
             />
           ))}
@@ -461,21 +461,21 @@ export const MockInterviewPage: React.FC = () => {
 
       {/* STAGE 0: SETUP */}
       {stage === 'setup' && (
-        <Card className="max-w-2xl mx-auto p-8 bg-slate-900/90 border-slate-800 shadow-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
+        <Card className="max-w-2xl mx-auto p-8 bg-white border-purple-100 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold mb-4">
+            <Sparkles className="w-3.5 h-3.5 text-brand-600" />
             <span>Configure Interview Parameters</span>
           </div>
 
-          <h2 className="text-xl font-bold text-white mb-6">Select Target Engineering Role & Experience</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-6">Select Target Engineering Role & Experience</h2>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Target Engineering Role</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Target Engineering Role</label>
               <select
                 value={targetRole}
                 onChange={e => setTargetRole(e.target.value)}
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-brand-400"
+                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:border-brand-500 shadow-xs"
               >
                 <option value="Full Stack Developer">Full Stack Developer (React / Node.js / TypeScript)</option>
                 <option value="Frontend Developer">Frontend React / Next.js Engineer</option>
@@ -485,11 +485,11 @@ export const MockInterviewPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Candidate Experience Tier</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Candidate Experience Tier</label>
               <select
                 value={difficulty}
                 onChange={e => setDifficulty(e.target.value)}
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-brand-400"
+                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:border-brand-500 shadow-xs"
               >
                 <option value="Fresher">Entry Level / Placement Track (0 Years)</option>
                 <option value="Intermediate">Mid-Level Engineer (1 - 3 Years)</option>
@@ -498,21 +498,21 @@ export const MockInterviewPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Candidate Skills Profile (for Eligibility Check) *</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Candidate Skills Profile (for Eligibility Check) *</label>
               <input
                 type="text"
                 value={skillsInput}
                 onChange={e => setSkillsInput(e.target.value)}
                 placeholder="e.g. JavaScript, TypeScript, React, Node.js, Express, SQL, Git, Docker, AWS"
-                className="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 shadow-xs"
               />
             </div>
           </div>
 
           {/* 4 Rounds Explanation */}
-          <div className="mt-6 p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 space-y-2">
-            <div className="font-bold text-slate-200">4-Round Placement Evaluation Flow:</div>
-            <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+          <div className="mt-6 p-4 rounded-xl bg-purple-50/60 border border-purple-100/90 text-xs text-slate-600 space-y-2">
+            <div className="font-bold text-slate-800">4-Round Placement Evaluation Flow:</div>
+            <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-700">
               <div>1. Eligibility Prerequisites Check</div>
               <div>2. Aptitude & Reasoning MCQs</div>
               <div>3. AI Technical Interview</div>
@@ -525,7 +525,7 @@ export const MockInterviewPage: React.FC = () => {
             size="lg"
             onClick={handleStartInterview}
             isLoading={isLoading}
-            className="w-full mt-6 text-sm font-bold shadow-lg shadow-brand-500/25"
+            className="w-full mt-6 text-sm font-bold shadow-md shadow-brand-500/25"
           >
             <Play className="w-4 h-4" />
             Begin Simulation
@@ -535,23 +535,23 @@ export const MockInterviewPage: React.FC = () => {
 
       {/* STAGE 1: ROUND 1 (ELIGIBILITY CHECK) */}
       {stage === 'eligibility' && eligibilityData && (
-        <Card className="max-w-2xl mx-auto p-8 shadow-2xl">
+        <Card className="max-w-2xl mx-auto p-8 bg-white border-purple-100 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Badge variant={eligibilityData.passed ? 'success' : 'danger'} size="md">
               Round 1: Eligibility Assessment
             </Badge>
           </div>
 
-          <h2 className="text-xl font-bold text-white mb-2">
+          <h2 className="text-xl font-bold text-slate-900 mb-2">
             {eligibilityData.passed ? 'Eligibility Prerequisites Satisfied' : 'Foundational Prerequisites Incomplete'}
           </h2>
-          <p className="text-xs text-slate-300 leading-relaxed mb-6">
+          <p className="text-xs text-slate-600 leading-relaxed mb-6">
             {eligibilityData.feedback}
           </p>
 
           {eligibilityData.missingSkills.length > 0 && (
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 mb-6 space-y-3">
-              <span className="text-xs font-semibold text-amber-400 block">Areas Requiring Attention:</span>
+            <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-100 mb-6 space-y-3">
+              <span className="text-xs font-semibold text-amber-700 block">Areas Requiring Attention:</span>
               <div className="flex flex-wrap gap-2">
                 {eligibilityData.missingSkills.map((s: string, i: number) => (
                   <Badge key={i} variant="warning" size="sm">⚠️ {s}</Badge>
@@ -559,14 +559,14 @@ export const MockInterviewPage: React.FC = () => {
               </div>
 
               <div className="pt-2">
-                <span className="text-[11px] text-slate-400 block mb-2">Recommended Learning Resources:</span>
+                <span className="text-[11px] text-slate-500 block mb-2">Recommended Learning Resources:</span>
                 {eligibilityData.recommendedResources?.map((res: any, idx: number) => (
                   <a
                     key={idx}
                     href={res.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-brand-400 hover:underline flex items-center gap-1.5 mb-1"
+                    className="text-xs text-brand-600 hover:underline flex items-center gap-1.5 mb-1"
                   >
                     <BookOpen className="w-3.5 h-3.5" />
                     {res.resourceName} ({res.topic})
@@ -577,7 +577,7 @@ export const MockInterviewPage: React.FC = () => {
           )}
 
           {eligibilityData.passed ? (
-            <Button variant="primary" size="lg" onClick={handleProceedToAptitude} isLoading={isLoading} className="w-full font-bold shadow-lg shadow-brand-500/25">
+            <Button variant="primary" size="lg" onClick={handleProceedToAptitude} isLoading={isLoading} className="w-full font-bold shadow-md shadow-brand-500/25">
               Proceed to Round 2 (Timed Aptitude MCQs)
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -592,22 +592,22 @@ export const MockInterviewPage: React.FC = () => {
       {/* STAGE 2: ROUND 2 (APTITUDE MCQs) */}
       {stage === 'aptitude' && (
         <div className="space-y-6 max-w-3xl mx-auto">
-          <div className="flex items-center justify-between p-4 rounded-xl bg-slate-900 border border-slate-800">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-white border border-purple-100 shadow-sm">
             <div className="flex items-center gap-2">
               <Badge variant="primary" size="sm">Round 2: Aptitude & Reasoning</Badge>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-slate-500 font-mono">
                 Question {currentAptitudeIndex + 1} of {aptitudeQuestions.length}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-amber-400 font-mono font-bold">
+            <div className="flex items-center gap-1.5 text-xs text-amber-600 font-mono font-bold">
               <Clock className="w-4 h-4" />
               <span>10:00 Timed Round</span>
             </div>
           </div>
 
           {aptitudeQuestions[currentAptitudeIndex] && (
-            <Card className="p-8 space-y-6 bg-slate-900/90 shadow-2xl">
-              <h3 className="text-base font-bold text-white leading-relaxed">
+            <Card className="p-8 space-y-6 bg-white border-purple-100 shadow-sm">
+              <h3 className="text-base font-bold text-slate-900 leading-relaxed">
                 {aptitudeQuestions[currentAptitudeIndex].questionText}
               </h3>
 
@@ -621,19 +621,19 @@ export const MockInterviewPage: React.FC = () => {
                       updated[currentAptitudeIndex] = optIdx;
                       setSelectedAnswers(updated);
                     }}
-                    className={`w-full p-4 rounded-xl text-left text-xs font-medium border transition-all ${
+                    className={`w-full p-4 rounded-xl text-left text-xs font-semibold border transition-all ${
                       selectedAnswers[currentAptitudeIndex] === optIdx
-                        ? 'bg-brand-500/20 border-brand-400 text-white shadow-md'
-                        : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                        ? 'bg-brand-50 border-brand-500 text-brand-800 shadow-xs'
+                        : 'bg-white border-slate-200 text-slate-700 hover:border-brand-300 hover:bg-slate-50'
                     }`}
                   >
-                    <span className="font-mono text-slate-500 mr-2">{String.fromCharCode(65 + optIdx)}.</span>
+                    <span className="font-mono text-slate-400 mr-2">{String.fromCharCode(65 + optIdx)}.</span>
                     {opt}
                   </button>
                 ))}
               </div>
 
-              <div className="flex justify-between items-center pt-4 border-t border-slate-800">
+              <div className="flex justify-between items-center pt-4 border-t border-purple-100">
                 <Button
                   variant="secondary"
                   size="sm"
@@ -657,7 +657,7 @@ export const MockInterviewPage: React.FC = () => {
                     size="sm"
                     onClick={handleSubmitAptitude}
                     isLoading={isLoading}
-                    className="font-bold shadow-lg shadow-brand-500/25"
+                    className="font-bold shadow-md shadow-brand-500/25"
                   >
                     Submit & Proceed to Technical Round
                   </Button>
@@ -679,34 +679,34 @@ export const MockInterviewPage: React.FC = () => {
               <Badge variant="purple" size="md">
                 {stage === 'technical' ? 'Round 3: AI Technical Interview' : 'Round 4: AI Behavioral & HR Round'}
               </Badge>
-              <span className="text-xs text-slate-400 font-mono">Question #{currentQuestionIndex}</span>
+              <span className="text-xs text-slate-500 font-mono">Question #{currentQuestionIndex}</span>
             </div>
 
             {/* AI Interlocutor Card */}
-            <Card className="p-6 bg-slate-900 border-brand-500/30 shadow-xl">
+            <Card className="p-6 bg-white border-purple-100 shadow-sm">
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/20 shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-purple-500 flex items-center justify-center shadow-md shadow-brand-500/20 shrink-0">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">
+                  <h3 className="font-bold text-slate-900 text-sm">
                     {stage === 'technical' ? 'AI Lead Technical Interviewer' : 'AI HR & Leadership Assessor'}
                   </h3>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-500">
                     Evaluating clarity, architectural depth, and structured communication.
                   </p>
                 </div>
               </div>
 
               {/* Question Text Box */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white font-medium leading-relaxed">
+              <div className="p-4 rounded-xl bg-purple-50/60 border border-purple-100 text-sm text-slate-900 font-medium leading-relaxed">
                 "{currentQuestionText}"
               </div>
 
               <div className="mt-3 flex items-center justify-end">
                 <button
                   onClick={() => speakText(currentQuestionText)}
-                  className="text-xs text-slate-400 hover:text-brand-400 flex items-center gap-1"
+                  className="text-xs text-slate-500 hover:text-brand-600 flex items-center gap-1 font-medium"
                 >
                   <Volume2 className="w-3.5 h-3.5" />
                   Replay Audio
@@ -716,16 +716,16 @@ export const MockInterviewPage: React.FC = () => {
 
             {/* Instant AI Feedback Box (if received) */}
             {instantFeedback && (
-              <div className="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30 text-xs text-emerald-300 animate-fadeIn space-y-1">
-                <div className="font-bold text-emerald-400">Interviewer Instant Feedback:</div>
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 animate-fadeIn space-y-1">
+                <div className="font-bold text-emerald-700">Interviewer Instant Feedback:</div>
                 <p>{instantFeedback}</p>
               </div>
             )}
 
             {/* Candidate Answer Box */}
-            <Card className="p-6 space-y-4">
+            <Card className="p-6 space-y-4 bg-white border-purple-100 shadow-sm">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Your Answer
                 </label>
                 <div className="flex items-center gap-2">
@@ -734,38 +734,38 @@ export const MockInterviewPage: React.FC = () => {
                     variant={isMicActive ? 'danger' : 'secondary'}
                     size="sm"
                     onClick={toggleMic}
-                    className="text-xs gap-1"
+                    className={`text-xs gap-1.5 transition-all ${isMicActive ? 'ring-4 ring-rose-400/30 animate-pulse' : ''}`}
                   >
-                    {isMicActive ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5 text-brand-400" />}
+                    {isMicActive ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5 text-brand-600" />}
                     {isMicActive ? 'Stop Listening' : 'Speak Answer'}
                   </Button>
                 </div>
               </div>
 
               {/* Answer Structuring Suggestions Chips */}
-              <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
-                <span className="text-[11px] font-semibold text-brand-400 block mb-1.5">
+              <div className="p-3 rounded-xl bg-purple-50/60 border border-purple-100/90">
+                <span className="text-[11px] font-semibold text-brand-700 block mb-1.5">
                   💡 Structure Suggestions (Click to insert template):
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   <button
                     type="button"
                     onClick={() => insertAnswerTemplate('star')}
-                    className="text-[10px] px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors"
+                    className="text-[10px] px-2.5 py-1 rounded-lg bg-white hover:bg-purple-50 border border-purple-200 text-slate-700 hover:text-brand-700 transition-colors shadow-xs"
                   >
                     + STAR Framework (Situation, Task, Action, Result)
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAnswerTemplate('arch')}
-                    className="text-[10px] px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors"
+                    className="text-[10px] px-2.5 py-1 rounded-lg bg-white hover:bg-purple-50 border border-purple-200 text-slate-700 hover:text-brand-700 transition-colors shadow-xs"
                   >
                     + Architecture & Scalability
                   </button>
                   <button
                     type="button"
                     onClick={() => insertAnswerTemplate('challenges')}
-                    className="text-[10px] px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors"
+                    className="text-[10px] px-2.5 py-1 rounded-lg bg-white hover:bg-purple-50 border border-purple-200 text-slate-700 hover:text-brand-700 transition-colors shadow-xs"
                   >
                     + Bottleneck Resolution
                   </button>
@@ -777,7 +777,7 @@ export const MockInterviewPage: React.FC = () => {
                 value={candidateAnswer}
                 onChange={e => setCandidateAnswer(e.target.value)}
                 placeholder="Speak or type your structured technical explanation or architectural solution here..."
-                className="w-full p-3 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 leading-relaxed font-sans"
+                className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 leading-relaxed font-sans shadow-xs"
               />
 
               <Button
@@ -786,7 +786,7 @@ export const MockInterviewPage: React.FC = () => {
                 onClick={stage === 'technical' ? handleSubmitTechnicalTurn : handleSubmitHRTurn}
                 isLoading={isLoading}
                 disabled={!candidateAnswer.trim()}
-                className="w-full font-bold shadow-lg shadow-brand-500/25"
+                className="w-full font-bold shadow-md shadow-brand-500/25"
               >
                 Submit Answer & Continue
                 <ChevronRight className="w-4 h-4" />
@@ -799,16 +799,16 @@ export const MockInterviewPage: React.FC = () => {
           <div className="lg:col-span-5 space-y-6">
             
             {/* Optional Webcam Preview Box */}
-            <Card className="p-5 bg-slate-900/90 border-slate-800 text-center">
+            <Card className="p-5 bg-white border-purple-100 text-center shadow-sm">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Video className="w-3.5 h-3.5 text-brand-400" />
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Video className="w-3.5 h-3.5 text-brand-600" />
                   Video Feed Preview
                 </span>
                 <span className="text-[10px] text-slate-500">100% Optional</span>
               </div>
 
-              <div className="relative aspect-video rounded-xl bg-slate-950 border border-slate-800 overflow-hidden flex items-center justify-center">
+              <div className="relative aspect-video rounded-xl bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center">
                 <video
                   ref={videoRef}
                   autoPlay
@@ -818,9 +818,9 @@ export const MockInterviewPage: React.FC = () => {
                 />
                 {!isCameraActive && (
                   <div className="text-center p-4">
-                    <CameraOff className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">Camera preview is currently off</p>
-                    <p className="text-[10px] text-slate-500 mt-1">Optional presentation aid</p>
+                    <CameraOff className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                    <p className="text-xs text-slate-300">Camera preview is currently off</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Optional presentation aid</p>
                   </div>
                 )}
               </div>
@@ -839,19 +839,19 @@ export const MockInterviewPage: React.FC = () => {
             </Card>
 
             {/* Live Metrics Card */}
-            <Card className="p-5 bg-slate-900/90 text-xs space-y-3">
-              <div className="font-bold text-white uppercase tracking-wider">Session Parameters:</div>
-              <div className="flex justify-between text-slate-400">
+            <Card className="p-5 bg-white border-purple-100 text-xs space-y-3 shadow-sm">
+              <div className="font-bold text-slate-900 uppercase tracking-wider">Session Parameters:</div>
+              <div className="flex justify-between text-slate-600">
                 <span>Target Role:</span>
-                <span className="text-white font-medium">{targetRole}</span>
+                <span className="text-slate-900 font-semibold">{targetRole}</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-slate-600">
                 <span>Round Progression:</span>
-                <span className="text-brand-400 font-medium font-mono">{stage.toUpperCase()} ROUND</span>
+                <span className="text-brand-700 font-semibold font-mono">{stage.toUpperCase()} ROUND</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-slate-600">
                 <span>Audio Engine:</span>
-                <span className="text-emerald-400 font-medium">Browser Web Speech STT/TTS</span>
+                <span className="text-emerald-700 font-semibold">Browser Web Speech STT/TTS</span>
               </div>
             </Card>
 
@@ -864,23 +864,23 @@ export const MockInterviewPage: React.FC = () => {
       {stage === 'report' && finalReport && (
         <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
           
-          <Card className="p-8 bg-gradient-to-b from-slate-900 to-slate-950 border-brand-500/40 shadow-2xl">
-            <div className="text-center pb-6 border-b border-slate-800">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                <Award className="w-4 h-4" />
+          <Card className="p-8 bg-white border-purple-100 shadow-md">
+            <div className="text-center pb-6 border-b border-purple-100">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+                <Award className="w-4 h-4 text-emerald-600" />
                 <span>Simulation Complete</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                 Candidate Placement Diagnostic Report
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Target Role: {finalReport.targetRole} • Difficulty: {finalReport.difficulty}
               </p>
 
-              <div className="mt-6 inline-block p-4 rounded-2xl bg-slate-900 border border-slate-800">
-                <span className="text-xs text-slate-400 block uppercase tracking-wider mb-1">Overall Placement Score</span>
-                <span className="text-4xl font-black text-brand-400 font-mono">
+              <div className="mt-6 inline-block p-4 rounded-2xl bg-purple-50/70 border border-purple-200">
+                <span className="text-xs text-slate-500 block uppercase tracking-wider mb-1">Overall Placement Score</span>
+                <span className="text-4xl font-black text-brand-700 font-mono">
                   {finalReport.overallScore}%
                 </span>
                 <div className="mt-1">
@@ -893,31 +893,31 @@ export const MockInterviewPage: React.FC = () => {
 
             {/* Score Grid Breakdown */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                <span className="text-xs text-slate-400 block mb-1">Round 2: Aptitude</span>
-                <span className="text-xl font-bold text-white font-mono">{finalReport.aptitudeScore?.overall || 85}%</span>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                <span className="text-xs text-slate-500 block mb-1">Round 2: Aptitude</span>
+                <span className="text-xl font-bold text-slate-900 font-mono">{finalReport.aptitudeScore?.overall || 85}%</span>
               </div>
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                <span className="text-xs text-slate-400 block mb-1">Round 3: Technical AI</span>
-                <span className="text-xl font-bold text-white font-mono">{finalReport.technicalScore}%</span>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                <span className="text-xs text-slate-500 block mb-1">Round 3: Technical AI</span>
+                <span className="text-xl font-bold text-slate-900 font-mono">{finalReport.technicalScore}%</span>
               </div>
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                <span className="text-xs text-slate-400 block mb-1">Round 4: HR & Behavioral</span>
-                <span className="text-xl font-bold text-white font-mono">{finalReport.hrScore}%</span>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                <span className="text-xs text-slate-500 block mb-1">Round 4: HR & Behavioral</span>
+                <span className="text-xl font-bold text-slate-900 font-mono">{finalReport.hrScore}%</span>
               </div>
             </div>
 
             {/* Strengths & Weaknesses */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-purple-100">
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3 flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-3 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   Key Strengths
                 </h4>
-                <ul className="space-y-1.5 text-xs text-slate-300">
+                <ul className="space-y-1.5 text-xs text-slate-600">
                   {finalReport.strengths?.map((str: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="text-emerald-400 font-bold">•</span>
+                      <span className="text-emerald-500 font-bold">•</span>
                       <span>{str}</span>
                     </li>
                   ))}
@@ -925,14 +925,14 @@ export const MockInterviewPage: React.FC = () => {
               </div>
 
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-1.5">
-                  <Lightbulb className="w-4 h-4" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-3 flex items-center gap-1.5">
+                  <Lightbulb className="w-4 h-4 text-amber-600" />
                   Actionable Improvement Roadmap
                 </h4>
-                <ul className="space-y-1.5 text-xs text-slate-300">
+                <ul className="space-y-1.5 text-xs text-slate-600">
                   {finalReport.weaknesses?.map((w: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold">•</span>
+                      <span className="text-amber-500 font-bold">•</span>
                       <span>{w}</span>
                     </li>
                   ))}
@@ -941,7 +941,7 @@ export const MockInterviewPage: React.FC = () => {
             </div>
 
             {/* Final Action Buttons */}
-            <div className="mt-8 pt-6 border-t border-slate-800 flex flex-wrap gap-4 justify-between">
+            <div className="mt-8 pt-6 border-t border-purple-100 flex flex-wrap gap-4 justify-between">
               <Button
                 variant="secondary"
                 size="md"
@@ -956,7 +956,7 @@ export const MockInterviewPage: React.FC = () => {
                 onClick={handleSaveReportToCloud}
                 isLoading={isLoading}
                 disabled={reportSaved}
-                className="font-bold shadow-lg shadow-brand-500/25"
+                className="font-bold shadow-md shadow-brand-500/25"
               >
                 <Save className="w-4 h-4" />
                 {reportSaved ? 'Scorecard Saved to Cloud' : 'Save Scorecard to Dashboard'}

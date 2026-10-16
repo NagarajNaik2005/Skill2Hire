@@ -480,39 +480,39 @@ export const ResumeBuilderPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800 no-print">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-purple-100 no-print">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="primary" size="sm">ATS Resume Engine</Badge>
             <Badge variant="success" size="sm">100% Visual Fidelity</Badge>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Resume Builder (ATS Friendly)
           </h1>
-          <p className="text-sm text-slate-300 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             Build ATS-compliant resumes with real-time keyword scoring, Google X-Y-Z metric formula, and 100% preview-matching exports.
           </p>
         </div>
 
         {/* Top Quick Badges / Status */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <Button variant="ghost" size="sm" onClick={handleLoadSampleResume} className="text-amber-300 border border-amber-500/30 hover:bg-amber-500/10">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <Button variant="ghost" size="sm" onClick={handleLoadSampleResume} className="text-amber-800 border border-amber-300 bg-amber-50/80 hover:bg-amber-100/80">
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
             Load Full A4 Sample (100% ATS)
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleSendToTailor} className="text-brand-400 border border-brand-500/30 hover:bg-brand-500/10">
+          <Button variant="ghost" size="sm" onClick={handleSendToTailor} className="text-brand-700 border border-brand-200 bg-brand-50/80 hover:bg-brand-100/80">
             Tailor for Job
             <ArrowRight className="w-3.5 h-3.5" />
           </Button>
           <Button variant="secondary" size="sm" onClick={handleSaveToCloud}>
-            <Save className="w-4 h-4 text-emerald-400" />
+            <Save className="w-4 h-4 text-emerald-600" />
             Save to Cloud
           </Button>
         </div>
       </div>
 
       {saveStatus && (
-        <div className="mt-4 p-3 rounded-lg bg-slate-900 border border-brand-500/30 text-xs text-brand-300 flex items-center justify-between animate-fadeIn no-print">
+        <div className="mt-4 p-3 rounded-lg bg-purple-50 border border-purple-200 text-xs text-brand-700 flex items-center justify-between animate-fadeIn no-print">
           <span>{saveStatus}</span>
         </div>
       )}
@@ -524,13 +524,13 @@ export const ResumeBuilderPage: React.FC = () => {
         <div className="lg:col-span-7 space-y-6 no-print">
           
           {/* Template Selector with Real Distinct Styles */}
-          <Card className="p-4 bg-slate-900/90 border-brand-500/30">
+          <Card className="p-4 border-purple-100/80">
             <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Layout className="w-3.5 h-3.5 text-brand-400" />
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Layout className="w-3.5 h-3.5 text-brand-600" />
                 Select ATS-Compliant Template
               </label>
-              <span className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
+              <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 100% Parsable Single-Column
               </span>
@@ -562,18 +562,18 @@ export const ResumeBuilderPage: React.FC = () => {
                   onClick={() => setResumeData(prev => ({ ...prev, templateId: tmpl.id as any }))}
                   className={`p-3 rounded-xl text-left border transition-all relative overflow-hidden ${
                     resumeData.templateId === tmpl.id
-                      ? 'bg-brand-500/15 border-brand-400 text-white shadow-lg ring-1 ring-brand-400'
-                      : 'bg-slate-950/80 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                      ? 'bg-brand-50/80 border-brand-500 text-brand-900 shadow-md ring-1 ring-brand-400'
+                      : 'bg-slate-50/70 border-purple-100 text-slate-600 hover:text-slate-900 hover:border-purple-200'
                   }`}
                 >
                   {resumeData.templateId === tmpl.id && (
                     <div className="absolute top-2 right-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-brand-400" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-brand-600" />
                     </div>
                   )}
-                  <div className="font-bold text-xs text-white">{tmpl.name}</div>
-                  <div className="text-[10px] text-brand-400 font-medium mt-0.5">{tmpl.tag}</div>
-                  <div className="text-[10px] text-slate-400 mt-1 leading-snug">{tmpl.desc}</div>
+                  <div className="font-bold text-xs text-slate-900">{tmpl.name}</div>
+                  <div className="text-[10px] text-brand-600 font-medium mt-0.5">{tmpl.tag}</div>
+                  <div className="text-[10px] text-slate-500 mt-1 leading-snug">{tmpl.desc}</div>
                 </button>
               ))}
             </div>
@@ -581,69 +581,69 @@ export const ResumeBuilderPage: React.FC = () => {
 
           {/* Section 1: Personal Details */}
           <Card className="p-6">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-brand-400" />
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand-600" />
               Personal & Contact Information
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Full Name *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Full Name *</label>
                 <input
                   type="text"
                   placeholder="e.g. Alex Morgan"
                   value={resumeData.personalInfo.fullName}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, fullName: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Email Address *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Email Address *</label>
                 <input
                   type="email"
                   placeholder="e.g. alex.morgan@example.com"
                   value={resumeData.personalInfo.email}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, email: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Phone Number *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Phone Number *</label>
                 <input
                   type="text"
                   placeholder="e.g. +1 (555) 234-5678"
                   value={resumeData.personalInfo.phone}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, phone: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Location (City, Country / Remote) *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Location (City, Country / Remote) *</label>
                 <input
                   type="text"
                   placeholder="e.g. San Francisco, CA (or Remote)"
                   value={resumeData.personalInfo.location}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, location: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">LinkedIn Profile URL</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">LinkedIn Profile URL</label>
                 <input
                   type="text"
                   placeholder="e.g. linkedin.com/in/alexmorgan"
                   value={resumeData.personalInfo.linkedin}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, linkedin: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">GitHub / Portfolio URL</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">GitHub / Portfolio URL</label>
                 <input
                   type="text"
                   placeholder="e.g. github.com/alexmorgan or alexmorgan.dev"
                   value={resumeData.personalInfo.github}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, github: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
             </div>
@@ -652,49 +652,49 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 2: Career Target & AI Specialization */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-400" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-600" />
                 Career Target & Specialization
               </h3>
-              <Button variant="ghost" size="sm" onClick={handleSuggestSpecializations} isLoading={isAiLoading} className="text-xs text-brand-400 gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+              <Button variant="ghost" size="sm" onClick={handleSuggestSpecializations} isLoading={isAiLoading} className="text-xs text-brand-600 hover:text-brand-700 gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
                 Suggest Specializations
               </Button>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Target Job Title *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Target Job Title *</label>
                 <input
                   type="text"
                   placeholder="e.g. Senior Full Stack Engineer"
                   value={resumeData.careerTarget.targetRole}
                   onChange={e => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, targetRole: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Specialization Focus</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Specialization Focus</label>
                 <input
                   type="text"
                   placeholder="e.g. Cloud Microservices & Distributed Architecture"
                   value={resumeData.careerTarget.specialization}
                   onChange={e => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, specialization: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
             </div>
 
             {aiSuggestions.length > 0 && (
-              <div className="mt-4 p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span className="text-xs text-brand-400 font-medium block mb-2">AI Suggested Specializations (Click to apply):</span>
+              <div className="mt-4 p-3 rounded-lg bg-purple-50/60 border border-purple-100">
+                <span className="text-xs text-brand-700 font-semibold block mb-2">AI Suggested Specializations (Click to apply):</span>
                 <div className="flex flex-wrap gap-2">
                   {aiSuggestions.map((track, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, specialization: track } }))}
-                      className="text-xs px-2.5 py-1 rounded bg-slate-900 border border-slate-700 hover:border-brand-400 text-slate-300 hover:text-white transition-colors"
+                      className="text-xs px-2.5 py-1 rounded bg-white border border-purple-200 hover:border-brand-400 text-slate-700 hover:text-brand-700 transition-colors shadow-sm"
                     >
                       + {track}
                     </button>
@@ -707,20 +707,20 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 3: Professional Summary & Suggestions */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-400" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-600" />
                 Professional Summary
               </h3>
-              <Button variant="ghost" size="sm" onClick={handleEnhanceSummary} isLoading={isAiLoading} className="text-xs text-brand-400 gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+              <Button variant="ghost" size="sm" onClick={handleEnhanceSummary} isLoading={isAiLoading} className="text-xs text-brand-600 hover:text-brand-700 gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
                 AI Enhance Summary
               </Button>
             </div>
 
             {/* Ready-to-Use Summary Suggestion Chips */}
-            <div className="mb-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-400 mb-2">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+            <div className="mb-3 p-3 rounded-xl bg-purple-50/60 border border-purple-100">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-700 mb-2">
+                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
                 <span>Suggested Summary Templates (Click to apply):</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -729,13 +729,13 @@ export const ResumeBuilderPage: React.FC = () => {
                     key={idx}
                     type="button"
                     onClick={() => applySummaryTemplate(item.text)}
-                    className="p-2 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-brand-400 text-left transition-colors group"
+                    className="p-2.5 rounded-lg bg-white border border-purple-100 hover:border-brand-400 text-left transition-colors group shadow-sm"
                   >
-                    <div className="text-[11px] font-bold text-slate-200 group-hover:text-brand-300 flex items-center justify-between">
+                    <div className="text-[11px] font-bold text-slate-900 group-hover:text-brand-700 flex items-center justify-between">
                       <span>{item.role}</span>
-                      <span className="text-[10px] text-brand-400 opacity-0 group-hover:opacity-100 transition-opacity">Apply</span>
+                      <span className="text-[10px] text-brand-600 opacity-0 group-hover:opacity-100 transition-opacity font-medium">Apply</span>
                     </div>
-                    <div className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">{item.text}</div>
+                    <div className="text-[10px] text-slate-500 line-clamp-2 mt-0.5">{item.text}</div>
                   </button>
                 ))}
               </div>
@@ -746,24 +746,24 @@ export const ResumeBuilderPage: React.FC = () => {
               value={resumeData.professionalSummary}
               onChange={e => setResumeData(p => ({ ...p, professionalSummary: e.target.value }))}
               placeholder="e.g. Results-driven Software Engineer with 3+ years of experience architecting high-throughput microservices and responsive web applications..."
-              className="w-full p-3 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 leading-relaxed font-sans"
+              className="w-full p-3 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 leading-relaxed font-sans transition-colors"
             />
-            <div className="flex items-center justify-between mt-2 text-[11px] text-slate-400">
+            <div className="flex items-center justify-between mt-2 text-[11px] text-slate-500">
               <span>💡 Ideal length: 3–4 concise sentences highlighting years of experience, core tech stack, and key impact.</span>
-              <span className="text-slate-500">{resumeData.professionalSummary?.length || 0} chars</span>
+              <span className="text-slate-400">{resumeData.professionalSummary?.length || 0} chars</span>
             </div>
           </Card>
 
           {/* Section 4: Categorized Skills */}
           <Card className="p-6">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-brand-400" />
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand-600" />
               Technical Skills (Comma-Separated)
             </h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Programming Languages</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Programming Languages</label>
                 <CommaSeparatedInput
                   category="languages"
                   placeholder="e.g. TypeScript, JavaScript, Python, Java, SQL, Go, C++"
@@ -772,11 +772,11 @@ export const ResumeBuilderPage: React.FC = () => {
                     ...p,
                     skills: { ...p.skills, programmingLanguages: items }
                   }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Frameworks & Libraries</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Frameworks & Libraries</label>
                 <CommaSeparatedInput
                   category="frameworks"
                   placeholder="e.g. React, Node.js, Express, Next.js, Redux Toolkit, Tailwind CSS, Jest"
@@ -785,11 +785,11 @@ export const ResumeBuilderPage: React.FC = () => {
                     ...p,
                     skills: { ...p.skills, frameworks: items, libraries: [] }
                   }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Databases & Cloud Infrastructure</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Databases & Cloud Infrastructure</label>
                 <CommaSeparatedInput
                   category="databases"
                   placeholder="e.g. PostgreSQL, MongoDB Atlas, Redis, AWS (ECS, S3, Lambda), Docker, Kubernetes, GCP"
@@ -798,11 +798,11 @@ export const ResumeBuilderPage: React.FC = () => {
                     ...p,
                     skills: { ...p.skills, databases: items, cloud: [] }
                   }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Tools & Methodologies</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Tools & Methodologies</label>
                 <CommaSeparatedInput
                   category="tools"
                   placeholder="e.g. Git, GitHub Actions, CI/CD, Postman, Linux, Agile/Scrum, Microservices"
@@ -811,7 +811,7 @@ export const ResumeBuilderPage: React.FC = () => {
                     ...p,
                     skills: { ...p.skills, tools: items, otherTechnologies: [] }
                   }))}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
               </div>
             </div>
@@ -820,8 +820,8 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 5: Technical Projects & Suggestions */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-400" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-600" />
                 Technical Projects
               </h3>
               <Button
@@ -851,7 +851,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
             <div className="space-y-5">
               {resumeData.projects.map((proj, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <div key={idx} className="p-4 rounded-xl bg-purple-50/30 border border-purple-100 space-y-3">
                   <div className="flex items-center justify-between">
                     <input
                       type="text"
@@ -862,12 +862,12 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].title = e.target.value;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="font-bold text-sm bg-transparent text-white placeholder-slate-500 border-b border-slate-800 hover:border-slate-600 focus:border-brand-400 focus:outline-none w-3/4 pb-1"
+                      className="font-bold text-sm bg-transparent text-slate-900 placeholder-slate-400 border-b border-purple-200 hover:border-brand-400 focus:border-brand-500 focus:outline-none w-3/4 pb-1"
                     />
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, projects: p.projects.filter((_, i) => i !== idx) }))}
-                      className="text-slate-500 hover:text-rose-400 p-1 transition-colors"
+                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
                       title="Remove Project"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -875,7 +875,7 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1">Project Description / Overview</label>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Project Description / Overview</label>
                     <input
                       type="text"
                       placeholder="e.g. High-concurrency collaboration engine with live state synchronization and analytics dashboard."
@@ -885,14 +885,14 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].description = e.target.value;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                      className="w-full px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                     />
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-medium text-slate-300">Technologies Used (comma separated)</label>
-                      <span className="text-[10px] text-slate-400">Type freely or click tags below</span>
+                      <label className="block text-xs font-medium text-slate-700">Technologies Used (comma separated)</label>
+                      <span className="text-[10px] text-slate-500">Type freely or click tags below</span>
                     </div>
                     <CommaSeparatedInput
                       placeholder="e.g. React, TypeScript, Node.js, WebSockets, Redis, PostgreSQL, AWS"
@@ -902,11 +902,11 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].technologies = items;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                      className="w-full px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                     />
                     {/* Quick Stack Suggestion Pills */}
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      <span className="text-[10px] text-slate-400 font-medium">Quick Add:</span>
+                      <span className="text-[10px] text-slate-500 font-medium">Quick Add:</span>
                       {['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS', 'Redis', 'GraphQL', 'Tailwind CSS', 'Python', 'Next.js', 'MongoDB'].map(tech => {
                         const isAlreadyAdded = (proj.technologies || []).some(t => t.toLowerCase() === tech.toLowerCase());
                         if (isAlreadyAdded) return null;
@@ -919,7 +919,7 @@ export const ResumeBuilderPage: React.FC = () => {
                               updated[idx].technologies = [...(updated[idx].technologies || []), tech];
                               setResumeData(p => ({ ...p, projects: updated }));
                             }}
-                            className="text-[10px] px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700/80 hover:border-brand-400 text-slate-300 hover:text-white transition-colors"
+                            className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-purple-50 border border-purple-200 hover:border-brand-400 text-slate-700 hover:text-brand-700 transition-colors shadow-sm"
                           >
                             + {tech}
                           </button>
@@ -929,29 +929,29 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   {/* Smart Bullet Suggestions for Project */}
-                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
-                    <span className="text-[11px] font-medium text-slate-400 block mb-1.5">
+                  <div className="p-2.5 rounded-lg bg-white/80 border border-purple-100">
+                    <span className="text-[11px] font-medium text-slate-600 block mb-1.5">
                       💡 Suggested Google X-Y-Z Metric Bullets (Click to append):
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         type="button"
                         onClick={() => addProjectBulletSuggestion(idx, 'metric')}
-                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
+                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
                       >
                         + ⚡ Performance Metric (-38% latency)
                       </button>
                       <button
                         type="button"
                         onClick={() => addProjectBulletSuggestion(idx, 'scale')}
-                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
+                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
                       >
                         + 📈 Scalability (15k+ daily requests)
                       </button>
                       <button
                         type="button"
                         onClick={() => addProjectBulletSuggestion(idx, 'security')}
-                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
+                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
                       >
                         + 🔒 Security & RBAC Auth
                       </button>
@@ -959,7 +959,7 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1">
+                    <label className="block text-xs font-medium text-slate-700 mb-1">
                       Bullet Point Responsibilities & Impact (1 per line)
                     </label>
                     <MultiLineTextarea
@@ -971,7 +971,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].responsibilities = items;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 font-sans leading-relaxed"
+                      className="w-full p-2.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 font-sans leading-relaxed transition-colors"
                     />
                   </div>
                 </div>
@@ -982,8 +982,8 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 6: Work Experience & Suggestions */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-400" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-600" />
                 Work Experience
               </h3>
               <Button
@@ -1016,7 +1016,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
             <div className="space-y-5">
               {resumeData.experience.map((exp, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <div key={idx} className="p-4 rounded-xl bg-purple-50/30 border border-purple-100 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-5/6">
                       <input
@@ -1028,7 +1028,7 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].role = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="font-bold text-sm bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="font-bold text-sm bg-white border border-purple-100 rounded px-2.5 py-1 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                       <input
                         type="text"
@@ -1039,13 +1039,13 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].company = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="text-sm bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="text-sm bg-white border border-purple-100 rounded px-2.5 py-1 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                     </div>
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, experience: p.experience.filter((_, i) => i !== idx) }))}
-                      className="text-slate-500 hover:text-rose-400 p-1 transition-colors"
+                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
                       title="Remove Experience"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -1054,7 +1054,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-0.5">Location</label>
+                      <label className="block text-[11px] text-slate-500 mb-0.5">Location</label>
                       <input
                         type="text"
                         placeholder="e.g. New York, NY (Hybrid)"
@@ -1064,11 +1064,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].location = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-0.5">Start Date</label>
+                      <label className="block text-[11px] text-slate-500 mb-0.5">Start Date</label>
                       <input
                         type="text"
                         placeholder="e.g. Jun 2023"
@@ -1078,11 +1078,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].startDate = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-0.5">End Date</label>
+                      <label className="block text-[11px] text-slate-500 mb-0.5">End Date</label>
                       <input
                         type="text"
                         placeholder="e.g. Present (or Aug 2024)"
@@ -1092,35 +1092,35 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].endDate = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                     </div>
                   </div>
 
                   {/* Smart Bullet Suggestions for Work Experience */}
-                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
-                    <span className="text-[11px] font-medium text-slate-400 block mb-1.5">
+                  <div className="p-2.5 rounded-lg bg-white/80 border border-purple-100">
+                    <span className="text-[11px] font-medium text-slate-600 block mb-1.5">
                       💡 Suggested Achievement Bullets (Click to append):
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         type="button"
                         onClick={() => addExpBulletSuggestion(idx, 'kpi')}
-                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
+                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
                       >
                         + 🚀 Performance & Caching (+40% speed)
                       </button>
                       <button
                         type="button"
                         onClick={() => addExpBulletSuggestion(idx, 'refactor')}
-                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
+                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
                       >
                         + 🧪 Test Coverage & Refactor (94% coverage)
                       </button>
                       <button
                         type="button"
                         onClick={() => addExpBulletSuggestion(idx, 'collab')}
-                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
+                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
                       >
                         + 👥 Agile Sprints & Bi-Weekly Releases
                       </button>
@@ -1128,7 +1128,7 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1">
+                    <label className="block text-xs font-medium text-slate-700 mb-1">
                       Key Accomplishments & Responsibilities (1 per line)
                     </label>
                     <MultiLineTextarea
@@ -1140,7 +1140,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].responsibilities = items;
                         setResumeData(p => ({ ...p, experience: updated }));
                       }}
-                      className="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 font-sans leading-relaxed"
+                      className="w-full p-2.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 font-sans leading-relaxed transition-colors"
                     />
                   </div>
                 </div>
@@ -1151,8 +1151,8 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 7: Education */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-400" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-600" />
                 Education Details
               </h3>
               <Button
@@ -1181,11 +1181,11 @@ export const ResumeBuilderPage: React.FC = () => {
 
             <div className="space-y-4">
               {resumeData.education.map((edu, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <div key={idx} className="p-4 rounded-xl bg-purple-50/30 border border-purple-100 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-5/6">
                       <div>
-                        <label className="block text-[11px] text-slate-400 mb-0.5">Degree / Major *</label>
+                        <label className="block text-[11px] text-slate-500 mb-0.5">Degree / Major *</label>
                         <input
                           type="text"
                           placeholder="e.g. B.S. in Computer Science"
@@ -1195,11 +1195,11 @@ export const ResumeBuilderPage: React.FC = () => {
                             updated[idx].degree = e.target.value;
                             setResumeData(p => ({ ...p, education: updated }));
                           }}
-                          className="w-full font-semibold text-xs bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                          className="w-full font-semibold text-xs bg-white border border-purple-100 rounded px-2.5 py-1.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-slate-400 mb-0.5">College / University *</label>
+                        <label className="block text-[11px] text-slate-500 mb-0.5">College / University *</label>
                         <input
                           type="text"
                           placeholder="e.g. University of California, Berkeley"
@@ -1209,14 +1209,14 @@ export const ResumeBuilderPage: React.FC = () => {
                             updated[idx].institution = e.target.value;
                             setResumeData(p => ({ ...p, education: updated }));
                           }}
-                          className="w-full text-xs bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                          className="w-full text-xs bg-white border border-purple-100 rounded px-2.5 py-1.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                         />
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, education: p.education.filter((_, i) => i !== idx) }))}
-                      className="text-slate-500 hover:text-rose-400 p-1 transition-colors"
+                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
                       title="Remove Education"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -1225,7 +1225,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-0.5">Start Year</label>
+                      <label className="block text-[11px] text-slate-500 mb-0.5">Start Year</label>
                       <input
                         type="text"
                         placeholder="e.g. 2020"
@@ -1235,11 +1235,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].startYear = e.target.value;
                           setResumeData(p => ({ ...p, education: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-0.5">End / Graduation Year</label>
+                      <label className="block text-[11px] text-slate-500 mb-0.5">End / Graduation Year</label>
                       <input
                         type="text"
                         placeholder="e.g. 2024"
@@ -1249,11 +1249,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].endYear = e.target.value;
                           setResumeData(p => ({ ...p, education: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-0.5">CGPA or Percentage</label>
+                      <label className="block text-[11px] text-slate-500 mb-0.5">CGPA or Percentage</label>
                       <input
                         type="text"
                         placeholder="e.g. 3.8 / 4.0 GPA or 85%"
@@ -1263,7 +1263,7 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].cgpaOrPercentage = e.target.value;
                           setResumeData(p => ({ ...p, education: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                       />
                     </div>
                   </div>
@@ -1274,15 +1274,15 @@ export const ResumeBuilderPage: React.FC = () => {
 
           {/* Section 8: Certifications & Achievements */}
           <Card className="p-6">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-brand-400" />
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand-600" />
               Certifications & Honors
             </h3>
             
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-medium text-slate-300">Certifications</label>
+                  <label className="block text-xs font-medium text-slate-700">Certifications</label>
                   <button
                     type="button"
                     onClick={() => setResumeData(p => ({
@@ -1292,7 +1292,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         { name: 'AWS Certified Solutions Architect', issuer: 'Amazon Web Services', issueDate: '2024' }
                       ]
                     }))}
-                    className="text-xs text-brand-400 hover:underline flex items-center gap-1"
+                    className="text-xs text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1 font-medium"
                   >
                     <Plus className="w-3 h-3" /> Add Certificate
                   </button>
@@ -1308,7 +1308,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].name = e.target.value;
                         setResumeData(p => ({ ...p, certifications: updated }));
                       }}
-                      className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                      className="flex-1 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                     />
                     <input
                       type="text"
@@ -1319,7 +1319,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].issuer = e.target.value;
                         setResumeData(p => ({ ...p, certifications: updated }));
                       }}
-                      className="w-1/3 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                      className="w-1/3 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                     />
                     <input
                       type="text"
@@ -1330,12 +1330,12 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].issueDate = e.target.value;
                         setResumeData(p => ({ ...p, certifications: updated }));
                       }}
-                      className="w-20 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                      className="w-20 px-2 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                     />
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, certifications: p.certifications.filter((_, i) => i !== idx) }))}
-                      className="text-slate-500 hover:text-rose-400 p-1"
+                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1345,7 +1345,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-medium text-slate-300">Key Achievements / Honors</label>
+                  <label className="block text-xs font-medium text-slate-700">Key Achievements / Honors</label>
                   <button
                     type="button"
                     onClick={() => setResumeData(p => ({
@@ -1355,7 +1355,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         { title: '1st Place Hackathon Winner', description: 'Built an open-source real-time developer tool.' }
                       ]
                     }))}
-                    className="text-xs text-brand-400 hover:underline flex items-center gap-1"
+                    className="text-xs text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1 font-medium"
                   >
                     <Plus className="w-3 h-3" /> Add Achievement
                   </button>
@@ -1371,7 +1371,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].title = e.target.value;
                         setResumeData(p => ({ ...p, achievements: updated }));
                       }}
-                      className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                      className="flex-1 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                     />
                     <input
                       type="text"
@@ -1382,12 +1382,12 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].description = e.target.value;
                         setResumeData(p => ({ ...p, achievements: updated }));
                       }}
-                      className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                      className="flex-1 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                     />
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, achievements: p.achievements.filter((_, i) => i !== idx) }))}
-                      className="text-slate-500 hover:text-rose-400 p-1"
+                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1403,14 +1403,14 @@ export const ResumeBuilderPage: React.FC = () => {
         <div className="lg:col-span-5 space-y-4">
           
           {/* View Tab Switcher: Preview vs ATS Breakdown vs Raw Parser */}
-          <div className="flex p-1 rounded-xl bg-slate-900 border border-slate-800 no-print">
+          <div className="flex p-1 rounded-xl bg-white border border-purple-100 shadow-sm no-print">
             <button
               type="button"
               onClick={() => setActiveRightTab('preview')}
               className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                 activeRightTab === 'preview'
-                  ? 'bg-brand-500 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-brand-600 text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
@@ -1421,8 +1421,8 @@ export const ResumeBuilderPage: React.FC = () => {
               onClick={() => setActiveRightTab('ats-breakdown')}
               className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                 activeRightTab === 'ats-breakdown'
-                  ? 'bg-brand-500 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-brand-600 text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -1433,8 +1433,8 @@ export const ResumeBuilderPage: React.FC = () => {
               onClick={() => setActiveRightTab('raw-ats-parser')}
               className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                 activeRightTab === 'raw-ats-parser'
-                  ? 'bg-brand-500 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-brand-600 text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Code2 className="w-3.5 h-3.5" />
@@ -1443,29 +1443,29 @@ export const ResumeBuilderPage: React.FC = () => {
           </div>
 
           {/* ATS Mini Score Pill */}
-          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 shadow-md flex items-center justify-between no-print">
+          <div className="p-3.5 rounded-xl bg-white border border-purple-100 shadow-sm flex items-center justify-between no-print">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
-                <Flame className="w-5 h-5 text-brand-400" />
+              <div className="w-9 h-9 rounded-lg bg-brand-50 border border-brand-200/60 flex items-center justify-center">
+                <Flame className="w-5 h-5 text-brand-600" />
               </div>
               <div>
-                <div className="text-xs font-bold text-white flex items-center gap-2">
+                <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
                   <span>ATS Match Score</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
-                    atsScoreData.overallScore >= 80 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-medium ${
+                    atsScoreData.overallScore >= 80 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
                   }`}>
                     {atsScoreData.overallScore >= 80 ? 'EXCELLENT' : 'OPTIMIZING'}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400">
+                <div className="text-[11px] text-slate-500">
                   {atsScoreData.detectedMetricsCount} KPIs • {atsScoreData.detectedVerbsCount} Action Verbs • {atsScoreData.matchedKeywords.length} Stack Keywords
                 </div>
               </div>
             </div>
 
             <div className="text-right font-mono">
-              <span className="text-2xl font-black text-brand-400">{atsScoreData.overallScore}</span>
-              <span className="text-xs text-slate-500">/100</span>
+              <span className="text-2xl font-black text-brand-600">{atsScoreData.overallScore}</span>
+              <span className="text-xs text-slate-400">/100</span>
             </div>
           </div>
 
@@ -1473,36 +1473,36 @@ export const ResumeBuilderPage: React.FC = () => {
           {activeRightTab === 'preview' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between text-xs no-print">
-                <span className="font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Layout className="w-3.5 h-3.5 text-brand-400" />
+                <span className="font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Layout className="w-3.5 h-3.5 text-brand-600" />
                   Live Resume Preview ({resumeData.templateId})
                 </span>
-                <span className="text-[11px] text-emerald-400 font-medium">100% Download Match</span>
+                <span className="text-[11px] text-emerald-600 font-medium">100% Download Match</span>
               </div>
 
               {/* The Live Document Container */}
-              <div className="max-h-[650px] overflow-y-auto rounded-xl shadow-2xl border border-slate-700/60 bg-slate-950 p-2">
+              <div className="max-h-[650px] overflow-y-auto rounded-xl shadow-md border border-purple-100 bg-slate-100/70 p-2">
                 <ResumePreview resumeData={resumeData} />
               </div>
 
               {/* ======================================================== */}
               {/* PRIMARY DOWNLOAD HUB — SITUATED DIRECTLY BELOW PREVIEW   */}
               {/* ======================================================== */}
-              <Card className="p-4 bg-slate-900/95 border-brand-500/40 shadow-2xl space-y-3 no-print">
+              <Card className="p-4 border-purple-100 shadow-xl space-y-3 no-print">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Download className="w-4 h-4 text-brand-400" />
-                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                    <Download className="w-4 h-4 text-brand-600" />
+                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                       Export & Download Document
                     </span>
                   </div>
                   {!isAuthenticated ? (
-                    <span className="text-[11px] text-amber-400 flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                      <Lock className="w-3 h-3" />
+                    <span className="text-[11px] text-amber-700 flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                      <Lock className="w-3 h-3 text-amber-600" />
                       Sign in required to export
                     </span>
                   ) : (
-                    <span className="text-[11px] text-emerald-400 flex items-center gap-1">
+                    <span className="text-[11px] text-emerald-600 flex items-center gap-1 font-medium">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Account Synced
                     </span>
@@ -1526,9 +1526,9 @@ export const ResumeBuilderPage: React.FC = () => {
                     variant="secondary"
                     size="md"
                     onClick={handlePrintToPDF}
-                    className="w-full justify-center py-2.5 text-xs font-semibold text-sky-300 border-sky-500/30 hover:bg-sky-500/10"
+                    className="w-full justify-center py-2.5 text-xs font-semibold text-sky-700 border-sky-200 bg-sky-50/70 hover:bg-sky-100/80"
                   >
-                    <Printer className="w-4 h-4 text-sky-400" />
+                    <Printer className="w-4 h-4 text-sky-600" />
                     Print / Vector PDF
                   </Button>
 
@@ -1537,9 +1537,9 @@ export const ResumeBuilderPage: React.FC = () => {
                     size="sm"
                     onClick={handleDownloadDOCX}
                     isLoading={isExportingDocx}
-                    className="w-full justify-center text-xs text-blue-300 border-blue-500/30 hover:bg-blue-500/10"
+                    className="w-full justify-center text-xs font-medium text-indigo-700 border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100/80"
                   >
-                    <FileSpreadsheet className="w-4 h-4 text-blue-400" />
+                    <FileSpreadsheet className="w-4 h-4 text-indigo-600" />
                     Download Word (.docx)
                   </Button>
 
@@ -1547,14 +1547,14 @@ export const ResumeBuilderPage: React.FC = () => {
                     variant="secondary"
                     size="sm"
                     onClick={handleSaveToCloud}
-                    className="w-full justify-center text-xs text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/10"
+                    className="w-full justify-center text-xs font-medium text-emerald-700 border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/80"
                   >
-                    <Save className="w-4 h-4 text-emerald-400" />
+                    <Save className="w-4 h-4 text-emerald-600" />
                     Save & Sync Cloud
                   </Button>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+                <div className="pt-2 border-t border-purple-100 flex items-center justify-between text-[11px] text-slate-500">
                   <span>📄 Generates exact replica of the preview</span>
                   <span>ATS Parsable Single-Column</span>
                 </div>
@@ -1564,54 +1564,54 @@ export const ResumeBuilderPage: React.FC = () => {
 
           {/* TAB 2: DETAILED ATS BREAKDOWN */}
           {activeRightTab === 'ats-breakdown' && (
-            <Card className="p-5 border-brand-500/30 bg-slate-900/90 shadow-xl space-y-4 no-print">
+            <Card className="p-5 border-purple-100 shadow-xl space-y-4 no-print">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-brand-400" />
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-brand-600" />
                   Algorithmic ATS Compliance Breakdown
                 </h3>
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+              <div className="w-full h-2.5 bg-purple-100/70 rounded-full overflow-hidden border border-purple-200/60">
                 <div 
-                  className="h-full bg-gradient-to-r from-brand-500 via-sky-400 to-emerald-400 transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-brand-600 via-purple-500 to-emerald-500 transition-all duration-500"
                   style={{ width: `${atsScoreData.overallScore}%` }}
                 />
               </div>
 
               {/* 5-Metric Breakdown */}
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Contact Info Extraction</span>
-                  <span className="font-bold text-white text-sm">{atsScoreData.scoreBreakdown.contactCompleteness}/15</span>
+                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
+                  <span className="text-slate-500 block text-[10px]">Contact Info Extraction</span>
+                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.contactCompleteness}/15</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Section Structure</span>
-                  <span className="font-bold text-white text-sm">{atsScoreData.scoreBreakdown.sectionCompleteness}/15</span>
+                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
+                  <span className="text-slate-500 block text-[10px]">Section Structure</span>
+                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.sectionCompleteness}/15</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Skills Match & Density</span>
-                  <span className="font-bold text-white text-sm">{atsScoreData.scoreBreakdown.skillsMatch}/25</span>
+                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
+                  <span className="text-slate-500 block text-[10px]">Skills Match & Density</span>
+                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.skillsMatch}/25</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="text-slate-400 block text-[10px]">Role Keyword Alignment</span>
-                  <span className="font-bold text-white text-sm">{atsScoreData.scoreBreakdown.keywordRelevance}/25</span>
+                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
+                  <span className="text-slate-500 block text-[10px]">Role Keyword Alignment</span>
+                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.keywordRelevance}/25</span>
                 </div>
-                <div className="col-span-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
+                <div className="col-span-2 p-2.5 rounded-lg bg-purple-50/40 border border-purple-100 flex justify-between items-center">
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Action Verbs & Quantified Metrics (Google X-Y-Z)</span>
-                    <span className="text-[11px] text-brand-300">{atsScoreData.detectedVerbsCount} strong verbs • {atsScoreData.detectedMetricsCount} quantified impact numbers</span>
+                    <span className="text-slate-500 block text-[10px]">Action Verbs & Quantified Metrics (Google X-Y-Z)</span>
+                    <span className="text-[11px] text-brand-700 font-medium">{atsScoreData.detectedVerbsCount} strong verbs • {atsScoreData.detectedMetricsCount} quantified impact numbers</span>
                   </div>
-                  <span className="font-bold text-white text-sm">{atsScoreData.scoreBreakdown.actionVerbsAndMetrics}/20</span>
+                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.actionVerbsAndMetrics}/20</span>
                 </div>
               </div>
 
               {/* Matched Keywords */}
               <div>
-                <div className="text-[11px] font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                <div className="text-[11px] font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
                   <span>Detected Role Keywords ({atsScoreData.matchedKeywords.length}):</span>
-                  <span className="text-[10px] text-emerald-400">Passes ATS Filter</span>
+                  <span className="text-[10px] text-emerald-600 font-medium">Passes ATS Filter</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {atsScoreData.matchedKeywords.map((kw, i) => (
@@ -1622,10 +1622,10 @@ export const ResumeBuilderPage: React.FC = () => {
 
               {/* Missing High-Frequency Keywords with 1-click Add */}
               {atsScoreData.missingKeywords.length > 0 && (
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                  <div className="text-[11px] font-semibold text-amber-300 mb-1.5 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200/80">
+                  <div className="text-[11px] font-semibold text-amber-800 mb-1.5 flex items-center justify-between">
                     <span>Missing High-Impact Keywords (Click to add):</span>
-                    <span className="text-[10px] text-amber-400">Boosts Score</span>
+                    <span className="text-[10px] text-amber-700 font-medium">Boosts Score</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {atsScoreData.missingKeywords.slice(0, 8).map((kw, i) => (
@@ -1633,7 +1633,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         key={i}
                         type="button"
                         onClick={() => handleAddMissingKeyword(kw)}
-                        className="text-[10px] px-2 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 hover:text-white transition-colors flex items-center gap-1"
+                        className="text-[10px] px-2 py-1 rounded bg-white border border-amber-300 text-amber-800 hover:bg-amber-100/80 transition-colors flex items-center gap-1 shadow-sm font-medium"
                       >
                         <Plus className="w-3 h-3" /> {kw}
                       </button>
@@ -1645,17 +1645,17 @@ export const ResumeBuilderPage: React.FC = () => {
               {/* Recommendations */}
               {atsScoreData.recommendations.length > 0 && (
                 <div className="space-y-1.5">
-                  <div className="text-[11px] font-semibold text-slate-300">Actionable ATS Suggestions:</div>
+                  <div className="text-[11px] font-semibold text-slate-700">Actionable ATS Suggestions:</div>
                   {atsScoreData.recommendations.map((rec, i) => (
-                    <div key={i} className="text-[11px] text-slate-400 flex items-start gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-brand-400 shrink-0 mt-0.5" />
+                    <div key={i} className="text-[11px] text-slate-600 flex items-start gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-brand-600 shrink-0 mt-0.5" />
                       <span>{rec}</span>
                     </div>
                   ))}
                 </div>
               )}
 
-              <p className="text-[10px] text-slate-500 italic border-t border-slate-800 pt-2">
+              <p className="text-[10px] text-slate-500 italic border-t border-purple-100 pt-2">
                 {atsScoreData.disclaimer}
               </p>
             </Card>
@@ -1663,24 +1663,24 @@ export const ResumeBuilderPage: React.FC = () => {
 
           {/* TAB 3: RAW ATS TEXT STREAM (PARSER SIMULATOR) */}
           {activeRightTab === 'raw-ats-parser' && (
-            <Card className="p-4 border-slate-800 bg-slate-900/90 shadow-xl space-y-3 no-print">
+            <Card className="p-4 border-purple-100 shadow-xl space-y-3 no-print">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                    <Code2 className="w-3.5 h-3.5 text-brand-400" />
+                  <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <Code2 className="w-3.5 h-3.5 text-brand-600" />
                     Simulated ATS Text Extractor
                   </h3>
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[10px] text-slate-500">
                     This represents exactly how automated parsers (Workday, Taleo, Greenhouse) read your plain text.
                   </p>
                 </div>
                 <Button variant="secondary" size="sm" onClick={handleCopyRawATS} className="text-xs">
-                  {copiedText ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedText ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-600" />}
                   {copiedText ? 'Copied!' : 'Copy Text'}
                 </Button>
               </div>
 
-              <pre className="p-3 bg-slate-950 border border-slate-800 rounded-lg text-[10px] font-mono text-emerald-400/90 max-h-[550px] overflow-y-auto whitespace-pre-wrap leading-relaxed select-text">
+              <pre className="p-3 bg-slate-950 border border-slate-800 rounded-lg text-[10px] font-mono text-emerald-400 max-h-[550px] overflow-y-auto whitespace-pre-wrap leading-relaxed select-text shadow-inner">
                 {atsScoreData.rawTextPreview}
               </pre>
             </Card>

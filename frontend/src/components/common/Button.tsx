@@ -18,14 +18,14 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
-    primary: 'btn-glossy-primary text-white font-bold',
-    secondary: 'bg-gradient-to-b from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-slate-100 border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] hover:border-slate-600 focus:ring-slate-400',
-    outline: 'bg-slate-950/60 backdrop-blur-md border border-brand-500/40 hover:border-brand-400 text-brand-300 hover:text-white hover:bg-brand-500/15 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] focus:ring-brand-400',
-    danger: 'bg-gradient-to-b from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),0_4px_14px_rgba(225,29,72,0.4)] focus:ring-rose-500',
-    ghost: 'bg-transparent hover:bg-white/[0.06] text-slate-300 hover:text-white border border-transparent hover:border-white/10 focus:ring-slate-400'
+    primary: 'btn-glossy-primary shimmer-sweep text-white font-bold',
+    secondary: 'btn-glossy-secondary text-slate-800 font-semibold focus:ring-brand-400',
+    outline: 'bg-white/90 backdrop-blur-md hover:bg-brand-50/80 border border-brand-200 hover:border-brand-400 text-brand-700 hover:text-brand-800 shadow-xs hover:shadow-sm focus:ring-brand-400',
+    danger: 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm shadow-rose-500/20 focus:ring-rose-400',
+    ghost: 'bg-transparent hover:bg-brand-50/80 text-slate-600 hover:text-brand-700 border border-transparent hover:border-brand-200/60 focus:ring-brand-400'
   };
 
   const sizes = {

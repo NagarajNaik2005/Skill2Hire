@@ -39,12 +39,12 @@ export const Logo: React.FC<LogoProps> = ({
       {/* Precision Geometric SVG Icon Mark */}
       <div className={`relative ${iconDimensions[size]} flex items-center justify-center shrink-0`}>
         {/* Ambient Glow Backdrop */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-brand-600 via-sky-500 to-indigo-500 opacity-60 blur-md group-hover:opacity-100 group-hover:blur-lg transition-all duration-300" />
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-brand-600 via-purple-500 to-fuchsia-500 opacity-40 blur-md group-hover:opacity-70 group-hover:blur-lg transition-all duration-300" />
         
         {/* Glassmorphic Icon Container */}
-        <div className="relative w-full h-full rounded-xl bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border border-white/20 p-1.5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_20px_-4px_rgba(14,165,233,0.35)] flex items-center justify-center overflow-hidden">
+        <div className="relative w-full h-full rounded-xl bg-gradient-to-b from-white via-brand-50 to-purple-100 border border-brand-200/90 p-1.5 shadow-[0_4px_16px_-2px_rgba(139,92,246,0.25)] flex items-center justify-center overflow-hidden">
           {/* Top-Right Light Flare */}
-          <div className="absolute -top-3 -right-3 w-7 h-7 bg-white/20 rounded-full blur-sm pointer-events-none" />
+          <div className="absolute -top-3 -right-3 w-7 h-7 bg-white/70 rounded-full blur-sm pointer-events-none" />
 
           {/* Precision Stylized Hex-Ribbon Logo Vector */}
           <svg
@@ -55,17 +55,17 @@ export const Logo: React.FC<LogoProps> = ({
           >
             <defs>
               <linearGradient id="logoGradPrimary" x1="2" y1="4" x2="30" y2="28" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#38bdf8" />
-                <stop offset="0.5" stopColor="#0ea5e9" />
+                <stop stopColor="#a855f7" />
+                <stop offset="0.5" stopColor="#8b5cf6" />
                 <stop offset="1" stopColor="#6366f1" />
               </linearGradient>
               <linearGradient id="logoGradSecondary" x1="6" y1="8" x2="26" y2="24" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#ffffff" stopOpacity="0.9" />
-                <stop offset="1" stopColor="#38bdf8" stopOpacity="0.4" />
+                <stop stopColor="#ffffff" stopOpacity="0.95" />
+                <stop offset="1" stopColor="#e9d5ff" stopOpacity="0.6" />
               </linearGradient>
               <linearGradient id="logoGradAccent" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#38bdf8" />
-                <stop offset="1" stopColor="#4f46e5" />
+                <stop stopColor="#c084fc" />
+                <stop offset="1" stopColor="#7c3aed" />
               </linearGradient>
             </defs>
 
@@ -86,7 +86,7 @@ export const Logo: React.FC<LogoProps> = ({
             <path
               d="M7 21.5L16 27L25 21.5L25 23.5L16 29L7 23.5V21.5Z"
               fill="url(#logoGradPrimary)"
-              opacity="0.75"
+              opacity="0.85"
             />
 
             {/* Inner Core Precision Node (Apex Spark) */}
@@ -97,16 +97,16 @@ export const Logo: React.FC<LogoProps> = ({
 
       {/* Modern Brand Wordmark & Enterprise Slogan */}
       <div className="flex flex-col">
-        <div className={`font-black ${textSizes[size]} text-white tracking-tight leading-none flex items-center`}>
+        <div className={`font-black ${textSizes[size]} text-slate-900 tracking-tight leading-none flex items-center`}>
           <span>Skill</span>
-          <span className="text-brand-400 font-extrabold mx-0.5 group-hover:text-sky-300 transition-colors">2</span>
-          <span className="bg-gradient-to-r from-sky-400 via-brand-300 to-indigo-300 bg-clip-text text-transparent font-extrabold">
+          <span className="text-brand-600 font-extrabold mx-0.5 group-hover:text-brand-700 transition-colors">2</span>
+          <span className="bg-gradient-to-r from-brand-600 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent font-extrabold">
             Hire
           </span>
         </div>
 
         {showSlogan && (
-          <span className={`${sloganSizes[size]} font-bold text-slate-400 uppercase leading-none mt-1`}>
+          <span className={`${sloganSizes[size]} font-bold text-slate-500 uppercase leading-none mt-1`}>
             {sloganText}
           </span>
         )}

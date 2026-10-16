@@ -243,16 +243,16 @@ export const ResumeTailorPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-purple-100">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="primary" size="sm">Tailoring Engine</Badge>
             <Badge variant="success" size="sm">Zero Fake Skills Guaranteed</Badge>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Resume tailoring
           </h1>
-          <p className="text-sm text-slate-300 mt-1">
+          <p className="text-sm text-slate-600 mt-1">
             Align your authentic experience with target Job Descriptions without hallucinating fake skills or invalid experience.
           </p>
         </div>
@@ -260,7 +260,7 @@ export const ResumeTailorPage: React.FC = () => {
         {/* Global Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
           <Button variant="secondary" size="sm" onClick={handleSaveToCloud}>
-            <Save className="w-4 h-4 text-emerald-400" />
+            <Save className="w-4 h-4 text-emerald-600" />
             Save to Cloud
           </Button>
 
@@ -270,11 +270,11 @@ export const ResumeTailorPage: React.FC = () => {
           </Button>
 
           <Button variant="secondary" size="sm" onClick={handleDownloadDOCX}>
-            <FileSpreadsheet className="w-4 h-4 text-blue-400" />
+            <FileSpreadsheet className="w-4 h-4 text-brand-600" />
             Download DOCX
           </Button>
 
-          <Button variant="ghost" size="sm" onClick={handleFindMatchingJobs} className="text-brand-400 border border-brand-500/30 hover:bg-brand-500/10">
+          <Button variant="ghost" size="sm" onClick={handleFindMatchingJobs} className="text-brand-700 border border-brand-200 hover:bg-brand-50">
             Find Matching Jobs
             <ArrowRight className="w-3.5 h-3.5" />
           </Button>
@@ -282,7 +282,7 @@ export const ResumeTailorPage: React.FC = () => {
       </div>
 
       {saveStatus && (
-        <div className="mt-4 p-3 rounded-lg bg-slate-900 border border-brand-500/30 text-xs text-brand-300 flex items-center justify-between animate-fadeIn">
+        <div className="mt-4 p-3 rounded-xl bg-purple-50 border border-brand-200 text-xs text-brand-700 flex items-center justify-between animate-fadeIn shadow-xs">
           <span>{saveStatus}</span>
         </div>
       )}
@@ -294,19 +294,19 @@ export const ResumeTailorPage: React.FC = () => {
         <div className="lg:col-span-6 space-y-6">
           
           {/* Target Role & JD Input */}
-          <Card className="p-6">
+          <Card className="p-6 bg-white border-purple-100 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-400" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-600" />
                 Target Job Criteria
               </h3>
-              <span className="text-[11px] text-brand-400 font-medium">Auto-Keyword Alignment</span>
+              <span className="text-[11px] text-brand-600 font-semibold">Auto-Keyword Alignment</span>
             </div>
 
             {/* Quick Sample JD Suggestions */}
-            <div className="mb-4 p-3 rounded-xl bg-slate-950/80 border border-slate-800">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-400 mb-2">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+            <div className="mb-4 p-3.5 rounded-xl bg-purple-50/60 border border-purple-100/90">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-700 mb-2">
+                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
                 <span>Try a Sample Job Description:</span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -315,7 +315,7 @@ export const ResumeTailorPage: React.FC = () => {
                     key={i}
                     type="button"
                     onClick={() => handleApplySampleJD(opt)}
-                    className="text-xs px-2.5 py-1 rounded bg-slate-900 border border-slate-700 hover:border-brand-400 text-slate-300 hover:text-white transition-colors"
+                    className="text-xs px-2.5 py-1 rounded-lg bg-white border border-purple-200/90 hover:border-brand-400 text-slate-700 hover:text-brand-700 transition-colors shadow-xs"
                   >
                     + {opt.role}
                   </button>
@@ -325,51 +325,51 @@ export const ResumeTailorPage: React.FC = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Target Job Role *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Target Job Role *</label>
                 <input
                   type="text"
                   placeholder="e.g. Senior Full Stack Engineer / React Lead"
                   value={targetRole}
                   onChange={e => setTargetRole(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Required Skills / Keywords (Comma Separated)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Required Skills / Keywords (Comma Separated)</label>
                 <input
                   type="text"
                   placeholder="e.g. React, TypeScript, Node.js, Express, MongoDB Atlas, Redis, AWS, Docker"
                   value={jobRequirements}
                   onChange={e => setJobRequirements(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Paste Job Description *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Paste Job Description *</label>
                 <textarea
                   rows={6}
                   value={jobDescription}
                   onChange={e => setJobDescription(e.target.value)}
                   placeholder="Paste the full job posting description here (roles, responsibilities, qualifications, tech stack)..."
-                  className="w-full p-3 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 leading-relaxed font-sans"
+                  className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 leading-relaxed font-sans shadow-xs"
                 />
               </div>
             </div>
           </Card>
 
           {/* Source Resume Input: File Upload or Builder Resume */}
-          <Card className="p-6">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-brand-400" />
+          <Card className="p-6 bg-white border-purple-100 shadow-sm">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand-600" />
               Source Candidate Profile
             </h3>
 
             {/* File Upload Dropzone */}
-            <div className="p-4 rounded-xl border-2 border-dashed border-slate-700/80 bg-slate-950/60 hover:border-brand-500/50 transition-colors text-center">
-              <Upload className="w-8 h-8 text-brand-400 mx-auto mb-2" />
-              <p className="text-xs text-slate-300 font-medium mb-1">
+            <div className="p-4 rounded-xl border-2 border-dashed border-purple-200 bg-purple-50/30 hover:border-brand-400 transition-colors text-center">
+              <Upload className="w-8 h-8 text-brand-600 mx-auto mb-2" />
+              <p className="text-xs text-slate-700 font-semibold mb-1">
                 Upload Existing Resume (PDF / DOCX)
               </p>
               <p className="text-[11px] text-slate-500 mb-3">
@@ -382,13 +382,13 @@ export const ResumeTailorPage: React.FC = () => {
                   onChange={handleFileUpload}
                   className="hidden"
                 />
-                <span className="text-xs px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium cursor-pointer border border-slate-700 shadow-sm">
+                <span className="text-xs px-3.5 py-1.5 rounded-xl bg-white hover:bg-purple-50 text-slate-800 font-semibold cursor-pointer border border-purple-200 shadow-xs">
                   {isUploading ? 'Parsing Resume...' : uploadFile ? uploadFile.name : 'Choose File to Upload'}
                 </span>
               </label>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <div className="mt-4 pt-4 border-t border-purple-100 flex items-center justify-between text-xs text-slate-500">
               <span>Or using active profile:</span>
               <Badge variant="primary" size="sm">{sourceResume.personalInfo.fullName} ({sourceResume.title})</Badge>
             </div>
@@ -398,7 +398,7 @@ export const ResumeTailorPage: React.FC = () => {
               size="lg"
               onClick={handleRunTailoring}
               isLoading={isTailoring}
-              className="w-full mt-6 text-sm font-bold shadow-xl shadow-brand-500/25"
+              className="w-full mt-6 text-sm font-bold shadow-md shadow-brand-500/25"
             >
               <Sparkles className="w-4 h-4" />
               Analyze & Generate Tailored Resume
@@ -413,10 +413,10 @@ export const ResumeTailorPage: React.FC = () => {
           {tailorResult ? (
             <>
               {/* Before vs After ATS Score Comparison */}
-              <Card className="p-6 bg-slate-900/90 border-brand-500/40 shadow-xl">
+              <Card className="p-6 bg-white border-purple-100 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-brand-400" />
+                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-brand-600" />
                     ATS Compatibility Comparison
                   </h3>
                   <Badge variant="success" size="sm">
@@ -425,27 +425,27 @@ export const ResumeTailorPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-center">
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                    <span className="text-xs text-slate-400 block mb-1">Original Match</span>
-                    <span className="text-2xl font-extrabold text-slate-300 font-mono">
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <span className="text-xs text-slate-500 block mb-1">Original Match</span>
+                    <span className="text-2xl font-extrabold text-slate-700 font-mono">
                       {tailorResult.matchScoreBefore}%
                     </span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-950 border border-emerald-500/40">
-                    <span className="text-xs text-emerald-400 block mb-1">Tailored Match</span>
-                    <span className="text-2xl font-extrabold text-emerald-400 font-mono">
+                  <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <span className="text-xs text-emerald-700 font-semibold block mb-1">Tailored Match</span>
+                    <span className="text-2xl font-extrabold text-emerald-700 font-mono">
                       {tailorResult.matchScoreAfter}%
                     </span>
                   </div>
                 </div>
 
                 {/* Major Changes Made */}
-                <div className="mt-4 pt-4 border-t border-slate-800 space-y-2">
-                  <span className="text-xs font-semibold text-slate-300 block">Key Optimizations Applied:</span>
-                  <ul className="text-xs text-slate-400 space-y-1">
+                <div className="mt-4 pt-4 border-t border-purple-100 space-y-2">
+                  <span className="text-xs font-semibold text-slate-700 block">Key Optimizations Applied:</span>
+                  <ul className="text-xs text-slate-600 space-y-1">
                     {tailorResult.changesSummary?.map((change: string, idx: number) => (
                       <li key={idx} className="flex items-start gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                         <span>{change}</span>
                       </li>
                     ))}
@@ -454,14 +454,14 @@ export const ResumeTailorPage: React.FC = () => {
               </Card>
 
               {/* Zero Fake Skills: Dedicated Skill Gaps Panel */}
-              <Card className="p-6 border-amber-500/30 bg-slate-900/90">
-                <div className="flex items-center gap-2 mb-2 text-amber-400">
+              <Card className="p-6 border-amber-200 bg-amber-50/40 shadow-sm">
+                <div className="flex items-center gap-2 mb-2 text-amber-700">
                   <AlertTriangle className="w-4 h-4" />
                   <h4 className="text-xs font-bold uppercase tracking-wider">
                     Zero Fake Skills — Identified Skill Gaps
                   </h4>
                 </div>
-                <p className="text-xs text-slate-300 mb-3">
+                <p className="text-xs text-slate-700 mb-3">
                   The following requirements from the JD were not found in your authentic profile. To preserve strict candidate integrity, Skill2Hire does <strong>not</strong> fabricate false credentials:
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -472,25 +472,25 @@ export const ResumeTailorPage: React.FC = () => {
                       </Badge>
                     ))
                   ) : (
-                    <span className="text-xs text-emerald-400 font-medium">✓ Excellent match — No critical skill gaps detected.</span>
+                    <span className="text-xs text-emerald-700 font-semibold">✓ Excellent match — No critical skill gaps detected.</span>
                   )}
                 </div>
               </Card>
 
               {/* Tailored Professional Summary Preview */}
-              <Card className="p-6 bg-slate-900/90 border-slate-800">
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-2">
+              <Card className="p-6 bg-white border-purple-100 shadow-sm">
+                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">
                   Tailored Professional Summary
                 </h4>
-                <p className="text-xs text-slate-300 bg-slate-950 p-3.5 rounded-lg border border-slate-800 leading-relaxed font-sans">
+                <p className="text-xs text-slate-700 bg-purple-50/50 p-3.5 rounded-xl border border-purple-100/90 leading-relaxed font-sans">
                   {tailorResult.tailoredResumeData.professionalSummary}
                 </p>
               </Card>
             </>
           ) : (
-            <div className="p-12 text-center rounded-2xl bg-slate-900/40 border border-slate-800 text-slate-400 space-y-3">
-              <Sparkles className="w-8 h-8 text-brand-400 mx-auto" />
-              <h4 className="font-bold text-white text-base">Awaiting Tailoring Input</h4>
+            <div className="p-12 text-center rounded-2xl bg-white border border-dashed border-purple-200 text-slate-500 space-y-3 shadow-xs">
+              <Sparkles className="w-8 h-8 text-brand-600 mx-auto" />
+              <h4 className="font-bold text-slate-900 text-base">Awaiting Tailoring Input</h4>
               <p className="text-xs max-w-sm mx-auto leading-relaxed">
                 Paste a target Job Description and click "Analyze & Generate Tailored Resume" to view side-by-side ATS match metrics, skill gaps, and optimized bullet points.
               </p>
