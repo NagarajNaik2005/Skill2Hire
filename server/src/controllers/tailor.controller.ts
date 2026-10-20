@@ -18,20 +18,19 @@ export class TailorController {
       }
 
       const extractedText = await ParserService.extractTextFromBuffer(req.file.buffer, req.file.mimetype);
-      const parsedData = ParserService.parseSectionsFromText(extractedText);
+      const parsedResume = ParserService.parseFullResume(extractedText, req.file.originalname);
+      const sectionData = ParserService.parseSectionsFromText(extractedText);
 
       res.status(200).json({
         success: true,
         message: 'Resume file parsed successfully.',
-        data: {
-          rawText: extractedText,
-          extractedSkills: parsedData.extractedSkills,
-          extractedEmail: parsedData.extractedEmail,
-          extractedPhone: parsedData.extractedPhone
-        }
+        data: parsedResume,
+        rawText: extractedText,
+        extractedSkills: sectionData.extractedSkills
       });
     } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
+      console.error('[Upload & Parse Error]:', error);
+      res.status(500).json({ success: false, error: error.message || 'Failed to parse resume file.' });
     }
   }
 
@@ -40,27 +39,42 @@ export class TailorController {
    */
   public static async generateTailoredResume(req: Request, res: Response): Promise<void> {
     try {
-      const { originalResume, targetRole, jobDescription, jobRequirements } = req.body;
+      const {
+        originalResume,
+        sourceResumeData,
+        targetRole,
+        jobRole,
+        jobDescription,
+        jobRequirements
+      } = req.body;
 
-      if (!jobDescription) {
+      const effectiveRole = targetRole || jobRole || 'Software Engineer';
+      const resumeInput = sourceResumeData || originalResume || {};
+
+      if (!jobDescription || !jobDescription.trim()) {
         res.status(400).json({ success: false, error: 'Job description is required for tailoring.' });
         return;
       }
 
       const result = await ResumeTailoringService.tailorResume(
-        originalResume || {},
-        targetRole || 'Software Engineer',
+        resumeInput,
+        effectiveRole,
         jobDescription,
-        jobRequirements
+        jobRequirements || []
       );
 
       res.status(200).json({
         success: true,
         message: 'Tailored resume generated with zero fake skills guardrail.',
-        data: result
+        data: {
+          ...result,
+          tailoredData: result.tailoredData,
+          tailoredResumeData: result.tailoredResumeData
+        }
       });
     } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
+      console.error('[generateTailoredResume Error]:', error);
+      res.status(500).json({ success: false, error: error.message || 'Failed to tailor resume.' });
     }
   }
 
@@ -80,6 +94,7 @@ export class TailorController {
         jobRequirements,
         originalResumeText,
         tailoredData,
+        tailoredResumeData,
         matchScoreBefore,
         matchScoreAfter,
         matchedKeywords,
@@ -92,9 +107,9 @@ export class TailorController {
         userId: req.user.id,
         targetRole,
         jobDescription,
-        jobRequirements,
+        jobRequirements: Array.isArray(jobRequirements) ? jobRequirements.join(', ') : jobRequirements,
         originalResumeText,
-        tailoredData,
+        tailoredData: tailoredData || tailoredResumeData,
         matchScoreBefore,
         matchScoreAfter,
         matchedKeywords,
@@ -148,11 +163,11 @@ export class TailorController {
   }
 
   /**
-   * Export Tailored PDF (Auth required)
+   * Export Tailored PDF
    */
-  public static async exportPDF(req: AuthenticatedRequest, res: Response): Promise<void> {
+  public static async exportPDF(req: Request, res: Response): Promise<void> {
     try {
-      const resumeData: IResumeData = req.body;
+      const resumeData: IResumeData = req.body.tailoredResumeData || req.body.tailoredData || req.body;
       const pdfBuffer = await PDFExportService.generateResumePDF(resumeData);
 
       res.setHeader('Content-Type', 'application/pdf');
@@ -165,11 +180,11 @@ export class TailorController {
   }
 
   /**
-   * Export Tailored DOCX (Auth required)
+   * Export Tailored DOCX
    */
-  public static async exportDOCX(req: AuthenticatedRequest, res: Response): Promise<void> {
+  public static async exportDOCX(req: Request, res: Response): Promise<void> {
     try {
-      const resumeData: IResumeData = req.body;
+      const resumeData: IResumeData = req.body.tailoredResumeData || req.body.tailoredData || req.body;
       const docxBuffer = await DOCXExportService.generateResumeDOCX(resumeData);
 
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');

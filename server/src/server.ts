@@ -53,14 +53,16 @@ app.use(errorHandler);
 
 // Start Server & Connect Database
 const startServer = async () => {
-  await connectDB();
-  
   app.listen(ENV.PORT, () => {
     console.log(`============================================================`);
     console.log(`🚀 Skill2Hire Backend Server running on port ${ENV.PORT}`);
     console.log(`📡 Client Origin allowed: ${ENV.CLIENT_URL}`);
     console.log(`🍃 Database configured: MongoDB Atlas`);
     console.log(`============================================================`);
+  });
+
+  connectDB().catch(err => {
+    console.error('[MongoDB Atlas Connect Error]:', err);
   });
 };
 

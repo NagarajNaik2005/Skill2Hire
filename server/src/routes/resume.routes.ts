@@ -1,11 +1,14 @@
 import { Router } from 'express';
 import { ResumeController } from '../controllers/resume.controller';
+import { TailorController } from '../controllers/tailor.controller';
 import { requireAuth } from '../middleware/auth.middleware';
+import { uploadResume } from '../middleware/upload.middleware';
 import { aiLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 // AI & ATS Utilities (Public / Guest accessible)
+router.post('/upload-parse', uploadResume.single('resumeFile'), TailorController.uploadAndParse);
 router.post('/ai-specializations', aiLimiter, ResumeController.suggestSpecializations);
 router.post('/ai-improve-bullet', aiLimiter, ResumeController.improveBullet);
 router.post('/ai-summary', aiLimiter, ResumeController.generateSummary);

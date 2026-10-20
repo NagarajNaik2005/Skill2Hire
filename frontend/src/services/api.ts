@@ -30,5 +30,8 @@ export const getErrorMessage = (error: any): string => {
     }
     return JSON.stringify(error.response.data.error);
   }
+  if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+    return 'Unable to reach backend server. Please verify that the backend API server is running on port 5000.';
+  }
   return error.message || 'An unexpected error occurred. Please try again.';
 };

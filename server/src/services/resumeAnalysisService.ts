@@ -61,7 +61,10 @@ export class ResumeAnalysisService {
   /**
    * Comprehensive, transparent ATS Analysis Engine
    */
-  public static calculateATSScore(resumeData: Partial<IResumeData>): IATSScoreBreakdown {
+  public static calculateATSScore(
+    resumeData: Partial<IResumeData>,
+    jobContext?: { targetRole?: string; jobDescription?: string; requiredSkills?: string[] }
+  ): IATSScoreBreakdown {
     let contactScore = 0;
     let sectionScore = 0;
     let skillsScore = 0;
@@ -117,7 +120,7 @@ export class ResumeAnalysisService {
       sectionScore += 4;
     } else {
       // If student/entry-level, give project-based credit
-      sectionScore += (resumeData.projects && resumeData.projects.length >= 2) ? 3 : 1;
+      sectionScore += (resumeData.projects && resumeData.projects.length >= 2) ? 4 : 2;
     }
 
     // 3. TECHNICAL SKILLS DENSITY & CATEGORIZATION (Max 25 pts)
@@ -136,24 +139,48 @@ export class ResumeAnalysisService {
     if (uniqueSkills.length >= 12) skillsScore = 25;
     else if (uniqueSkills.length >= 8) skillsScore = 20;
     else if (uniqueSkills.length >= 5) {
-      skillsScore = 14;
+      skillsScore = 15;
       recommendations.push('Expand your skills section with databases, cloud services, and testing frameworks.');
     } else if (uniqueSkills.length >= 2) {
-      skillsScore = 8;
+      skillsScore = 10;
       sectionIssues.push('Skills section has very few listed technical skills.');
     } else {
-      skillsScore = 2;
+      skillsScore = 4;
       sectionIssues.push('No technical skills detected.');
     }
 
-    // 4. KEYWORD MATCH AGAINST TARGET ROLE (Max 25 pts)
-    const targetRoleLower = (resumeData.careerTarget?.targetRole || '').toLowerCase();
-    let targetDict = ROLE_KEYWORD_DICTIONARIES['full stack'];
+    // 4. KEYWORD MATCH AGAINST TARGET ROLE & JOB DESCRIPTION (Max 25 pts)
+    const targetRoleLower = (jobContext?.targetRole || resumeData.careerTarget?.targetRole || '').toLowerCase();
+    let targetDict: string[] = [...(ROLE_KEYWORD_DICTIONARIES['full stack'] || [])];
 
     for (const [key, dict] of Object.entries(ROLE_KEYWORD_DICTIONARIES)) {
       if (targetRoleLower.includes(key)) {
-        targetDict = dict;
+        targetDict = [...dict];
         break;
+      }
+    }
+
+    // Incorporate dynamic JD requirements if provided
+    if (jobContext?.requiredSkills && jobContext.requiredSkills.length > 0) {
+      for (const reqSkill of jobContext.requiredSkills) {
+        if (!targetDict.some(k => k.toLowerCase() === reqSkill.toLowerCase())) {
+          targetDict.push(reqSkill);
+        }
+      }
+    }
+
+    // Extract tech keywords from JD if provided
+    if (jobContext?.jobDescription) {
+      const commonTechWords = [
+        'React', 'Node.js', 'TypeScript', 'JavaScript', 'Python', 'Java', 'Go', 'AWS', 'Docker',
+        'Kubernetes', 'MongoDB', 'PostgreSQL', 'Redis', 'GraphQL', 'REST API', 'CI/CD', 'Git',
+        'Next.js', 'Express', 'Microservices', 'Unit Testing', 'Tailwind CSS', 'Redux', 'System Design'
+      ];
+      for (const tech of commonTechWords) {
+        const regex = new RegExp(`\\b${tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+        if (regex.test(jobContext.jobDescription) && !targetDict.some(k => k.toLowerCase() === tech.toLowerCase())) {
+          targetDict.push(tech);
+        }
       }
     }
 
@@ -174,7 +201,6 @@ export class ResumeAnalysisService {
     let matchedCount = 0;
     for (const kw of targetDict) {
       const kwLower = kw.toLowerCase();
-      // Match whole word or key token
       if (textCorpus.includes(kwLower)) {
         matchedKeywords.push(kw);
         matchedCount++;
@@ -184,7 +210,7 @@ export class ResumeAnalysisService {
     }
 
     const keywordRatio = targetDict.length > 0 ? (matchedCount / targetDict.length) : 0;
-    keywordScore = Math.min(25, Math.round(keywordRatio * 25) + (matchedCount >= 8 ? 3 : 0));
+    keywordScore = Math.min(25, Math.max(12, Math.round(keywordRatio * 25) + (matchedCount >= 6 ? 4 : 0)));
 
     // 5. ACTION VERBS & QUANTIFIABLE METRICS (Max 20 pts)
     const allBulletPoints: string[] = [];
