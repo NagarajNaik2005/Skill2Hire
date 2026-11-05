@@ -96,6 +96,8 @@ export interface IResumeData {
   languages: string[];
   professionalSummary: string;
   atsScore?: number;
+  isAtsCompliant?: boolean;
+  atsFormatStatus?: 'preserved' | 'converted';
 }
 
 export interface IATSScoreBreakdown {
