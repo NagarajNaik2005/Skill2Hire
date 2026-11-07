@@ -3,17 +3,24 @@ import { JobPreference } from '../models/JobPreference';
 import { SavedJob } from '../models/SavedJob';
 import { AuthenticatedRequest } from '../types';
 import { JobAggregatorService } from '../services/jobAggregator.service';
+import { isDbConnected } from '../config/db';
+import { fallbackStore } from '../services/fallbackStore';
 
 export class JobController {
   /**
-   * Search Live Jobs & Rank with Skill2Hire Compatibility (Auth optional)
+   * Search Live Jobs & Rank with Skill2Hire Compatibility (Auth required)
    */
   public static async searchJobs(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
+      if (!req.user?.id) {
+        res.status(401).json({ success: false, error: 'Please log in to search for jobs.' });
+        return;
+      }
+
       const { role, location, workMode, experienceLevel, skills } = req.body;
 
-      // If user is authenticated, attempt to record search preference in MongoDB
-      if (req.user?.id) {
+      // Safely save preference if Atlas is connected
+      if (isDbConnected) {
         try {
           await JobPreference.findOneAndUpdate(
             { userId: req.user.id },
@@ -28,7 +35,7 @@ export class JobController {
             { upsert: true, new: true }
           );
         } catch (dbErr) {
-          console.warn('[JobController.searchJobs]: Preference save skipped (database offline):', dbErr);
+          // Non-critical, continue
         }
       }
 
@@ -47,35 +54,26 @@ export class JobController {
       });
     } catch (error: any) {
       console.error('[JobController.searchJobs Error]:', error);
-      // Even if an unexpected error occurred, fall back to curated seed jobs to guarantee zero downtime
-      try {
-        const fallback = JobAggregatorService.getCuratedSeedJobs(req.body?.role || '', req.body?.location || '');
-        res.status(200).json({
-          success: true,
-          message: 'Jobs fetched successfully.',
-          data: {
-            bestFit: fallback[0] || null,
-            goodMatches: fallback.slice(1, 6),
-            allJobs: fallback
-          }
-        });
-      } catch {
-        res.status(500).json({ success: false, error: error.message || 'Failed to fetch job suggestions.' });
-      }
+      res.status(500).json({ success: false, error: error.message || 'Failed to fetch job suggestions.' });
     }
   }
 
   /**
-   * Get Recommendations based on user profile (Auth optional)
+   * Get Recommendations based on user profile (Auth required)
    */
   public static async getRecommendations(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
+      if (!req.user?.id) {
+        res.status(401).json({ success: false, error: 'Unauthorized.' });
+        return;
+      }
+
       let pref: any = null;
-      if (req.user?.id) {
+      if (isDbConnected) {
         try {
           pref = await JobPreference.findOne({ userId: req.user.id });
-        } catch (dbErr) {
-          console.warn('[JobController.getRecommendations]: Preference lookup skipped:', dbErr);
+        } catch (e) {
+          pref = null;
         }
       }
 
@@ -89,21 +87,12 @@ export class JobController {
 
       res.status(200).json({ success: true, data: results });
     } catch (error: any) {
-      console.error('[JobController.getRecommendations Error]:', error);
-      const fallback = JobAggregatorService.getCuratedSeedJobs();
-      res.status(200).json({
-        success: true,
-        data: {
-          bestFit: fallback[0] || null,
-          goodMatches: fallback.slice(1, 6),
-          allJobs: fallback
-        }
-      });
+      res.status(500).json({ success: false, error: error.message });
     }
   }
 
   /**
-   * Bookmark a Job to MongoDB Atlas (Auth required)
+   * Bookmark a Job (Dual Atlas + local store failover)
    */
   public static async saveJob(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
@@ -129,32 +118,43 @@ export class JobController {
         matchReason
       } = req.body;
 
-      const saved = await SavedJob.findOneAndUpdate(
-        { userId: req.user.id, jobId },
-        {
-          userId: req.user.id,
-          jobId,
-          title,
-          company,
-          location,
-          workMode,
-          salary,
-          description,
-          source,
-          applicationUrl,
-          skills,
-          matchPercentage,
-          matchingSkills,
-          missingSkills,
-          matchReason
-        },
-        { upsert: true, new: true }
-      );
+      const jobPayload = {
+        userId: req.user.id,
+        jobId,
+        title,
+        company,
+        location,
+        workMode,
+        salary,
+        description,
+        source,
+        applicationUrl,
+        skills,
+        matchPercentage,
+        matchingSkills,
+        missingSkills,
+        matchReason
+      };
+
+      const localSaved = fallbackStore.saveJob(jobPayload);
+
+      let atlasSaved: any = null;
+      if (isDbConnected) {
+        try {
+          atlasSaved = await SavedJob.findOneAndUpdate(
+            { userId: req.user.id, jobId },
+            jobPayload,
+            { upsert: true, new: true }
+          );
+        } catch (dbErr) {
+          console.warn('[JobController.saveJob] Atlas save failed, saved locally:', dbErr);
+        }
+      }
 
       res.status(201).json({
         success: true,
         message: 'Job bookmarked to your dashboard.',
-        data: saved
+        data: atlasSaved || localSaved
       });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
@@ -171,7 +171,17 @@ export class JobController {
         return;
       }
 
-      const savedJobs = await SavedJob.find({ userId: req.user.id }).sort({ savedAt: -1 });
+      let savedJobs: any[] = [];
+      if (isDbConnected) {
+        try {
+          savedJobs = await SavedJob.find({ userId: req.user.id }).sort({ savedAt: -1 });
+        } catch (dbErr) {
+          savedJobs = fallbackStore.listSavedJobs(req.user.id);
+        }
+      } else {
+        savedJobs = fallbackStore.listSavedJobs(req.user.id);
+      }
+
       res.status(200).json({ success: true, data: savedJobs });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
@@ -188,7 +198,16 @@ export class JobController {
         return;
       }
 
-      await SavedJob.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+      if (isDbConnected) {
+        try {
+          await SavedJob.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        } catch (dbErr) {
+          // Ignored
+        }
+      }
+
+      fallbackStore.deleteSavedJob(req.params.id, req.user.id);
+
       res.status(200).json({ success: true, message: 'Saved job removed from dashboard.' });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });

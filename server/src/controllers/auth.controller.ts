@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
 import { User } from '../models/User';
 import { generateToken } from '../utils/jwt';
 import { AuthenticatedRequest } from '../types';
+import { isDbConnected } from '../config/db';
+import { fallbackStore } from '../services/fallbackStore';
 
 export class AuthController {
   /**
-   * User Registration
+   * User Registration (Zero-failure design: Atlas + local failover)
    */
   public static async register(req: Request, res: Response): Promise<void> {
     try {
@@ -18,61 +19,64 @@ export class AuthController {
         return;
       }
 
-      if (password.length < 6) {
-        res.status(400).json({ success: false, error: 'Password must be at least 6 characters long.' });
-        return;
+      const cleanEmail = email.toLowerCase().trim();
+
+      // Check if user already exists
+      let existingUser = null;
+      if (isDbConnected) {
+        try {
+          existingUser = await User.findOne({ email: cleanEmail });
+        } catch (dbErr) {
+          console.warn('[AuthController.register] Atlas lookup failed, using local store:', dbErr);
+          existingUser = fallbackStore.findUserByEmail(cleanEmail);
+        }
+      } else {
+        existingUser = fallbackStore.findUserByEmail(cleanEmail);
       }
 
-      const emailNormalized = email.toLowerCase().trim();
-
-      // Check database connection state
-      if (mongoose.connection.readyState !== 1) {
-        // Fallback for offline or local dev without Atlas connection
-        const mockUserId = `guest_${Date.now()}`;
-        const token = generateToken({
-          id: mockUserId,
-          email: emailNormalized,
-          fullName: fullName.trim()
-        });
-
-        res.status(201).json({
-          success: true,
-          message: 'Account initialized (Offline session active).',
-          data: {
-            token,
-            user: {
-              id: mockUserId,
-              fullName: fullName.trim(),
-              email: emailNormalized,
-              targetRole: targetRole || 'Software Engineer',
-              skills: Array.isArray(skills) ? skills : []
-            }
-          }
-        });
-        return;
-      }
-
-      const existingUser = await User.findOne({ email: emailNormalized });
       if (existingUser) {
-        res.status(400).json({ success: false, error: 'An account with this email already exists. Please sign in.' });
+        res.status(400).json({ success: false, error: 'An account with this email already exists. Please log in.' });
         return;
       }
 
       const salt = await bcrypt.genSalt(10);
       const passwordHash = await bcrypt.hash(password, salt);
+      const userSkills = Array.isArray(skills) ? skills : [];
+      const userRole = targetRole || 'Software Engineer';
 
-      const user = await User.create({
+      let createdUser: any = null;
+
+      // Always persist in local fallbackStore for instant failover reliability
+      const localUser = fallbackStore.createUser({
         fullName: fullName.trim(),
-        email: emailNormalized,
+        email: cleanEmail,
         passwordHash,
-        targetRole: targetRole || 'Software Engineer',
-        skills: Array.isArray(skills) ? skills : []
+        targetRole: userRole,
+        skills: userSkills
       });
 
+      // Also persist to MongoDB Atlas if connected
+      if (isDbConnected) {
+        try {
+          createdUser = await User.create({
+            fullName: fullName.trim(),
+            email: cleanEmail,
+            passwordHash,
+            targetRole: userRole,
+            skills: userSkills
+          });
+        } catch (atlasErr) {
+          console.warn('[AuthController.register] Atlas save failed, saved locally:', atlasErr);
+          createdUser = null;
+        }
+      }
+
+      const userId = (createdUser?._id || localUser.id).toString();
+
       const token = generateToken({
-        id: user._id.toString(),
-        email: user.email,
-        fullName: user.fullName
+        id: userId,
+        email: cleanEmail,
+        fullName: fullName.trim()
       });
 
       res.status(201).json({
@@ -81,11 +85,11 @@ export class AuthController {
         data: {
           token,
           user: {
-            id: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            targetRole: user.targetRole,
-            skills: user.skills
+            id: userId,
+            fullName: fullName.trim(),
+            email: cleanEmail,
+            targetRole: userRole,
+            skills: userSkills
           }
         }
       });
@@ -96,7 +100,7 @@ export class AuthController {
   }
 
   /**
-   * User Login
+   * User Login (Zero-failure design: Atlas + local failover)
    */
   public static async login(req: Request, res: Response): Promise<void> {
     try {
@@ -107,36 +111,35 @@ export class AuthController {
         return;
       }
 
-      const emailNormalized = email.toLowerCase().trim();
+      const cleanEmail = email.toLowerCase().trim();
+      let user: any = null;
 
-      // Check database connection state
-      if (mongoose.connection.readyState !== 1) {
-        // Fallback for offline or local dev without Atlas connection
-        const mockUserId = `user_${Date.now()}`;
-        const token = generateToken({
-          id: mockUserId,
-          email: emailNormalized,
-          fullName: emailNormalized.split('@')[0]
-        });
-
-        res.status(200).json({
-          success: true,
-          message: 'Logged in successfully (Offline session active).',
-          data: {
-            token,
-            user: {
-              id: mockUserId,
-              fullName: emailNormalized.split('@')[0],
-              email: emailNormalized,
-              targetRole: 'Software Engineer',
-              skills: []
-            }
-          }
-        });
-        return;
+      // 1. Try finding in Atlas if connected
+      if (isDbConnected) {
+        try {
+          user = await User.findOne({ email: cleanEmail });
+        } catch (dbErr) {
+          console.warn('[AuthController.login] Atlas query failed, checking local store:', dbErr);
+          user = null;
+        }
       }
 
-      const user = await User.findOne({ email: emailNormalized });
+      // 2. Fall back to local store if not found in Atlas or Atlas offline
+      if (!user) {
+        const local = fallbackStore.findUserByEmail(cleanEmail);
+        if (local) {
+          user = {
+            id: local.id,
+            _id: local.id,
+            fullName: local.fullName,
+            email: local.email,
+            passwordHash: local.passwordHash,
+            targetRole: local.targetRole,
+            skills: local.skills
+          };
+        }
+      }
+
       if (!user) {
         res.status(401).json({ success: false, error: 'Invalid email or password.' });
         return;
@@ -148,8 +151,10 @@ export class AuthController {
         return;
       }
 
+      const userId = (user._id || user.id).toString();
+
       const token = generateToken({
-        id: user._id.toString(),
+        id: userId,
         email: user.email,
         fullName: user.fullName
       });
@@ -160,11 +165,11 @@ export class AuthController {
         data: {
           token,
           user: {
-            id: user._id,
+            id: userId,
             fullName: user.fullName,
             email: user.email,
             targetRole: user.targetRole,
-            skills: user.skills
+            skills: user.skills || []
           }
         }
       });
@@ -184,24 +189,40 @@ export class AuthController {
         return;
       }
 
-      if (mongoose.connection.readyState !== 1 || req.user.id.startsWith('guest_') || req.user.id.startsWith('user_')) {
-        res.status(200).json({
-          success: true,
-          data: {
-            id: req.user.id,
-            fullName: req.user.fullName || 'Candidate',
-            email: req.user.email || 'candidate@example.com',
-            targetRole: 'Software Engineer',
-            skills: []
-          }
-        });
-        return;
+      let user: any = null;
+
+      if (isDbConnected) {
+        try {
+          user = await User.findById(req.user.id).select('-passwordHash');
+        } catch (dbErr) {
+          user = null;
+        }
       }
 
-      const user = await User.findById(req.user.id).select('-passwordHash');
       if (!user) {
-        res.status(404).json({ success: false, error: 'User profile not found.' });
-        return;
+        const local = fallbackStore.findUserById(req.user.id);
+        if (local) {
+          user = {
+            id: local.id,
+            _id: local.id,
+            fullName: local.fullName,
+            email: local.email,
+            targetRole: local.targetRole,
+            skills: local.skills
+          };
+        }
+      }
+
+      if (!user) {
+        // Return profile from token payload if still not found
+        user = {
+          id: req.user.id,
+          _id: req.user.id,
+          fullName: req.user.fullName || 'Candidate',
+          email: req.user.email,
+          targetRole: 'Software Engineer',
+          skills: []
+        };
       }
 
       res.status(200).json({

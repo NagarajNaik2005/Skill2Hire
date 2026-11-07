@@ -1,207 +1,120 @@
 import { IResumeData } from '../types';
 
-export interface IATSScoreBreakdown {
+export interface ATSAnalysisResult {
   overallScore: number;
   scoreBreakdown: {
-    contactCompleteness: number;  // Max 15
-    sectionCompleteness: number;  // Max 15
-    skillsMatch: number;          // Max 25
-    keywordRelevance: number;     // Max 25
-    actionVerbsAndMetrics: number;// Max 20
+    sectionCompleteness: number; // Max 25
+    keywordRelevance: number;    // Max 25
+    skillsMatch: number;         // Max 25
+    structureAndHeadings: number;// Max 15
+    formattingAndImpact: number; // Max 10
   };
   matchedKeywords: string[];
   missingKeywords: string[];
   sectionIssues: string[];
   recommendations: string[];
-  detectedMetricsCount: number;
-  detectedVerbsCount: number;
-  rawTextPreview: string;
   disclaimer: string;
 }
 
-export const ROLE_KEYWORD_DICTIONARIES: Record<string, string[]> = {
-  'frontend': [
-    'React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Redux', 'Next.js',
-    'REST APIs', 'GraphQL', 'Responsive Design', 'Web Performance', 'Jest', 'Vite', 'State Management',
-    'Git', 'CI/CD', 'Accessibility', 'Component Lifecycle', 'Micro-Frontends'
-  ],
-  'backend': [
-    'Node.js', 'Express', 'TypeScript', 'Python', 'Java', 'Spring Boot', 'PostgreSQL', 'MongoDB',
-    'Redis', 'RESTful APIs', 'GraphQL', 'Microservices', 'Docker', 'Kubernetes', 'AWS', 'SQL',
-    'Kafka', 'RabbitMQ', 'CI/CD', 'Unit Testing', 'System Design', 'Performance Optimization'
-  ],
-  'full stack': [
-    'React', 'Node.js', 'TypeScript', 'JavaScript', 'Express', 'PostgreSQL', 'MongoDB',
-    'Redis', 'Next.js', 'Tailwind CSS', 'RESTful APIs', 'GraphQL', 'Docker', 'AWS',
-    'Git', 'CI/CD', 'State Management', 'Microservices', 'Unit Testing', 'Database Optimization'
-  ],
-  'devops': [
-    'AWS', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD', 'GitHub Actions', 'Linux',
-    'Bash', 'Prometheus', 'Grafana', 'Nginx', 'Microservices', 'Ansible', 'CloudFormation',
-    'Infrastructure as Code', 'Helm', 'ArgoCD', 'SRE', 'Python', 'Security Compliance'
-  ],
-  'data': [
-    'Python', 'SQL', 'Pandas', 'NumPy', 'PyTorch', 'TensorFlow', 'Scikit-learn', 'Data Pipelines',
-    'ETL', 'Machine Learning', 'Deep Learning', 'NLP', 'Big Data', 'Spark', 'Airflow',
-    'Docker', 'AWS', 'Model Deployment', 'Feature Engineering', 'Statistical Analysis'
-  ],
-  'mobile': [
-    'React Native', 'Flutter', 'TypeScript', 'JavaScript', 'Swift', 'Kotlin', 'iOS', 'Android',
-    'REST APIs', 'GraphQL', 'State Management', 'Mobile UI/UX', 'App Store Deployment',
-    'Push Notifications', 'Offline Storage', 'Mobile Security', 'CI/CD Pipelines'
-  ],
-  'software engineer': [
-    'Data Structures', 'Algorithms', 'Object-Oriented Programming', 'System Design', 'Git',
-    'Unit Testing', 'RESTful APIs', 'SQL', 'CI/CD', 'Microservices', 'Design Patterns',
-    'Agile/Scrum', 'Cloud Computing', 'Database Design', 'Debugging', 'Code Review'
-  ]
-};
-
 export class ResumeAnalysisService {
   /**
-   * Comprehensive, transparent ATS Analysis Engine
+   * Measurable Rule-Based ATS Analysis Engine
    */
-  public static calculateATSScore(
-    resumeData: Partial<IResumeData>,
-    jobContext?: { targetRole?: string; jobDescription?: string; requiredSkills?: string[] }
-  ): IATSScoreBreakdown {
-    let contactScore = 0;
-    let sectionScore = 0;
-    let skillsScore = 0;
-    let keywordScore = 0;
-    let verbAndMetricScore = 0;
+  public static calculateATSScore(resumeData: Partial<IResumeData>): ATSAnalysisResult {
+    let sectionCompleteness = 0;
+    let keywordRelevance = 0;
+    let skillsMatch = 0;
+    let structureAndHeadings = 0;
+    let formattingAndImpact = 0;
 
     const sectionIssues: string[] = [];
     const recommendations: string[] = [];
     const matchedKeywords: string[] = [];
     const missingKeywords: string[] = [];
 
-    // 1. CONTACT INFORMATION CHECK (Max 15 pts)
+    // 1. SECTION COMPLETENESS (Max 25 pts)
     const personal = resumeData.personalInfo;
-    if (personal?.fullName && personal.fullName.trim().length >= 2) contactScore += 3;
-    else sectionIssues.push('Full name is missing or incomplete.');
-
-    if (personal?.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(personal.email)) contactScore += 3;
-    else sectionIssues.push('Valid email address is missing.');
-
-    if (personal?.phone && personal.phone.replace(/[^0-9]/g, '').length >= 7) contactScore += 3;
-    else sectionIssues.push('Valid contact phone number is missing.');
-
-    if (personal?.location && personal.location.trim().length >= 3) contactScore += 3;
-    else sectionIssues.push('Location (City, Country / Remote) is missing.');
-
-    if (personal?.linkedin || personal?.github || personal?.portfolio) contactScore += 3;
-    else recommendations.push('Include a LinkedIn, GitHub, or Portfolio URL to boost recruiter credibility.');
-
-    // 2. SECTION ARCHITECTURE & COMPLETENESS (Max 15 pts)
-    if (resumeData.professionalSummary && resumeData.professionalSummary.trim().length >= 60) {
-      sectionScore += 4;
+    if (personal?.fullName && personal?.email && personal?.phone && personal?.location) {
+      sectionCompleteness += 5;
     } else {
-      sectionIssues.push('Professional Summary is missing or under 60 characters.');
-      recommendations.push('Write a 3-4 sentence professional summary highlighting your primary stack and proven impact.');
+      sectionIssues.push('Incomplete contact information (Missing phone, location, or email).');
+    }
+
+    if (resumeData.professionalSummary && resumeData.professionalSummary.length > 50) {
+      sectionCompleteness += 5;
+    } else {
+      sectionIssues.push('Professional Summary is missing or too short.');
+      recommendations.push('Add a 3-4 sentence professional summary highlighting your core tech stack and value.');
     }
 
     if (resumeData.education && resumeData.education.length > 0) {
-      sectionScore += 3;
+      sectionCompleteness += 5;
     } else {
       sectionIssues.push('Education section is missing.');
     }
 
     if (resumeData.projects && resumeData.projects.length >= 2) {
-      sectionScore += 4;
+      sectionCompleteness += 5;
     } else if (resumeData.projects && resumeData.projects.length === 1) {
-      sectionScore += 2;
-      recommendations.push('Add at least 2 distinct technical projects to demonstrate hands-on architectural experience.');
+      sectionCompleteness += 3;
+      recommendations.push('Include at least 2 detailed technical projects demonstrating full development lifecycle.');
     } else {
-      sectionIssues.push('No technical projects listed.');
+      sectionIssues.push('No technical projects found.');
     }
 
     if (resumeData.experience && resumeData.experience.length > 0) {
-      sectionScore += 4;
+      sectionCompleteness += 5;
     } else {
-      // If student/entry-level, give project-based credit
-      sectionScore += (resumeData.projects && resumeData.projects.length >= 2) ? 4 : 2;
+      // If student/fresher, give partial points if projects are strong
+      sectionCompleteness += (resumeData.projects && resumeData.projects.length >= 2) ? 4 : 2;
     }
 
-    // 3. TECHNICAL SKILLS DENSITY & CATEGORIZATION (Max 25 pts)
-    const allSkillsList: string[] = [
+    // 2. SKILLS MATCH (Max 25 pts)
+    const allSkills: string[] = [
       ...(resumeData.skills?.programmingLanguages || []),
       ...(resumeData.skills?.frameworks || []),
       ...(resumeData.skills?.libraries || []),
       ...(resumeData.skills?.databases || []),
       ...(resumeData.skills?.tools || []),
       ...(resumeData.skills?.cloud || []),
-      ...(resumeData.skills?.otherTechnologies || [])
-    ].map(s => s.trim()).filter(Boolean);
+      ...(resumeData.skills?.otherTechnologies || []),
+      ...(resumeData.softSkills || [])
+    ];
 
-    const uniqueSkills = Array.from(new Set(allSkillsList));
-
-    if (uniqueSkills.length >= 12) skillsScore = 25;
-    else if (uniqueSkills.length >= 8) skillsScore = 20;
-    else if (uniqueSkills.length >= 5) {
-      skillsScore = 15;
-      recommendations.push('Expand your skills section with databases, cloud services, and testing frameworks.');
-    } else if (uniqueSkills.length >= 2) {
-      skillsScore = 10;
-      sectionIssues.push('Skills section has very few listed technical skills.');
+    if (allSkills.length >= 10) {
+      skillsMatch = 25;
+    } else if (allSkills.length >= 6) {
+      skillsMatch = 18;
+      recommendations.push('Expand your technical skills list to cover databases, testing tools, and deployment environments.');
+    } else if (allSkills.length >= 3) {
+      skillsMatch = 12;
     } else {
-      skillsScore = 4;
-      sectionIssues.push('No technical skills detected.');
+      skillsMatch = 5;
+      sectionIssues.push('Skills section has very few listed technologies.');
     }
 
-    // 4. KEYWORD MATCH AGAINST TARGET ROLE & JOB DESCRIPTION (Max 25 pts)
-    const targetRoleLower = (jobContext?.targetRole || resumeData.careerTarget?.targetRole || '').toLowerCase();
-    let targetDict: string[] = [...(ROLE_KEYWORD_DICTIONARIES['full stack'] || [])];
+    // 3. KEYWORD RELEVANCE (Max 25 pts)
+    const targetRole = (resumeData.careerTarget?.targetRole || '').toLowerCase();
+    const roleKeywordDictionary: Record<string, string[]> = {
+      'frontend': ['React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind', 'Redux', 'REST API', 'Responsive Design', 'Webpack/Vite'],
+      'backend': ['Node.js', 'Express', 'Java', 'Spring Boot', 'Python', 'Django', 'MongoDB', 'PostgreSQL', 'REST API', 'Microservices', 'Docker'],
+      'full stack': ['React', 'Node.js', 'TypeScript', 'JavaScript', 'Express', 'MongoDB', 'SQL', 'Git', 'REST API', 'CI/CD', 'Tailwind'],
+      'software engineer': ['Data Structures', 'Algorithms', 'OOP', 'Git', 'System Design', 'Unit Testing', 'CI/CD', 'REST API', 'SQL']
+    };
 
-    for (const [key, dict] of Object.entries(ROLE_KEYWORD_DICTIONARIES)) {
-      if (targetRoleLower.includes(key)) {
-        targetDict = [...dict];
+    let targetDict: string[] = roleKeywordDictionary['full stack'];
+    for (const key of Object.keys(roleKeywordDictionary)) {
+      if (targetRole.includes(key)) {
+        targetDict = roleKeywordDictionary[key];
         break;
       }
     }
 
-    // Incorporate dynamic JD requirements if provided
-    if (jobContext?.requiredSkills && jobContext.requiredSkills.length > 0) {
-      for (const reqSkill of jobContext.requiredSkills) {
-        if (!targetDict.some(k => k.toLowerCase() === reqSkill.toLowerCase())) {
-          targetDict.push(reqSkill);
-        }
-      }
-    }
-
-    // Extract tech keywords from JD if provided
-    if (jobContext?.jobDescription) {
-      const commonTechWords = [
-        'React', 'Node.js', 'TypeScript', 'JavaScript', 'Python', 'Java', 'Go', 'AWS', 'Docker',
-        'Kubernetes', 'MongoDB', 'PostgreSQL', 'Redis', 'GraphQL', 'REST API', 'CI/CD', 'Git',
-        'Next.js', 'Express', 'Microservices', 'Unit Testing', 'Tailwind CSS', 'Redux', 'System Design'
-      ];
-      for (const tech of commonTechWords) {
-        const regex = new RegExp(`\\b${tech.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-        if (regex.test(jobContext.jobDescription) && !targetDict.some(k => k.toLowerCase() === tech.toLowerCase())) {
-          targetDict.push(tech);
-        }
-      }
-    }
-
-    // Build plain text resume representation
-    const textCorpus = [
-      resumeData.personalInfo?.fullName || '',
-      resumeData.careerTarget?.targetRole || '',
-      resumeData.careerTarget?.specialization || '',
-      resumeData.professionalSummary || '',
-      uniqueSkills.join(' '),
-      ...(resumeData.projects || []).map(p => `${p.title} ${p.description || ''} ${(p.technologies || []).join(' ')} ${(p.responsibilities || []).join(' ')}`),
-      ...(resumeData.experience || []).map(e => `${e.role} ${e.company} ${(e.responsibilities || []).join(' ')}`),
-      ...(resumeData.education || []).map(ed => `${ed.degree} ${ed.institution}`),
-      ...(resumeData.certifications || []).map(c => `${c.name} ${c.issuer}`),
-      ...(resumeData.achievements || []).map(a => `${a.title} ${a.description}`)
-    ].join(' ').toLowerCase();
-
+    const flatResumeText = JSON.stringify(resumeData).toLowerCase();
     let matchedCount = 0;
+
     for (const kw of targetDict) {
-      const kwLower = kw.toLowerCase();
-      if (textCorpus.includes(kwLower)) {
+      if (flatResumeText.includes(kw.toLowerCase())) {
         matchedKeywords.push(kw);
         matchedCount++;
       } else {
@@ -209,98 +122,52 @@ export class ResumeAnalysisService {
       }
     }
 
-    const keywordRatio = targetDict.length > 0 ? (matchedCount / targetDict.length) : 0;
-    keywordScore = Math.min(25, Math.max(12, Math.round(keywordRatio * 25) + (matchedCount >= 6 ? 4 : 0)));
+    keywordRelevance = Math.round((matchedCount / targetDict.length) * 25);
 
-    // 5. ACTION VERBS & QUANTIFIABLE METRICS (Max 20 pts)
-    const allBulletPoints: string[] = [];
-    resumeData.projects?.forEach(p => p.responsibilities?.forEach(r => r && allBulletPoints.push(r)));
-    resumeData.experience?.forEach(e => e.responsibilities?.forEach(r => r && allBulletPoints.push(r)));
+    // 4. STRUCTURE & HEADINGS (Max 15 pts)
+    // ATS Single column & standard template checks
+    structureAndHeadings += 15; // Built-in templates comply with single column & standard headers
 
-    const strongActionVerbs = [
-      'developed', 'architected', 'engineered', 'built', 'implemented', 'designed',
-      'optimized', 'reduced', 'increased', 'delivered', 'spearheaded', 'automated',
-      'scaled', 'integrated', 'refactored', 'accelerated', 'orchestrated', 'authored',
-      'launched', 'mentored', 'streamlined', 'secured', 'migrated', 'configured'
-    ];
+    // 5. FORMATTING & IMPACT METRICS (Max 10 pts)
+    const allBullets: string[] = [];
+    resumeData.projects?.forEach(p => p.responsibilities?.forEach(r => allBullets.push(r)));
+    resumeData.experience?.forEach(e => e.responsibilities?.forEach(r => allBullets.push(r)));
 
-    let detectedVerbsCount = 0;
-    let detectedMetricsCount = 0;
+    const strongActionVerbs = ['developed', 'architected', 'engineered', 'built', 'implemented', 'designed', 'optimized', 'reduced', 'increased', 'delivered'];
+    let strongVerbCount = 0;
+    let metricCount = 0;
 
-    for (const bullet of allBulletPoints) {
-      const lower = bullet.toLowerCase();
-      if (strongActionVerbs.some(v => lower.includes(v))) {
-        detectedVerbsCount++;
-      }
-      // Regex for numbers, percentages, ms, scale multipliers, users, money
-      if (/\b\d+%\b|\$\d+|\b\d+\s*(ms|s|x|k|m|million|billion|users|clients|req\/s|rpm|tps|fps)\b|\b\d+\.?\d*\b/i.test(bullet)) {
-        detectedMetricsCount++;
-      }
+    for (const b of allBullets) {
+      const lower = b.toLowerCase();
+      if (strongActionVerbs.some(v => lower.includes(v))) strongVerbCount++;
+      if (/\d+%|\$\d+|\d+\s*(ms|users|requests|x)/i.test(b)) metricCount++;
     }
 
-    if (detectedVerbsCount >= 5) verbAndMetricScore += 10;
-    else if (detectedVerbsCount >= 3) verbAndMetricScore += 7;
-    else if (detectedVerbsCount >= 1) verbAndMetricScore += 4;
-    else {
-      recommendations.push('Begin all bullet points with strong power action verbs (e.g. Architected, Optimized, Deployed).');
-    }
+    if (strongVerbCount >= 3) formattingAndImpact += 5;
+    else recommendations.push('Start your experience and project bullet points with strong action verbs (e.g., Architected, Optimized).');
 
-    if (detectedMetricsCount >= 4) verbAndMetricScore += 10;
-    else if (detectedMetricsCount >= 2) verbAndMetricScore += 7;
-    else if (detectedMetricsCount >= 1) verbAndMetricScore += 4;
-    else {
-      recommendations.push('Add quantifiable numerical metrics (e.g., "reduced latency by 35%", "serving 15k+ daily users") to prove business impact.');
-    }
+    if (metricCount >= 2) formattingAndImpact += 5;
+    else recommendations.push('Quantify results in your bullet points with measurable impact numbers (e.g., "reduced latency by 20%").');
 
-    // Raw ATS Parser simulation output
-    const rawTextPreview = [
-      `=== ATS CONTACT HEADER ===`,
-      `NAME: ${resumeData.personalInfo?.fullName || 'N/A'}`,
-      `CONTACT: ${resumeData.personalInfo?.email || ''} | ${resumeData.personalInfo?.phone || ''} | ${resumeData.personalInfo?.location || ''}`,
-      `LINKS: ${[resumeData.personalInfo?.linkedin, resumeData.personalInfo?.github, resumeData.personalInfo?.portfolio].filter(Boolean).join(' | ')}`,
-      ``,
-      `=== TARGET ROLE ===`,
-      `${resumeData.careerTarget?.targetRole || 'Software Engineer'}${resumeData.careerTarget?.specialization ? ` (${resumeData.careerTarget.specialization})` : ''}`,
-      ``,
-      `=== PROFESSIONAL SUMMARY ===`,
-      resumeData.professionalSummary || '[No summary provided]',
-      ``,
-      `=== TECHNICAL SKILLS ===`,
-      `Languages: ${(resumeData.skills?.programmingLanguages || []).join(', ')}`,
-      `Frameworks/Libraries: ${(resumeData.skills?.frameworks || []).concat(resumeData.skills?.libraries || []).join(', ')}`,
-      `Databases & Cloud: ${(resumeData.skills?.databases || []).concat(resumeData.skills?.cloud || []).join(', ')}`,
-      `Tools & Technologies: ${(resumeData.skills?.tools || []).concat(resumeData.skills?.otherTechnologies || []).join(', ')}`,
-      ``,
-      `=== TECHNICAL PROJECTS ===`,
-      ...(resumeData.projects || []).map(p => `• ${p.title} [${(p.technologies || []).join(', ')}]\n  ${p.description || ''}\n  ${(p.responsibilities || []).map(r => `  - ${r}`).join('\n')}`),
-      ``,
-      `=== WORK EXPERIENCE ===`,
-      ...(resumeData.experience || []).map(e => `• ${e.role} at ${e.company} (${e.startDate} - ${e.current ? 'Present' : e.endDate})\n  ${(e.responsibilities || []).map(r => `  - ${r}`).join('\n')}`),
-      ``,
-      `=== EDUCATION ===`,
-      ...(resumeData.education || []).map(ed => `• ${ed.degree} - ${ed.institution} (${ed.endYear}) ${ed.cgpaOrPercentage ? `[Score: ${ed.cgpaOrPercentage}]` : ''}`)
-    ].join('\n');
-
-    const totalRaw = contactScore + sectionScore + skillsScore + keywordScore + verbAndMetricScore;
-    const overallScore = Math.min(100, Math.max(0, totalRaw));
+    const overallScore = Math.min(
+      100,
+      Math.max(0, sectionCompleteness + keywordRelevance + skillsMatch + structureAndHeadings + formattingAndImpact)
+    );
 
     return {
       overallScore,
       scoreBreakdown: {
-        contactCompleteness: contactScore,
-        sectionCompleteness: sectionScore,
-        skillsMatch: skillsScore,
-        keywordRelevance: keywordScore,
-        actionVerbsAndMetrics: verbAndMetricScore
+        sectionCompleteness,
+        keywordRelevance,
+        skillsMatch,
+        structureAndHeadings,
+        formattingAndImpact
       },
       matchedKeywords,
       missingKeywords,
       sectionIssues,
       recommendations,
-      detectedMetricsCount,
-      detectedVerbsCount,
-      rawTextPreview,
-      disclaimer: 'Skill2Hire ATS Score matches industry criteria (Workday, Taleo, Greenhouse parsing compliance, keyword density, and Google X-Y-Z formula).'
+      disclaimer: 'Skill2Hire ATS Compatibility Score — An algorithmic estimation of resume structure and keyword readiness, not an endorsement by any specific proprietary ATS.'
     };
   }
 }

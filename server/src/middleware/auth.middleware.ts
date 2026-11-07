@@ -33,8 +33,8 @@ export const optionalAuth = (req: AuthenticatedRequest, _res: Response, next: Ne
       const decoded = verifyToken(token);
       req.user = decoded;
     }
-  } catch {
-    // Gracefully proceed as guest without error
+  } catch (error) {
+    // Continue even if token is absent or invalid
   }
   next();
 };

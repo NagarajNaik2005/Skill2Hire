@@ -22,18 +22,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<IUser | null>(() => {
-    try {
-      const stored = localStorage.getItem('s2h_user_profile');
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState<IUser | null>(null);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('s2h_auth_token'));
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
-  const [authModalReason, setAuthModalReason] = useState<string>('Create a free account to sync across devices');
+  const [authModalReason, setAuthModalReason] = useState<string>('Create a free account to continue');
   const [pendingCallback, setPendingCallback] = useState<(() => void) | null>(null);
 
   // Initialize and check token profile on mount
@@ -44,24 +37,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try {
           const res = await api.get('/auth/profile');
           if (res.data?.success && res.data?.data) {
-            const userData: IUser = {
+            setUser({
               id: res.data.data._id || res.data.data.id,
               fullName: res.data.data.fullName,
               email: res.data.data.email,
               targetRole: res.data.data.targetRole,
               skills: res.data.data.skills || []
-            };
-            setUser(userData);
-            localStorage.setItem('s2h_user_profile', JSON.stringify(userData));
-          }
-        } catch {
-          // If server is unavailable but local user exists, keep offline session
-          const storedUser = localStorage.getItem('s2h_user_profile');
-          if (!storedUser) {
+            });
+          } else {
             localStorage.removeItem('s2h_auth_token');
             setToken(null);
-            setUser(null);
           }
+        } catch (error) {
+          localStorage.removeItem('s2h_auth_token');
+          setToken(null);
         }
       }
       setIsLoading(false);
@@ -77,55 +66,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const receivedToken = res.data.data.token;
         const receivedUser = res.data.data.user;
 
-        const userData: IUser = {
+        localStorage.setItem('s2h_auth_token', receivedToken);
+        setToken(receivedToken);
+        setUser({
           id: receivedUser.id || receivedUser._id,
           fullName: receivedUser.fullName,
           email: receivedUser.email,
           targetRole: receivedUser.targetRole,
           skills: receivedUser.skills || []
-        };
-
-        localStorage.setItem('s2h_auth_token', receivedToken);
-        localStorage.setItem('s2h_user_profile', JSON.stringify(userData));
-        setToken(receivedToken);
-        setUser(userData);
+        });
 
         setIsAuthModalOpen(false);
 
+        // Execute queued progressive action if pending
         if (pendingCallback) {
           setTimeout(() => {
             pendingCallback();
             setPendingCallback(null);
-          }, 150);
+          }, 200);
         }
 
         return { success: true };
       }
       return { success: false, error: 'Failed to authenticate.' };
     } catch (error: any) {
-      // Offline fallback
-      if (!error.response) {
-        const localUser: IUser = {
-          id: `offline_${Date.now()}`,
-          fullName: email.split('@')[0],
-          email: email.trim(),
-          targetRole: 'Software Engineer',
-          skills: []
-        };
-        const localToken = `s2h_offline_${Date.now()}`;
-        localStorage.setItem('s2h_auth_token', localToken);
-        localStorage.setItem('s2h_user_profile', JSON.stringify(localUser));
-        setToken(localToken);
-        setUser(localUser);
-        setIsAuthModalOpen(false);
-        if (pendingCallback) {
-          setTimeout(() => {
-            pendingCallback();
-            setPendingCallback(null);
-          }, 150);
-        }
-        return { success: true };
-      }
       return { success: false, error: getErrorMessage(error) };
     }
   };
@@ -143,62 +107,36 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const receivedToken = res.data.data.token;
         const receivedUser = res.data.data.user;
 
-        const userData: IUser = {
+        localStorage.setItem('s2h_auth_token', receivedToken);
+        setToken(receivedToken);
+        setUser({
           id: receivedUser.id || receivedUser._id,
           fullName: receivedUser.fullName,
           email: receivedUser.email,
           targetRole: receivedUser.targetRole,
           skills: receivedUser.skills || []
-        };
-
-        localStorage.setItem('s2h_auth_token', receivedToken);
-        localStorage.setItem('s2h_user_profile', JSON.stringify(userData));
-        setToken(receivedToken);
-        setUser(userData);
+        });
 
         setIsAuthModalOpen(false);
 
+        // Execute queued progressive action if pending
         if (pendingCallback) {
           setTimeout(() => {
             pendingCallback();
             setPendingCallback(null);
-          }, 150);
+          }, 200);
         }
 
         return { success: true };
       }
       return { success: false, error: 'Registration failed.' };
     } catch (error: any) {
-      // Offline fallback
-      if (!error.response) {
-        const localUser: IUser = {
-          id: `offline_${Date.now()}`,
-          fullName: fullName.trim(),
-          email: email.trim(),
-          targetRole: targetRole || 'Software Engineer',
-          skills: []
-        };
-        const localToken = `s2h_offline_${Date.now()}`;
-        localStorage.setItem('s2h_auth_token', localToken);
-        localStorage.setItem('s2h_user_profile', JSON.stringify(localUser));
-        setToken(localToken);
-        setUser(localUser);
-        setIsAuthModalOpen(false);
-        if (pendingCallback) {
-          setTimeout(() => {
-            pendingCallback();
-            setPendingCallback(null);
-          }, 150);
-        }
-        return { success: true };
-      }
       return { success: false, error: getErrorMessage(error) };
     }
   };
 
   const logout = () => {
     localStorage.removeItem('s2h_auth_token');
-    localStorage.removeItem('s2h_user_profile');
     setToken(null);
     setUser(null);
   };
@@ -222,7 +160,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const saveGuestDraft = (key: string, data: any) => {
     try {
       localStorage.setItem(`s2h_guest_${key}`, JSON.stringify(data));
-    } catch {
+    } catch (e) {
       console.warn('Failed to persist draft in localStorage');
     }
   };
@@ -231,7 +169,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const item = localStorage.getItem(`s2h_guest_${key}`);
       return item ? JSON.parse(item) : defaultValue;
-    } catch {
+    } catch (e) {
       return defaultValue;
     }
   };

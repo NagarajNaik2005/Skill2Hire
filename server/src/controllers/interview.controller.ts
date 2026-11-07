@@ -1,17 +1,21 @@
 import { Response } from 'express';
-import { Interview } from '../models/Interview';
 import { InterviewReport } from '../models/InterviewReport';
 import { AuthenticatedRequest } from '../types';
 import { InterviewService } from '../services/interviewService';
+import { isDbConnected } from '../config/db';
+import { fallbackStore } from '../services/fallbackStore';
 
 export class InterviewController {
   /**
-   * Round 1: Check Eligibility (Auth required)
+   * Round 1: Check Eligibility (Guest or Auth)
    */
   public static checkEligibility(req: AuthenticatedRequest, res: Response): void {
     try {
       const { targetRole, candidateSkills } = req.body;
-      const result = InterviewService.checkEligibility(targetRole || 'Software Engineer', candidateSkills || []);
+      const result = InterviewService.checkEligibility(
+        targetRole || 'Full Stack Developer',
+        Array.isArray(candidateSkills) ? candidateSkills : []
+      );
       res.status(200).json({ success: true, data: result });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
@@ -19,24 +23,29 @@ export class InterviewController {
   }
 
   /**
-   * Round 2: Get Aptitude MCQs (Auth required)
+   * Round 2: Get Aptitude MCQs (GET or POST)
    */
   public static getAptitudeQuestions(_req: AuthenticatedRequest, res: Response): void {
     try {
       const questions = InterviewService.getAptitudeQuestions();
-      res.status(200).json({ success: true, data: questions });
+      res.status(200).json({
+        success: true,
+        data: {
+          questions
+        }
+      });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
     }
   }
 
   /**
-   * Round 2: Submit & Grade Aptitude Answers (Auth required)
+   * Round 2: Submit & Grade Aptitude Answers
    */
   public static submitAptitude(req: AuthenticatedRequest, res: Response): void {
     try {
-      const { userAnswers } = req.body;
-      const result = InterviewService.evaluateAptitude(userAnswers || {});
+      const payload = req.body.answers !== undefined ? req.body.answers : req.body.userAnswers;
+      const result = InterviewService.evaluateAptitude(payload || []);
       res.status(200).json({ success: true, data: result });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
@@ -44,54 +53,68 @@ export class InterviewController {
   }
 
   /**
-   * Round 3: Technical Interview Turn (Auth required)
+   * Universal Interactive Turn: Next Question for Technical and HR rounds
+   */
+  public static async nextQuestion(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { targetRole, roundType, questionIndex, candidateAnswer, conversationHistory } = req.body;
+      const result = await InterviewService.processNextQuestion({
+        targetRole: targetRole || 'Full Stack Developer',
+        roundType: roundType === 'hr' ? 'hr' : 'technical',
+        questionIndex: Number(questionIndex) || 1,
+        candidateAnswer: candidateAnswer || '',
+        conversationHistory: conversationHistory || []
+      });
+      res.status(200).json({ success: true, data: result });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  /**
+   * Round 3: Technical Turn (Direct alias)
    */
   public static async technicalTurn(req: AuthenticatedRequest, res: Response): Promise<void> {
-    try {
-      const { targetRole, questionNumber, previousQuestion, candidateAnswer, skills } = req.body;
-      const result = await InterviewService.processTechnicalTurn(
-        targetRole || 'Software Engineer',
-        questionNumber || 1,
-        previousQuestion || '',
-        candidateAnswer || '',
-        skills || []
-      );
-      res.status(200).json({ success: true, data: result });
-    } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
-    }
+    req.body.roundType = 'technical';
+    return InterviewController.nextQuestion(req, res);
   }
 
   /**
-   * Round 4: HR Interview Turn (Auth required)
+   * Round 4: HR Turn (Direct alias)
    */
   public static async hrTurn(req: AuthenticatedRequest, res: Response): Promise<void> {
+    req.body.roundType = 'hr';
+    return InterviewController.nextQuestion(req, res);
+  }
+
+  /**
+   * Final Scorecard Generation
+   */
+  public static generateReport(req: AuthenticatedRequest, res: Response): void {
     try {
-      const { targetRole, questionNumber, previousQuestion, candidateAnswer } = req.body;
-      const result = await InterviewService.processHRTurn(
-        targetRole || 'Software Engineer',
-        questionNumber || 1,
-        previousQuestion || '',
-        candidateAnswer || ''
-      );
-      res.status(200).json({ success: true, data: result });
+      const { targetRole, difficulty, aptitudeScore, technicalTurns, hrTurns } = req.body;
+      const report = InterviewService.generateComprehensiveReport({
+        targetRole,
+        difficulty,
+        aptitudeScore,
+        technicalTurns,
+        hrTurns
+      });
+      res.status(200).json({ success: true, data: report });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
     }
   }
 
   /**
-   * Save Comprehensive Interview Report in MongoDB Atlas (Auth required)
+   * Save Comprehensive Interview Report in MongoDB Atlas or Local Store
    */
   public static async saveReport(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      if (!req.user?.id) {
-        res.status(401).json({ success: false, error: 'Unauthorized.' });
-        return;
-      }
-
+      const userId = req.user?.id || 'guest_user';
       const {
         targetRole,
+        difficulty,
         eligibilityResult,
         aptitudeScore,
         technicalScore,
@@ -106,30 +129,45 @@ export class InterviewController {
         overallResult
       } = req.body;
 
-      const report = await InterviewReport.create({
-        userId: req.user.id,
+      const reportPayload = {
+        userId,
         targetRole: targetRole || 'Software Engineer',
+        difficulty: difficulty || 'Fresher',
         eligibilityResult: eligibilityResult || { passed: true, missingSkills: [], weakAreas: [] },
-        aptitudeScore: aptitudeScore || { overall: 75, quantitative: 80, logical: 80, verbal: 70, dataInterpretation: 70, passed: true },
-        technicalScore: technicalScore || 80,
-        hrScore: hrScore || 85,
-        overallScore: overallScore || 80,
-        communicationAssessment: communicationAssessment || { clarityScore: 85, relevanceScore: 85, structureScore: 80, feedback: 'Strong communication and problem solving approach.' },
+        aptitudeScore: aptitudeScore || { overall: 80, quantitative: 80, logical: 80, verbal: 80, passed: true },
+        technicalScore: technicalScore || 84,
+        hrScore: hrScore || 88,
+        overallScore: overallScore || 84,
+        communicationAssessment: communicationAssessment || { clarityScore: 85, relevanceScore: 85, structureScore: 80, feedback: 'Strong communication and structured delivery.' },
         strengths: strengths || ['Core technical depth', 'Structured communication', 'Analytical reasoning'],
         weaknesses: weaknesses || ['Discussing edge-case trade-offs', 'Detailed time complexity explanations'],
         skillGaps: skillGaps || [],
         improvementSuggestions: improvementSuggestions || ['Practice articulating architectural trade-offs using the STAR framework.'],
         recommendedLearningResources: recommendedLearningResources || [],
         overallResult: overallResult || 'Passed'
-      });
+      };
+
+      // Always save to fallback store for guaranteed reliability
+      const localReport = fallbackStore.saveReport(reportPayload);
+
+      // Also persist to MongoDB Atlas if connected
+      let atlasReport: any = null;
+      if (isDbConnected && userId !== 'guest_user') {
+        try {
+          atlasReport = await InterviewReport.create(reportPayload);
+        } catch (dbErr) {
+          console.warn('[InterviewController.saveReport] Atlas save failed, saved locally:', dbErr);
+        }
+      }
 
       res.status(201).json({
         success: true,
         message: 'Mock interview report saved to your Skill2Hire profile.',
-        data: report
+        data: atlasReport || localReport
       });
     } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message });
+      console.error('[InterviewController.saveReport Error]:', error);
+      res.status(500).json({ success: false, error: error.message || 'Failed to save report.' });
     }
   }
 
@@ -138,12 +176,23 @@ export class InterviewController {
    */
   public static async listReports(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      if (!req.user?.id) {
-        res.status(401).json({ success: false, error: 'Unauthorized.' });
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(200).json({ success: true, data: [] });
         return;
       }
 
-      const reports = await InterviewReport.find({ userId: req.user.id }).sort({ createdAt: -1 });
+      let reports: any[] = [];
+      if (isDbConnected) {
+        try {
+          reports = await InterviewReport.find({ userId }).sort({ createdAt: -1 });
+        } catch (dbErr) {
+          reports = fallbackStore.listReports(userId);
+        }
+      } else {
+        reports = fallbackStore.listReports(userId);
+      }
+
       res.status(200).json({ success: true, data: reports });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
@@ -155,7 +204,17 @@ export class InterviewController {
    */
   public static async getReportById(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const report = await InterviewReport.findById(req.params.id);
+      let report: any = null;
+      if (isDbConnected) {
+        try {
+          report = await InterviewReport.findById(req.params.id);
+        } catch (dbErr) {
+          report = fallbackStore.getReportById(req.params.id);
+        }
+      } else {
+        report = fallbackStore.getReportById(req.params.id);
+      }
+
       if (!report) {
         res.status(404).json({ success: false, error: 'Interview report not found.' });
         return;

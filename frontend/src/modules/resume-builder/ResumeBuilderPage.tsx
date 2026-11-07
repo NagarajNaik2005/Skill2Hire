@@ -3,14 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { api, getErrorMessage } from '../../services/api';
 import { IResumeData, IATSScoreBreakdown } from '../../types';
-import { calculateClientATS } from './utils/atsCalculator';
-import { ResumePreview } from './templates/ResumePreview';
-import { CommaSeparatedInput } from './components/CommaSeparatedInput';
-import { MultiLineTextarea } from './components/MultiLineTextarea';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { Badge } from '../../components/common/Badge';
-import html2pdf from 'html2pdf.js';
+import { SkillTagInput } from '../../components/common/SkillTagInput';
 import { 
   FileText, 
   Sparkles, 
@@ -22,53 +18,57 @@ import {
   AlertCircle, 
   Layout, 
   ArrowRight,
+  RefreshCw,
   Eye,
+  FileCode,
   FileSpreadsheet,
   Lightbulb,
-  Printer,
-  Copy,
+  GraduationCap,
+  Briefcase,
+  Award,
   Check,
+  FolderGit2,
   Code2,
-  Flame,
-  ShieldCheck,
-  Zap,
-  Lock
+  Layers,
+  Database,
+  Wrench,
+  Users
 } from 'lucide-react';
 
 const defaultResume: IResumeData = {
   title: 'My ATS Professional Resume',
-  templateId: 'ats-classic',
+  templateId: 'ats-modern',
   personalInfo: {
-    fullName: 'Alex Morgan',
-    email: 'alex.morgan@example.com',
+    fullName: 'Aarav Sharma',
+    email: 'aarav.sharma@example.com',
     phone: '+1 (555) 234-5678',
-    location: 'San Francisco, CA (or Remote)',
-    linkedin: 'linkedin.com/in/alexmorgan',
-    github: 'github.com/alexmorgan',
-    portfolio: 'alexmorgan.dev'
+    location: 'San Francisco, CA',
+    linkedin: 'linkedin.com/in/aarav-sharma-dev',
+    github: 'github.com/aarav-dev',
+    portfolio: 'aarav-portfolio.dev'
   },
   careerTarget: {
     targetRole: 'Senior Full Stack Software Engineer',
-    specialization: 'Distributed Systems & Cloud Architecture'
+    specialization: 'Cloud Microservices & Modern Web Platforms'
   },
   education: [
     {
-      degree: 'B.S. in Computer Science & Engineering',
+      degree: 'B.S. in Computer Science',
       institution: 'State University of Technology',
       university: 'Tech University',
       startYear: '2020',
       endYear: '2024',
-      cgpaOrPercentage: '3.85 / 4.0 GPA'
+      cgpaOrPercentage: '3.8 / 4.0 GPA'
     }
   ],
   skills: {
     programmingLanguages: ['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL', 'Go'],
-    frameworks: ['React', 'Node.js', 'Express', 'Next.js', 'Redux Toolkit'],
-    libraries: ['Tailwind CSS', 'Mongoose', 'Prisma', 'Axios', 'Jest'],
-    databases: ['PostgreSQL', 'MongoDB Atlas', 'Redis'],
-    tools: ['Git', 'GitHub Actions', 'Docker', 'Postman', 'VS Code'],
-    cloud: ['AWS (ECS, S3, Lambda)', 'Vercel', 'GCP'],
-    otherTechnologies: ['RESTful APIs', 'GraphQL', 'Microservices Architecture', 'CI/CD Pipelines']
+    frameworks: ['React', 'Node.js', 'Express', 'Next.js', 'Redux Toolkit', 'Tailwind CSS', 'Mongoose', 'Prisma', 'Axios', 'Jest'],
+    libraries: [],
+    databases: ['PostgreSQL', 'MongoDB Atlas', 'Redis', 'AWS (ECS, S3, Lambda)', 'Vercel', 'GCP'],
+    tools: ['Git', 'GitHub Actions', 'Docker', 'Postman', 'VS Code', 'RESTful APIs', 'GraphQL', 'Microservices Architecture', 'CI/CD Pipelines'],
+    cloud: [],
+    otherTechnologies: []
   },
   projects: [
     {
@@ -76,107 +76,98 @@ const defaultResume: IResumeData = {
       description: 'High-throughput real-time event processing system handling asynchronous notifications and analytics.',
       technologies: ['React', 'TypeScript', 'Node.js', 'MongoDB Atlas', 'Redis', 'AWS'],
       responsibilities: [
-        'Architected modular REST and WebSocket backend services supporting 20k+ concurrent connected users with 99.9% uptime.',
+        'Architected modular REST and WebSocket backend services supporting 20k+ concurrent connected users.',
         'Engineered Redis caching layer and optimized MongoDB indexes, reducing average API response latency by 35%.',
         'Implemented automated CI/CD deployment pipelines using GitHub Actions and AWS containerized infrastructure.'
       ],
-      liveLink: 'https://cloud-event-platform.example.com',
-      githubLink: 'https://github.com/alexmorgan/cloud-event-platform'
-    },
-    {
-      title: 'Real-Time Collaborative Code Sandbox',
-      description: 'Browser-based interactive IDE with live multi-user code editing, syntax highlighting, and secure execution.',
-      technologies: ['React', 'TypeScript', 'WebSockets', 'Docker', 'Redis', 'Node.js'],
-      responsibilities: [
-        'Engineered real-time collaborative editing using Operational Transformation (OT), enabling conflict-free sync for 50+ concurrent users.',
-        'Architected isolated Docker sandboxes executing untrusted code with <80ms spin-up latency and strict memory ceilings.',
-        'Integrated Redis pub/sub state synchronization, eliminating cursor drift across distributed WebSocket server nodes.'
-      ],
-      liveLink: 'https://code-sandbox.example.com',
-      githubLink: 'https://github.com/alexmorgan/code-sandbox'
+      liveLink: 'https://cloud-event-platform.dev',
+      githubLink: 'https://github.com/aarav-dev/event-platform'
     }
   ],
   experience: [
     {
       company: 'TechMatrix Systems',
       role: 'Full Stack Software Engineer',
-      location: 'San Francisco, CA (Remote)',
+      location: 'San Francisco, CA',
       startDate: 'Jun 2024',
       endDate: 'Present',
       current: true,
       responsibilities: [
         'Designed and shipped enterprise dashboard features used by 50,000+ active monthly enterprise clients.',
-        'Refactored legacy REST microservices into modern TypeScript services, improving system test coverage from 65% to 92%.',
-        'Collaborated with product and DevOps teams to reduce cloud infrastructure overhead by 22% via autoscaling.'
-      ]
-    },
-    {
-      company: 'Nexora Cloud Labs',
-      role: 'Software Engineering Intern',
-      location: 'Bengaluru, India',
-      startDate: 'Jan 2023',
-      endDate: 'May 2024',
-      current: false,
-      responsibilities: [
-        'Built automated API load testing suites using Jest and k6, identifying database bottlenecks and boosting throughput by 28%.',
-        'Engineered responsive React client components adhering to WCAG 2.1 AA accessibility guidelines across mobile and desktop.',
-        'Authored comprehensive OpenAPI/Swagger documentation for 40+ endpoints, accelerating frontend-backend integration velocity.'
+        'Refactored legacy REST microservices into modern TypeScript services, improving system test coverage to 92%.',
+        'Collaborated with product and DevOps teams to reduce cloud infrastructure overhead by 22%.'
       ]
     }
   ],
   certifications: [
-    { name: 'AWS Certified Solutions Architect — Associate', issuer: 'Amazon Web Services', issueDate: '2024' },
-    { name: 'Meta Certified Frontend Developer Professional', issuer: 'Meta', issueDate: '2023' }
+    { name: 'AWS Certified Solutions Architect — Associate', issuer: 'Amazon Web Services', issueDate: '2024' }
   ],
   achievements: [
-    { title: '1st Place Winner — Global Cloud Innovations Hackathon', description: 'Engineered an offline-first disaster response coordination application in 36 hours among 400+ participants.' }
+    { title: '1st Place Winner — Global Cloud Innovations Hackathon', description: 'Engineered an offline-first disaster response coordination application in 36 hours.' }
   ],
-  softSkills: ['System Architecture Design', 'Agile Leadership', 'Technical Mentorship', 'Cross-Functional Collaboration'],
+  softSkills: ['System Architecture Design', 'Agile Leadership', 'Technical Mentorship', 'Cross-Functional Collaboration', 'Code Review & Mentorship', 'Problem Solving'],
   languages: ['English (Fluent)', 'Spanish (Conversational)'],
   professionalSummary: 'Results-driven Full Stack Software Engineer with expertise in building resilient TypeScript/React web applications and scalable Node.js microservices. Proven track record in cloud architecture, database performance optimization, and implementing rigorous ATS standards.'
+};
+
+// Pure sanitizer to prevent duplicated skills from previously saved drafts
+const normalizeResumeSkills = (draft: IResumeData): IResumeData => {
+  const mergeDedup = (...arrays: (string[] | undefined)[]): string[] => {
+    const seen = new Set<string>();
+    const res: string[] = [];
+    for (const arr of arrays) {
+      if (!arr) continue;
+      for (const item of arr) {
+        const clean = item?.trim();
+        if (!clean) continue;
+        const lower = clean.toLowerCase();
+        if (!seen.has(lower)) {
+          seen.add(lower);
+          res.push(clean);
+        }
+      }
+    }
+    return res;
+  };
+
+  const existingSkills = draft?.skills || {
+    programmingLanguages: [],
+    frameworks: [],
+    libraries: [],
+    databases: [],
+    tools: [],
+    cloud: [],
+    otherTechnologies: []
+  };
+
+  return {
+    ...draft,
+    softSkills: mergeDedup(draft?.softSkills),
+    skills: {
+      programmingLanguages: mergeDedup(existingSkills.programmingLanguages),
+      frameworks: mergeDedup(existingSkills.frameworks, existingSkills.libraries),
+      libraries: [],
+      databases: mergeDedup(existingSkills.databases, existingSkills.cloud),
+      cloud: [],
+      tools: mergeDedup(existingSkills.tools, existingSkills.otherTechnologies),
+      otherTechnologies: []
+    }
+  };
 };
 
 // Summary suggestions by role
 const summarySuggestionsByRole = [
   {
-    role: 'AI Engineer',
-    text: 'Innovative AI Engineer specializing in designing and deploying Generative AI systems, LLM fine-tuning, RAG architectures, and scalable inference microservices. Proficient in Python, PyTorch, LangChain, Vector Databases, and cloud-native MLOps pipelines delivering sub-second response times.'
-  },
-  {
     role: 'Full Stack Engineer',
-    text: 'Results-driven Full Stack Software Engineer with expertise in architecting high-performance React and Node.js web applications. Demonstrated success in scaling cloud microservices, optimizing database throughput by 35%+, and delivering secure, accessible user experiences.'
-  },
-  {
-    role: 'Data Analyst',
-    text: 'Detail-oriented Data Analyst proficient in SQL, Python, Microsoft Excel, Power BI, and Tableau. Proven track record of transforming complex raw datasets into interactive executive dashboards, driving business intelligence insights, and optimizing reporting workflows with statistical accuracy.'
-  },
-  {
-    role: 'Data Engineer',
-    text: 'Scalable Data Engineer with deep expertise in designing robust ETL/ELT pipelines, distributed data architectures (Apache Spark, Kafka), and cloud data warehouses (Snowflake, BigQuery, AWS). Proven ability to optimize high-throughput data processing and ensure 99.9% data pipeline reliability.'
+    text: 'Results-driven Full Stack Software Engineer with expertise in architecting high-performance React and Node.js web applications. Demonstrated success in scaling cloud microservices, optimizing database throughput by 30%+, and delivering secure, accessible user experiences.'
   },
   {
     role: 'Frontend Specialist',
-    text: 'User-centric Frontend Engineer specializing in React, Next.js, TypeScript, and modern design systems. Passionate about web performance optimization, sub-second render speeds, component reusability, and responsive cross-platform accessibility.'
+    text: 'User-centric Frontend Engineer specializing in React, TypeScript, and modern design systems. Passionate about web performance optimization, sub-second render speeds, component reusability, and responsive cross-platform accessibility.'
   },
   {
     role: 'Backend & Cloud SDE',
-    text: 'Performance-focused Backend Engineer with deep knowledge of distributed systems, RESTful & GraphQL APIs, and cloud infrastructure (AWS/Docker). Proven ability to design fault-tolerant microservices handling 20,000+ daily requests with 99.9% uptime.'
-  },
-  {
-    role: 'Cloud & DevOps Engineer',
-    text: 'Solutions-focused Cloud & DevOps Engineer skilled in AWS, Docker, Kubernetes, Terraform, and automated CI/CD pipelines. Adept at implementing zero-downtime deployments, infrastructure-as-code, and resilient observability for high-availability cloud platforms.'
-  },
-  {
-    role: 'Machine Learning / AI Engineer',
-    text: 'Innovative Machine Learning Engineer with strong foundational skills in Python, PyTorch, TensorFlow, and LLM fine-tuning. Experienced in building end-to-end data pipelines, developing NLP/Computer Vision models, and deploying low-latency AI inference microservices.'
-  },
-  {
-    role: 'Cybersecurity Analyst',
-    text: 'Security-driven Cybersecurity Analyst skilled in threat detection, vulnerability assessments, network protocol analysis (Wireshark), and SIEM tooling. Experienced in enforcing zero-trust architectures and SOC compliance across enterprise cloud environments.'
-  },
-  {
-    role: 'QA / Automation Engineer',
-    text: 'Quality-oriented QA Automation Engineer proficient in designing end-to-end test suites using Cypress, Playwright, Jest, and Selenium. Expert in continuous test automation within CI/CD pipelines, increasing software release reliability and defect catch rates by 40%.'
+    text: 'Performance-focused Backend Engineer with deep knowledge of distributed systems, RESTful & GraphQL APIs, and cloud infrastructure (AWS/Docker). Proven ability to design fault-tolerant microservices handling high transaction volumes with 99.9% uptime.'
   },
   {
     role: 'Recent Graduate / Entry Level',
@@ -184,43 +175,235 @@ const summarySuggestionsByRole = [
   }
 ];
 
+const roleSkillsCatalog: Record<string, {
+  languages: string[];
+  frameworks: string[];
+  databases: string[];
+  tools: string[];
+  softSkills: string[];
+}> = {
+  'Full Stack': {
+    languages: ['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL', 'HTML5', 'CSS3'],
+    frameworks: ['React', 'Node.js', 'Express', 'Next.js', 'Tailwind CSS', 'Redux Toolkit'],
+    databases: ['PostgreSQL', 'MongoDB Atlas', 'Redis', 'MySQL'],
+    tools: ['Git', 'GitHub Actions', 'Docker', 'AWS (S3, Lambda)', 'Postman', 'RESTful APIs'],
+    softSkills: ['System Architecture Design', 'Agile / Scrum', 'Technical Leadership', 'Cross-Functional Collaboration', 'Code Review & Mentorship', 'Problem Solving']
+  },
+  'Frontend': {
+    languages: ['TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'SQL'],
+    frameworks: ['React', 'Next.js', 'Tailwind CSS', 'Redux Toolkit', 'Vue.js', 'Vite'],
+    databases: ['Firebase', 'Supabase', 'IndexedDB'],
+    tools: ['Git', 'Figma', 'Jest', 'Chrome DevTools', 'Webpack', 'Responsive Design'],
+    softSkills: ['UI/UX Empathy', 'Design System Architecture', 'Web Accessibility (WCAG)', 'Cross-Browser Compatibility', 'Client Communication', 'Visual Hierarchy']
+  },
+  'Backend': {
+    languages: ['Node.js', 'Python', 'Java', 'Go', 'SQL', 'TypeScript', 'C++'],
+    frameworks: ['Express', 'FastAPI', 'Spring Boot', 'NestJS', 'Django'],
+    databases: ['PostgreSQL', 'MongoDB Atlas', 'Redis', 'MySQL', 'Elasticsearch'],
+    tools: ['Docker', 'AWS (ECS, RDS)', 'Kafka', 'Postman', 'Git', 'Microservices Architecture'],
+    softSkills: ['Distributed Systems Architecture', 'API Governance', 'Database Optimization', 'High Availability & Fault Tolerance', 'Root Cause Analysis', 'System Security']
+  },
+  'DevOps / Cloud': {
+    languages: ['Python', 'Bash / Shell', 'Go', 'YAML', 'JSON'],
+    frameworks: ['Terraform', 'Ansible', 'Helm'],
+    databases: ['PostgreSQL', 'Redis'],
+    tools: ['Kubernetes', 'Docker', 'AWS (EKS, IAM)', 'GitHub Actions', 'Linux', 'CI/CD Pipelines'],
+    softSkills: ['Infrastructure Automation', 'Incident Management & RCA', 'Site Reliability Engineering', 'Security & Compliance', 'Cost Optimization', 'Disaster Recovery Planning']
+  },
+  'AI / Data Science': {
+    languages: ['Python', 'SQL', 'R', 'C++', 'JavaScript'],
+    frameworks: ['PyTorch', 'TensorFlow', 'FastAPI', 'Pandas', 'NumPy', 'Scikit-Learn'],
+    databases: ['PostgreSQL', 'Pinecone / Vector DB', 'Redis'],
+    tools: ['Jupyter Notebooks', 'Git', 'LangChain', 'Docker', 'Hugging Face', 'Data Pipelines'],
+    softSkills: ['Statistical Reasoning', 'Data Storytelling', 'Hypothesis Testing', 'AI Ethics & Governance', 'Critical Thinking', 'Model Validation']
+  },
+  'Mobile (React Native / Android)': {
+    languages: ['TypeScript', 'Kotlin', 'Swift', 'JavaScript', 'Java'],
+    frameworks: ['React Native', 'Flutter', 'Expo', 'SwiftUI'],
+    databases: ['SQLite', 'Firebase Firestore', 'Realm'],
+    tools: ['Android Studio', 'Xcode', 'Git', 'Postman', 'Push Notifications'],
+    softSkills: ['Mobile UX Guidelines', 'App Store Release Management', 'Memory Profiling', 'Offline-First Architecture', 'Device Fragmentation Handling']
+  },
+  'Cybersecurity': {
+    languages: ['Python', 'Bash / Shell', 'C', 'SQL', 'PowerShell'],
+    frameworks: ['OWASP Top 10', 'NIST Framework', 'Snort'],
+    databases: ['SQL', 'Elasticsearch', 'Splunk'],
+    tools: ['Wireshark', 'Metasploit', 'Nmap', 'Burp Suite', 'Linux', 'Cryptographic Protocols'],
+    softSkills: ['Threat Modeling', 'Risk Assessment', 'Incident Response', 'Security Compliance & Auditing', 'Zero-Trust Mindset', 'Security Forensics']
+  },
+  'QA / Testing': {
+    languages: ['JavaScript', 'TypeScript', 'Python', 'Java', 'SQL'],
+    frameworks: ['Playwright', 'Cypress', 'Selenium', 'Jest', 'Mocha / Chai'],
+    databases: ['PostgreSQL', 'MongoDB'],
+    tools: ['Postman', 'Jira', 'GitHub Actions', 'TestRail', 'BrowserStack'],
+    softSkills: ['Attention to Detail', 'Edge Case Analysis', 'Bug Investigation & Reporting', 'Quality Advocacy', 'Agile Testing']
+  },
+  'Data Analyst / BI': {
+    languages: ['SQL', 'Python', 'R', 'DAX', 'PowerQuery'],
+    frameworks: ['Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
+    databases: ['BigQuery', 'Snowflake', 'PostgreSQL', 'SQL Server'],
+    tools: ['Power BI', 'Tableau', 'Excel (Advanced)', 'Git', 'dbt'],
+    softSkills: ['Business Intelligence', 'Data Storytelling', 'Stakeholder Presentations', 'Quantitative Analysis', 'KPI Tracking']
+  }
+};
+
 export const ResumeBuilderPage: React.FC = () => {
   const { isAuthenticated, openAuthModal, saveGuestDraft, getGuestDraft } = useAuth();
   const navigate = useNavigate();
 
   const [resumeData, setResumeData] = useState<IResumeData>(() => 
-    getGuestDraft('resume_draft', defaultResume)
+    normalizeResumeSkills(getGuestDraft('resume_draft', defaultResume))
   );
-
-  const [atsScoreData, setAtsScoreData] = useState<IATSScoreBreakdown>(() => 
-    calculateClientATS(getGuestDraft('resume_draft', defaultResume))
-  );
-
+  const [atsScoreData, setAtsScoreData] = useState<IATSScoreBreakdown | null>(null);
+  const [isAnalyzingATS, setIsAnalyzingATS] = useState(false);
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const [isExportingPdf, setIsExportingPdf] = useState(false);
-  const [isExportingDocx, setIsExportingDocx] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
-  const [activeRightTab, setActiveRightTab] = useState<'preview' | 'ats-breakdown' | 'raw-ats-parser'>('preview');
-  const [copiedText, setCopiedText] = useState(false);
 
-  // Sync draft and run instant calculation on every edit
+  // Smart Technical & Soft Skill Suggestions state
+  const [activeSkillCategoryTab, setActiveSkillCategoryTab] = useState('Full Stack');
+  const [isSuggestingSkills, setIsSuggestingSkills] = useState(false);
+  const [aiSkillSuggestions, setAiSkillSuggestions] = useState<{
+    programmingLanguages?: string[];
+    frameworks?: string[];
+    databases?: string[];
+    tools?: string[];
+    softSkills?: string[];
+  } | null>(null);
+
+  // Toggle or add a skill to a specific resume section
+  const handleToggleSkill = (
+    category: 'programmingLanguages' | 'frameworks' | 'databases' | 'tools' | 'softSkills',
+    skill: string
+  ) => {
+    setResumeData(prev => {
+      if (category === 'softSkills') {
+        const currentList = prev.softSkills || [];
+        const exists = currentList.some(s => s.toLowerCase() === skill.toLowerCase());
+        const updatedList = exists
+          ? currentList.filter(s => s.toLowerCase() !== skill.toLowerCase())
+          : [...currentList, skill];
+        return {
+          ...prev,
+          softSkills: updatedList
+        };
+      }
+
+      const currentList = prev.skills[category] || [];
+      const exists = currentList.some(s => s.toLowerCase() === skill.toLowerCase());
+      const updatedList = exists
+        ? currentList.filter(s => s.toLowerCase() !== skill.toLowerCase())
+        : [...currentList, skill];
+
+      return {
+        ...prev,
+        skills: {
+          ...prev.skills,
+          [category]: updatedList,
+          ...(category === 'frameworks' ? { libraries: [] } : {}),
+          ...(category === 'databases' ? { cloud: [] } : {}),
+          ...(category === 'tools' ? { otherTechnologies: [] } : {})
+        }
+      };
+    });
+  };
+
+  // Add all recommended skills for current role preset
+  const handleAddAllSkillsForRole = (roleKey: string) => {
+    const catalog = roleSkillsCatalog[roleKey];
+    if (!catalog) return;
+
+    setResumeData(prev => {
+      const mergeUnique = (existing: string[] = [], incoming: string[] = []) => {
+        const set = new Set(existing.map(s => s.toLowerCase()));
+        const additions = incoming.filter(s => !set.has(s.toLowerCase()));
+        return [...existing, ...additions];
+      };
+
+      return {
+        ...prev,
+        softSkills: mergeUnique(prev.softSkills || [], catalog.softSkills || []),
+        skills: {
+          ...prev.skills,
+          programmingLanguages: mergeUnique(prev.skills.programmingLanguages, catalog.languages),
+          frameworks: mergeUnique(prev.skills.frameworks.concat(prev.skills.libraries || []), catalog.frameworks),
+          libraries: [],
+          databases: mergeUnique(prev.skills.databases.concat(prev.skills.cloud || []), catalog.databases),
+          cloud: [],
+          tools: mergeUnique(prev.skills.tools.concat(prev.skills.otherTechnologies || []), catalog.tools),
+          otherTechnologies: []
+        }
+      };
+    });
+    setSaveStatus(`✅ Added all recommended technical & soft skills for "${roleKey}"`);
+    setTimeout(() => setSaveStatus(null), 3000);
+  };
+
+  // AI: Fetch smart skill suggestions based on target role
+  const handleAiSuggestSkills = async () => {
+    setIsSuggestingSkills(true);
+    try {
+      const res = await api.post('/resumes/ai-skills', {
+        targetRole: resumeData.careerTarget.targetRole
+      });
+      if (res.data?.success && res.data?.data) {
+        const suggested = res.data.data;
+        setAiSkillSuggestions({
+          programmingLanguages: suggested.programmingLanguages || [],
+          frameworks: suggested.frameworks || [],
+          databases: suggested.databases || [],
+          tools: suggested.tools || [],
+          softSkills: suggested.softSkills || []
+        });
+
+        setResumeData(prev => {
+          const mergeUnique = (existing: string[] = [], incoming: string[] = []) => {
+            const set = new Set(existing.map(s => s.toLowerCase()));
+            const additions = incoming.filter(s => !set.has(s.toLowerCase()));
+            return [...existing, ...additions];
+          };
+
+          return {
+            ...prev,
+            softSkills: mergeUnique(prev.softSkills || [], suggested.softSkills || []),
+            skills: {
+              ...prev.skills,
+              programmingLanguages: mergeUnique(prev.skills.programmingLanguages, suggested.programmingLanguages),
+              frameworks: mergeUnique(prev.skills.frameworks.concat(prev.skills.libraries || []), suggested.frameworks),
+              libraries: [],
+              databases: mergeUnique(prev.skills.databases.concat(prev.skills.cloud || []), suggested.databases),
+              cloud: [],
+              tools: mergeUnique(prev.skills.tools.concat(prev.skills.otherTechnologies || []), suggested.tools),
+              otherTechnologies: []
+            }
+          };
+        });
+        setSaveStatus(`✅ Added AI-recommended technical & soft skills for "${resumeData.careerTarget.targetRole}"`);
+        setTimeout(() => setSaveStatus(null), 3500);
+      }
+    } catch (e) {
+      console.warn('AI skills error:', e);
+    } finally {
+      setIsSuggestingSkills(false);
+    }
+  };
+
+  // Auto-save guest draft to localStorage on change
   useEffect(() => {
     saveGuestDraft('resume_draft', resumeData);
-    const clientCalc = calculateClientATS(resumeData);
-    setAtsScoreData(clientCalc);
-
-    // Also request backend check asynchronously if available
-    api.post('/resumes/ats-analysis', resumeData)
-      .then(res => {
-        if (res.data?.success && res.data?.data) {
-          setAtsScoreData(res.data.data);
-        }
-      })
-      .catch(() => {
-        // Keeps clientCalc as resilient fallback
-      });
+    runATSAnalysis(resumeData);
   }, [resumeData]);
+
+  const runATSAnalysis = async (data: IResumeData) => {
+    try {
+      const res = await api.post('/resumes/ats-analysis', data);
+      if (res.data?.success) {
+        setAtsScoreData(res.data.data);
+      }
+    } catch (e) {
+      // Local fallback calculation if backend is loading
+    }
+  };
 
   // AI: Suggest Specializations
   const handleSuggestSpecializations = async () => {
@@ -270,29 +453,6 @@ export const ResumeBuilderPage: React.FC = () => {
     setResumeData(prev => ({ ...prev, professionalSummary: summaryText }));
   };
 
-  // Quick Action: Add Missing Keyword to Technical Skills
-  const handleAddMissingKeyword = (keyword: string) => {
-    setResumeData(prev => {
-      const updatedLanguages = [...prev.skills.programmingLanguages];
-      const updatedTools = [...prev.skills.tools];
-
-      if (['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL', 'Go', 'C++', 'Rust', 'Ruby'].includes(keyword)) {
-        if (!updatedLanguages.includes(keyword)) updatedLanguages.push(keyword);
-      } else {
-        if (!updatedTools.includes(keyword)) updatedTools.push(keyword);
-      }
-
-      return {
-        ...prev,
-        skills: {
-          ...prev.skills,
-          programmingLanguages: updatedLanguages,
-          tools: updatedTools
-        }
-      };
-    });
-  };
-
   // Quick Action: Add Google X-Y-Z formula bullet to project
   const addProjectBulletSuggestion = (projIdx: number, suggestionType: 'metric' | 'scale' | 'security') => {
     let suggestion = '';
@@ -325,31 +485,10 @@ export const ResumeBuilderPage: React.FC = () => {
     setResumeData(prev => ({ ...prev, experience: updated }));
   };
 
-  // Action: Load Full A4 Industry Sample
-  const handleLoadSampleResume = () => {
-    setResumeData(defaultResume);
-    setSaveStatus('✅ Loaded full A4 FAANG-standard 100% ATS resume sample!');
-    setTimeout(() => setSaveStatus(null), 3500);
-  };
-
-  // Action: Print / Save to PDF (Native browser vector print)
-  const handlePrintToPDF = () => {
-    if (!isAuthenticated) {
-      openAuthModal('Please sign in or create a free account to print or save your resume.', handlePrintToPDF);
-      return;
-    }
-
-    setSaveStatus('Opening print / PDF dialog (100% matches preview)...');
-    setTimeout(() => {
-      window.print();
-      setSaveStatus(null);
-    }, 200);
-  };
-
   // Action: Save to Cloud
   const handleSaveToCloud = async () => {
     if (!isAuthenticated) {
-      openAuthModal('Please sign in or create a free account to save and sync your resume in the cloud.', handleSaveToCloud);
+      openAuthModal('Create a free account to save and sync your resume in cloud storage.', handleSaveToCloud);
       return;
     }
 
@@ -357,7 +496,7 @@ export const ResumeBuilderPage: React.FC = () => {
       setSaveStatus('Saving resume to cloud...');
       const res = await api.post('/resumes', resumeData);
       if (res.data?.success) {
-        setSaveStatus('✅ Resume successfully saved to your cloud account!');
+        setSaveStatus('✅ Resume successfully saved to your account!');
         setTimeout(() => setSaveStatus(null), 4000);
       }
     } catch (error: any) {
@@ -365,117 +504,43 @@ export const ResumeBuilderPage: React.FC = () => {
     }
   };
 
-  // Internal: Execute Pixel-Perfect DOM-to-PDF Export
-  const executeDirectPDFDownload = async () => {
-    setIsExportingPdf(true);
-    setSaveStatus('Generating 100% pixel-perfect PDF from live preview...');
-
-    let exportWrapper: HTMLDivElement | null = null;
-    try {
-      const element = document.getElementById('printable-resume-container');
-      if (!element) {
-        throw new Error('Preview element not found.');
-      }
-
-      // Ensure all web fonts (Inter, JetBrains Mono, etc.) are fully loaded
-      if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
-      }
-
-      // Clone the resume into an isolated, invisible unscaled container
-      // to guarantee that ancestor CSS transforms/zoom/scrollbars don't distort html2canvas
-      exportWrapper = document.createElement('div');
-      exportWrapper.id = 'pdf-export-isolated-wrapper';
-      exportWrapper.style.position = 'fixed';
-      exportWrapper.style.left = '0';
-      exportWrapper.style.top = '0';
-      exportWrapper.style.opacity = '0';
-      exportWrapper.style.pointerEvents = 'none';
-      exportWrapper.style.width = '210mm';
-      exportWrapper.style.minHeight = '297mm';
-      exportWrapper.style.background = '#ffffff';
-      exportWrapper.style.zIndex = '-99999';
-      exportWrapper.style.margin = '0';
-      exportWrapper.style.padding = '0';
-      exportWrapper.style.transform = 'none';
-      exportWrapper.style.zoom = '1';
-
-      const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.width = '210mm';
-      clone.style.margin = '0';
-      clone.style.boxShadow = 'none';
-      clone.style.border = 'none';
-      clone.style.transform = 'none';
-      clone.style.zoom = '1';
-      clone.style.overflow = 'visible';
-
-      // Ensure 100% full vertical visibility for candidate name in canvas export
-      clone.querySelectorAll('h1').forEach(h1 => {
-        const el = h1 as HTMLElement;
-        el.style.overflow = 'visible';
-        el.style.textOverflow = 'clip';
-        el.style.whiteSpace = 'normal';
-        el.style.lineHeight = '1.35';
-        el.style.paddingTop = '6px';
-        el.style.paddingBottom = '6px';
-        el.style.display = 'block';
-      });
-      clone.querySelectorAll('.resume-document').forEach(doc => {
-        (doc as HTMLElement).style.overflow = 'visible';
-      });
-
-      exportWrapper.appendChild(clone);
-      document.body.appendChild(exportWrapper);
-
-      // Brief pause to allow browser layout engine to calculate exact computed styles
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      const opt = {
-        margin: [0, 0, 0, 0] as [number, number, number, number],
-        filename: `${(resumeData.personalInfo.fullName || 'Resume').replace(/\s+/g, '_')}_${resumeData.templateId || 'ATS'}.pdf`,
-        image: { type: 'jpeg' as const, quality: 1.0 },
-        html2canvas: { 
-          scale: 2.5, 
-          useCORS: true, 
-          logging: false, 
-          letterRendering: false, 
-          backgroundColor: '#ffffff',
-          scrollY: 0,
-          scrollX: 0
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const, compress: true },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-      };
-
-      await html2pdf().set(opt).from(clone).save();
-
-      setSaveStatus('✅ PDF downloaded! 100% exact match to live preview.');
-      setTimeout(() => setSaveStatus(null), 3500);
-    } catch (error) {
-      console.warn('html2pdf generation error, falling back to browser print:', error);
-      window.print();
-    } finally {
-      if (exportWrapper && document.body.contains(exportWrapper)) {
-        document.body.removeChild(exportWrapper);
-      }
-      setIsExportingPdf(false);
-    }
-  };
-
-  // Action: Download PDF with Auth Requirement
-  const handleDownloadPDF = () => {
+  // Action: Download PDF
+  const handleDownloadPDF = async () => {
     if (!isAuthenticated) {
-      openAuthModal('Please sign in or create a free account to download your ATS-compliant PDF resume.', executeDirectPDFDownload);
+      openAuthModal('Create a free account to download your ATS-compliant PDF resume.', handleDownloadPDF);
       return;
     }
-    executeDirectPDFDownload();
+
+    try {
+      setSaveStatus('Generating ATS PDF...');
+      const res = await api.post('/resumes/export-pdf', resumeData, {
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([res.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_ATS_Resume.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      setSaveStatus(null);
+    } catch (error: any) {
+      setSaveStatus('Failed to download PDF.');
+    }
   };
 
-  // Internal: Execute DOCX Download
-  const executeDirectDOCXDownload = async () => {
-    setIsExportingDocx(true);
+  // Action: Download DOCX
+  const handleDownloadDOCX = async () => {
+    if (!isAuthenticated) {
+      openAuthModal('Create a free account to download your editable Word (.docx) resume.', handleDownloadDOCX);
+      return;
+    }
+
     try {
-      setSaveStatus('Generating ATS Word (.docx) document...');
+      setSaveStatus('Generating ATS DOCX...');
       const res = await api.post('/resumes/export-docx', resumeData, {
         responseType: 'blob'
       });
@@ -484,34 +549,15 @@ export const ResumeBuilderPage: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${(resumeData.personalInfo.fullName || 'Resume').replace(/\s+/g, '_')}_ATS_Resume.docx`);
+      link.setAttribute('download', `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_ATS_Resume.docx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      setSaveStatus('✅ DOCX downloaded successfully!');
-      setTimeout(() => setSaveStatus(null), 3000);
-    } catch {
-      setSaveStatus('❌ Failed to export DOCX. Please try again.');
-    } finally {
-      setIsExportingDocx(false);
+      setSaveStatus(null);
+    } catch (error: any) {
+      setSaveStatus('Failed to download DOCX.');
     }
-  };
-
-  // Action: Download DOCX with Auth Requirement
-  const handleDownloadDOCX = () => {
-    if (!isAuthenticated) {
-      openAuthModal('Please sign in or create a free account to download your editable Word (.docx) resume.', executeDirectDOCXDownload);
-      return;
-    }
-    executeDirectDOCXDownload();
-  };
-
-  // Action: Copy Raw ATS Stream
-  const handleCopyRawATS = () => {
-    navigator.clipboard.writeText(atsScoreData.rawTextPreview);
-    setCopiedText(true);
-    setTimeout(() => setCopiedText(false), 2500);
   };
 
   // Shortcut to Resume Tailoring
@@ -523,101 +569,84 @@ export const ResumeBuilderPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-purple-100 no-print">
+      {/* Top Header & Actions */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="primary" size="sm">ATS Resume Engine</Badge>
-            <Badge variant="success" size="sm">100% Visual Fidelity</Badge>
+            <Badge variant="success" size="sm">Single-Column Standard</Badge>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Resume Builder (ATS Friendly)
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Resume builder (ATS friendly)
           </h1>
-          <p className="text-sm text-slate-600 mt-1">
-            Build ATS-compliant resumes with real-time keyword scoring, Google X-Y-Z metric formula, and 100% preview-matching exports.
+          <p className="text-sm text-slate-300 mt-1">
+            Build ATS-compliant resumes with real-time keyword scoring, Google X-Y-Z metric bullets, and instant PDF/DOCX exports.
           </p>
         </div>
 
-        {/* Top Quick Badges / Status */}
+        {/* Global Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <Button variant="ghost" size="sm" onClick={handleLoadSampleResume} className="text-amber-800 border border-amber-300 bg-amber-50/80 hover:bg-amber-100/80">
-            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            Load Full A4 Sample (100% ATS)
+          <Button variant="secondary" size="sm" onClick={handleSaveToCloud}>
+            <Save className="w-4 h-4 text-emerald-400" />
+            Save to Cloud
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleSendToTailor} className="text-brand-700 border border-brand-200 bg-brand-50/80 hover:bg-brand-100/80">
+
+          <Button variant="primary" size="sm" onClick={handleDownloadPDF}>
+            <Download className="w-4 h-4" />
+            Download PDF
+          </Button>
+
+          <Button variant="secondary" size="sm" onClick={handleDownloadDOCX}>
+            <FileSpreadsheet className="w-4 h-4 text-blue-400" />
+            Download DOCX
+          </Button>
+
+          <Button variant="ghost" size="sm" onClick={handleSendToTailor} className="text-brand-400 border border-brand-500/30 hover:bg-brand-500/10">
             Tailor for Job
             <ArrowRight className="w-3.5 h-3.5" />
-          </Button>
-          <Button variant="secondary" size="sm" onClick={handleSaveToCloud}>
-            <Save className="w-4 h-4 text-emerald-600" />
-            Save to Cloud
           </Button>
         </div>
       </div>
 
       {saveStatus && (
-        <div className="mt-4 p-3 rounded-lg bg-purple-50 border border-purple-200 text-xs text-brand-700 flex items-center justify-between animate-fadeIn no-print">
+        <div className="mt-4 p-3 rounded-lg bg-slate-900 border border-brand-500/30 text-xs text-brand-300 flex items-center justify-between animate-fadeIn">
           <span>{saveStatus}</span>
         </div>
       )}
 
-      {/* Main Grid: Form Editor (Left 7 cols) & Live Preview / Download Hub (Right 5 cols) */}
+      {/* Main Grid: Form / ATS Meter / Live Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
         
         {/* Left Column: Form Editor (7 cols) */}
-        <div className="lg:col-span-7 space-y-6 no-print">
+        <div className="lg:col-span-7 space-y-6">
           
-          {/* Template Selector with Real Distinct Styles */}
-          <Card className="p-4 border-purple-100/80">
+          {/* Template Selector */}
+          <Card className="p-4 bg-slate-900/90">
             <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Layout className="w-3.5 h-3.5 text-brand-600" />
-                Select ATS-Compliant Template
+              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Layout className="w-3.5 h-3.5 text-brand-400" />
+                Select ATS-Friendly Template
               </label>
-              <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                100% Parsable Single-Column
-              </span>
+              <span className="text-[11px] text-emerald-400 font-medium">95%+ ATS Parsable</span>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {[
-                { 
-                  id: 'ats-classic', 
-                  name: 'ATS Classic', 
-                  tag: 'Ivy League Serif',
-                  desc: 'Traditional centered layout with elegant rule dividers.' 
-                },
-                { 
-                  id: 'ats-modern', 
-                  name: 'ATS Modern', 
-                  tag: 'Clean Sans Accent',
-                  desc: 'Modern left-aligned header with indigo accent bars.' 
-                },
-                { 
-                  id: 'ats-technical', 
-                  name: 'ATS Technical', 
-                  tag: 'Developer Matrix',
-                  desc: 'High-density tech matrix with monospace tags.' 
-                }
+                { id: 'ats-classic', name: 'ATS Classic', desc: 'Traditional Linear' },
+                { id: 'ats-modern', name: 'ATS Modern', desc: 'Clean Section Dividers' },
+                { id: 'ats-technical', name: 'ATS Technical', desc: 'Developer Matrix' }
               ].map(tmpl => (
                 <button
                   key={tmpl.id}
                   type="button"
                   onClick={() => setResumeData(prev => ({ ...prev, templateId: tmpl.id as any }))}
-                  className={`p-3 rounded-xl text-left border transition-all relative overflow-hidden ${
+                  className={`p-3 rounded-lg text-left border transition-all ${
                     resumeData.templateId === tmpl.id
-                      ? 'bg-brand-50/80 border-brand-500 text-brand-900 shadow-md ring-1 ring-brand-400'
-                      : 'bg-slate-50/70 border-purple-100 text-slate-600 hover:text-slate-900 hover:border-purple-200'
+                      ? 'bg-brand-500/15 border-brand-400 text-white shadow-sm'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
                   }`}
                 >
-                  {resumeData.templateId === tmpl.id && (
-                    <div className="absolute top-2 right-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-brand-600" />
-                    </div>
-                  )}
-                  <div className="font-bold text-xs text-slate-900">{tmpl.name}</div>
-                  <div className="text-[10px] text-brand-600 font-medium mt-0.5">{tmpl.tag}</div>
-                  <div className="text-[10px] text-slate-500 mt-1 leading-snug">{tmpl.desc}</div>
+                  <div className="font-semibold text-xs text-white">{tmpl.name}</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{tmpl.desc}</div>
                 </button>
               ))}
             </div>
@@ -625,101 +654,69 @@ export const ResumeBuilderPage: React.FC = () => {
 
           {/* Section 1: Personal Details */}
           <Card className="p-6">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-brand-600" />
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand-400" />
               Personal & Contact Information
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Full Name *</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Full Name *</label>
                 <input
                   type="text"
                   placeholder="e.g. Alex Morgan"
                   value={resumeData.personalInfo.fullName}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, fullName: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Email Address *</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Email Address *</label>
                 <input
                   type="email"
                   placeholder="e.g. alex.morgan@example.com"
                   value={resumeData.personalInfo.email}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, email: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Phone Number *</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Phone Number *</label>
                 <input
                   type="text"
                   placeholder="e.g. +1 (555) 234-5678"
                   value={resumeData.personalInfo.phone}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, phone: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">Location (City, Country / Remote) *</label>
-                  <span className="text-[10px] text-slate-400">Click suggestion or type</span>
-                </div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Location (City, Country) *</label>
                 <input
                   type="text"
-                  list="resume-builder-locations"
                   placeholder="e.g. San Francisco, CA (or Remote)"
                   value={resumeData.personalInfo.location}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, location: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
-                <datalist id="resume-builder-locations">
-                  <option value="Remote" />
-                  <option value="Remote (India)" />
-                  <option value="Remote (US / Global)" />
-                  <option value="Bengaluru, India" />
-                  <option value="Hyderabad, India" />
-                  <option value="Pune, India" />
-                  <option value="Mumbai, India" />
-                  <option value="Delhi NCR, India" />
-                  <option value="Chennai, India" />
-                  <option value="San Francisco, CA" />
-                  <option value="New York, NY" />
-                  <option value="Seattle, WA" />
-                  <option value="Austin, TX" />
-                  <option value="London, UK" />
-                </datalist>
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['Remote', 'Bengaluru, India', 'Hyderabad, India', 'Pune, India', 'Mumbai, India', 'Delhi NCR, India', 'San Francisco, CA', 'New York, NY'].map(loc => (
-                    <button
-                      key={loc}
-                      type="button"
-                      onClick={() => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, location: loc } }))}
-                      className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                    >
-                      + {loc}
-                    </button>
-                  ))}
-                </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">LinkedIn Profile URL</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">LinkedIn Profile</label>
                 <input
                   type="text"
                   placeholder="e.g. linkedin.com/in/alexmorgan"
                   value={resumeData.personalInfo.linkedin}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, linkedin: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">GitHub / Portfolio URL</label>
+                <label className="block text-xs font-medium text-slate-300 mb-1">GitHub / Portfolio URL</label>
                 <input
                   type="text"
                   placeholder="e.g. github.com/alexmorgan or alexmorgan.dev"
                   value={resumeData.personalInfo.github}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, github: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
               </div>
             </div>
@@ -728,93 +725,49 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 2: Career Target & AI Specialization */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-600" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-400" />
                 Career Target & Specialization
               </h3>
-              <Button variant="ghost" size="sm" onClick={handleSuggestSpecializations} isLoading={isAiLoading} className="text-xs text-brand-600 hover:text-brand-700 gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+              <Button variant="ghost" size="sm" onClick={handleSuggestSpecializations} isLoading={isAiLoading} className="text-xs text-brand-400 gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
                 Suggest Specializations
               </Button>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">Target Job Title *</label>
-                  <span className="text-[10px] text-slate-400">Click suggestion or type</span>
-                </div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Target Job Title *</label>
                 <input
                   type="text"
-                  list="resume-builder-target-roles"
-                  placeholder="e.g. Data Analyst / Senior Full Stack Engineer"
+                  placeholder="e.g. Senior Full Stack Engineer"
                   value={resumeData.careerTarget.targetRole}
                   onChange={e => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, targetRole: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
-                <datalist id="resume-builder-target-roles">
-                  <option value="AI Engineer" />
-                  <option value="Data Analyst" />
-                  <option value="Data Engineer" />
-                  <option value="Full Stack Developer" />
-                  <option value="Frontend Developer" />
-                  <option value="Backend Developer" />
-                  <option value="Cloud & DevOps Engineer" />
-                  <option value="Machine Learning Engineer" />
-                  <option value="Cybersecurity Analyst" />
-                  <option value="QA / Automation Engineer" />
-                  <option value="Software Engineer" />
-                </datalist>
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['AI Engineer', 'Data Analyst', 'Data Engineer', 'Full Stack Developer', 'Cloud & DevOps Engineer', 'Machine Learning Engineer', 'Frontend Developer', 'Backend Developer', 'Cybersecurity Analyst'].map(roleOption => (
-                    <button
-                      key={roleOption}
-                      type="button"
-                      onClick={() => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, targetRole: roleOption } }))}
-                      className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                    >
-                      + {roleOption}
-                    </button>
-                  ))}
-                </div>
               </div>
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">Specialization Focus</label>
-                  <span className="text-[10px] text-slate-400">Click suggestion or type</span>
-                </div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">Specialization Focus</label>
                 <input
                   type="text"
-                  placeholder="e.g. Generative AI & LLMs or Cloud Microservices"
+                  placeholder="e.g. Cloud Microservices & Distributed Architecture"
                   value={resumeData.careerTarget.specialization}
                   onChange={e => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, specialization: e.target.value } }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                 />
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['Generative AI & LLMs', 'RAG & Vector Search', 'MLOps & Deployment', 'Cloud Microservices', 'Distributed Data Pipelines'].map(spec => (
-                    <button
-                      key={spec}
-                      type="button"
-                      onClick={() => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, specialization: spec } }))}
-                      className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                    >
-                      + {spec}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
 
             {aiSuggestions.length > 0 && (
-              <div className="mt-4 p-3 rounded-lg bg-purple-50/60 border border-purple-100">
-                <span className="text-xs text-brand-700 font-semibold block mb-2">AI Suggested Specializations (Click to apply):</span>
+              <div className="mt-4 p-3 rounded-lg bg-slate-950 border border-slate-800">
+                <span className="text-xs text-brand-400 font-medium block mb-2">AI Suggested Specializations (Click to apply):</span>
                 <div className="flex flex-wrap gap-2">
                   {aiSuggestions.map((track, i) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, specialization: track } }))}
-                      className="text-xs px-2.5 py-1 rounded bg-white border border-purple-200 hover:border-brand-400 text-slate-700 hover:text-brand-700 transition-colors shadow-sm"
+                      className="text-xs px-2.5 py-1 rounded bg-slate-900 border border-slate-700 hover:border-brand-400 text-slate-300 hover:text-white transition-colors"
                     >
                       + {track}
                     </button>
@@ -827,21 +780,21 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 3: Professional Summary & Suggestions */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-600" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-400" />
                 Professional Summary
               </h3>
-              <Button variant="ghost" size="sm" onClick={handleEnhanceSummary} isLoading={isAiLoading} className="text-xs text-brand-600 hover:text-brand-700 gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+              <Button variant="ghost" size="sm" onClick={handleEnhanceSummary} isLoading={isAiLoading} className="text-xs text-brand-400 gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
                 AI Enhance Summary
               </Button>
             </div>
 
             {/* Ready-to-Use Summary Suggestion Chips */}
-            <div className="mb-3 p-3 rounded-xl bg-purple-50/60 border border-purple-100">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-700 mb-2">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-                <span>Suggested Summary Templates (Click to apply):</span>
+            <div className="mb-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-400 mb-2">
+                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                <span>Suggested Summary Templates (Click to insert):</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {summarySuggestionsByRole.map((item, idx) => (
@@ -849,13 +802,13 @@ export const ResumeBuilderPage: React.FC = () => {
                     key={idx}
                     type="button"
                     onClick={() => applySummaryTemplate(item.text)}
-                    className="p-2.5 rounded-lg bg-white border border-purple-100 hover:border-brand-400 text-left transition-colors group shadow-sm"
+                    className="p-2 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-brand-400 text-left transition-colors group"
                   >
-                    <div className="text-[11px] font-bold text-slate-900 group-hover:text-brand-700 flex items-center justify-between">
+                    <div className="text-[11px] font-bold text-slate-200 group-hover:text-brand-300 flex items-center justify-between">
                       <span>{item.role}</span>
-                      <span className="text-[10px] text-brand-600 opacity-0 group-hover:opacity-100 transition-opacity font-medium">Apply</span>
+                      <span className="text-[10px] text-brand-400 opacity-0 group-hover:opacity-100 transition-opacity">Apply</span>
                     </div>
-                    <div className="text-[10px] text-slate-500 line-clamp-2 mt-0.5">{item.text}</div>
+                    <div className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">{item.text}</div>
                   </button>
                 ))}
               </div>
@@ -865,209 +818,457 @@ export const ResumeBuilderPage: React.FC = () => {
               rows={4}
               value={resumeData.professionalSummary}
               onChange={e => setResumeData(p => ({ ...p, professionalSummary: e.target.value }))}
-              placeholder="e.g. Results-driven Software Engineer with 3+ years of experience architecting high-throughput microservices and responsive web applications..."
-              className="w-full p-3 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 leading-relaxed font-sans transition-colors"
+              placeholder="e.g. Results-driven Software Engineer with 3+ years of experience architecting high-throughput microservices and responsive web applications. Proven track record in TypeScript, React, and cloud scalability..."
+              className="w-full p-3 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 leading-relaxed font-sans"
             />
-            <div className="flex items-center justify-between mt-2 text-[11px] text-slate-500">
+            <div className="flex items-center justify-between mt-2 text-[11px] text-slate-400">
               <span>💡 Ideal length: 3–4 concise sentences highlighting years of experience, core tech stack, and key impact.</span>
-              <span className="text-slate-400">{resumeData.professionalSummary?.length || 0} chars</span>
+              <span className="text-slate-500">{resumeData.professionalSummary?.length || 0} chars</span>
             </div>
           </Card>
 
-          {/* Section 4: Categorized Skills */}
+          {/* Section 4: Categorized Skills & Smart Skill Recommender */}
           <Card className="p-6">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-brand-600" />
-              Technical Skills (Comma-Separated)
-            </h3>
-            
-            <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">Programming Languages</label>
-                  <span className="text-[10px] text-slate-400">Click to add</span>
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-brand-400" />
+                  Technical Skills & Competencies
+                </h3>
+                <span className="text-[11px] text-slate-400">Click suggested badges below or type comma-separated values to create interactive tags</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleAiSuggestSkills}
+                isLoading={isSuggestingSkills}
+                className="text-xs text-brand-400 gap-1.5 self-start sm:self-auto border border-brand-500/30 hover:bg-brand-500/10"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+                AI Suggest for "{resumeData.careerTarget.targetRole || 'Target Role'}"
+              </Button>
+            </div>
+
+            {/* AI Skill Suggestions Banner (Shown when AI suggest is triggered) */}
+            {aiSkillSuggestions && (
+              <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-brand-950/70 via-slate-900/90 to-purple-950/70 border border-brand-500/30 space-y-3 animate-fadeIn">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-brand-500/20 pb-2.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-brand-300">
+                    <Sparkles className="w-4 h-4 text-brand-400 shrink-0 animate-pulse" />
+                    <span>AI Tailored Skills for "{resumeData.careerTarget.targetRole}":</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setResumeData(prev => {
+                        const mergeUnique = (existing: string[] = [], incoming: string[] = []) => {
+                          const set = new Set(existing.map(s => s.toLowerCase()));
+                          const additions = incoming.filter(s => !set.has(s.toLowerCase()));
+                          return [...existing, ...additions];
+                        };
+                        return {
+                          ...prev,
+                          softSkills: mergeUnique(prev.softSkills || [], aiSkillSuggestions.softSkills || []),
+                          skills: {
+                            ...prev.skills,
+                            programmingLanguages: mergeUnique(prev.skills.programmingLanguages, aiSkillSuggestions.programmingLanguages || []),
+                            frameworks: mergeUnique(prev.skills.frameworks.concat(prev.skills.libraries || []), aiSkillSuggestions.frameworks || []),
+                            libraries: [],
+                            databases: mergeUnique(prev.skills.databases.concat(prev.skills.cloud || []), aiSkillSuggestions.databases || []),
+                            cloud: [],
+                            tools: mergeUnique(prev.skills.tools.concat(prev.skills.otherTechnologies || []), aiSkillSuggestions.tools || []),
+                            otherTechnologies: []
+                          }
+                        };
+                      });
+                      setSaveStatus(`✅ Added all AI skills for "${resumeData.careerTarget.targetRole}"`);
+                      setTimeout(() => setSaveStatus(null), 3000);
+                    }}
+                    className="text-xs px-2.5 py-1 rounded bg-brand-500/20 border border-brand-500/40 text-brand-300 hover:text-white hover:bg-brand-500/30 transition-colors font-medium self-start sm:self-auto"
+                  >
+                    + Add All AI Recommendations
+                  </button>
                 </div>
-                <CommaSeparatedInput
-                  category="languages"
-                  placeholder="e.g. Python, SQL, TypeScript, JavaScript, Java, Go, C++, R"
-                  value={resumeData.skills?.programmingLanguages || []}
-                  onChange={items => setResumeData(p => ({
-                    ...p,
-                    skills: { ...p.skills, programmingLanguages: items }
-                  }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
-                />
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['Python', 'SQL', 'TypeScript', 'JavaScript', 'Java', 'C++', 'Go', 'R', 'C#'].map(lang => {
-                    const isAdded = (resumeData.skills?.programmingLanguages || []).some(l => l.toLowerCase() === lang.toLowerCase());
-                    if (isAdded) return null;
-                    return (
-                      <button
-                        key={lang}
-                        type="button"
-                        onClick={() => setResumeData(p => ({
-                          ...p,
-                          skills: { ...p.skills, programmingLanguages: [...(p.skills?.programmingLanguages || []), lang] }
-                        }))}
-                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                      >
-                        + {lang}
-                      </button>
-                    );
-                  })}
+
+                <div className="space-y-2.5 pt-1 text-xs">
+                  {/* AI Languages */}
+                  {aiSkillSuggestions.programmingLanguages && aiSkillSuggestions.programmingLanguages.length > 0 && (
+                    <div>
+                      <span className="text-[11px] font-semibold text-brand-300/80 block mb-1">Languages:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {aiSkillSuggestions.programmingLanguages.map((skill, idx) => {
+                          const isAdded = resumeData.skills.programmingLanguages.some(s => s.toLowerCase() === skill.toLowerCase());
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleToggleSkill('programmingLanguages', skill)}
+                              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                                isAdded
+                                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                                  : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-brand-400 hover:text-white'
+                              }`}
+                            >
+                              {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-brand-400 font-bold">+</span>}
+                              <span>{skill}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* AI Frameworks */}
+                  {aiSkillSuggestions.frameworks && aiSkillSuggestions.frameworks.length > 0 && (
+                    <div>
+                      <span className="text-[11px] font-semibold text-emerald-300/80 block mb-1">Frameworks & Libraries:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {aiSkillSuggestions.frameworks.map((skill, idx) => {
+                          const isAdded = (resumeData.skills.frameworks || []).concat(resumeData.skills.libraries || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleToggleSkill('frameworks', skill)}
+                              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                                isAdded
+                                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                                  : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-emerald-400 hover:text-white'
+                              }`}
+                            >
+                              {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-emerald-400 font-bold">+</span>}
+                              <span>{skill}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* AI Databases */}
+                  {aiSkillSuggestions.databases && aiSkillSuggestions.databases.length > 0 && (
+                    <div>
+                      <span className="text-[11px] font-semibold text-cyan-300/80 block mb-1">Databases & Cloud:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {aiSkillSuggestions.databases.map((skill, idx) => {
+                          const isAdded = (resumeData.skills.databases || []).concat(resumeData.skills.cloud || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleToggleSkill('databases', skill)}
+                              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                                isAdded
+                                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                                  : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-cyan-400 hover:text-white'
+                              }`}
+                            >
+                              {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-cyan-400 font-bold">+</span>}
+                              <span>{skill}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* AI Tools */}
+                  {aiSkillSuggestions.tools && aiSkillSuggestions.tools.length > 0 && (
+                    <div>
+                      <span className="text-[11px] font-semibold text-amber-300/80 block mb-1">Tools & Infrastructure:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {aiSkillSuggestions.tools.map((skill, idx) => {
+                          const isAdded = (resumeData.skills.tools || []).concat(resumeData.skills.otherTechnologies || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleToggleSkill('tools', skill)}
+                              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                                isAdded
+                                  ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                                  : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-amber-400 hover:text-white'
+                              }`}
+                            >
+                              {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-amber-400 font-bold">+</span>}
+                              <span>{skill}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* AI Soft Skills */}
+                  {aiSkillSuggestions.softSkills && aiSkillSuggestions.softSkills.length > 0 && (
+                    <div>
+                      <span className="text-[11px] font-semibold text-purple-300/80 block mb-1">Soft Skills & Competencies:</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {aiSkillSuggestions.softSkills.map((skill, idx) => {
+                          const isAdded = (resumeData.softSkills || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleToggleSkill('softSkills', skill)}
+                              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                                isAdded
+                                  ? 'bg-purple-500/20 border-purple-500/50 text-purple-300 font-medium'
+                                  : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-purple-400 hover:text-white'
+                              }`}
+                            >
+                              {isAdded ? <Check className="w-3 h-3 text-purple-400" /> : <span className="text-purple-400 font-bold">+</span>}
+                              <span>{skill}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">Frameworks & Libraries</label>
-                  <span className="text-[10px] text-slate-400">Click to add</span>
+            )}
+
+            {/* Smart Technical & Soft Skill Recommender Panel */}
+            <div className="mb-6 p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-400">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>Role-Based Skill Suggestions:</span>
                 </div>
-                <CommaSeparatedInput
-                  category="frameworks"
-                  placeholder="e.g. React, Node.js, Express, Next.js, Pandas, FastAPI, Django, Redux Toolkit"
-                  value={(resumeData.skills?.frameworks || []).concat(resumeData.skills?.libraries || [])}
-                  onChange={items => setResumeData(p => ({
-                    ...p,
-                    skills: { ...p.skills, frameworks: items, libraries: [] }
-                  }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
-                />
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['React', 'Node.js', 'Express', 'Next.js', 'Pandas', 'FastAPI', 'Django', 'Spring Boot', 'Tailwind CSS'].map(fw => {
-                    const currentList = (resumeData.skills?.frameworks || []).concat(resumeData.skills?.libraries || []);
-                    if (currentList.some(item => item.toLowerCase() === fw.toLowerCase())) return null;
-                    return (
-                      <button
-                        key={fw}
-                        type="button"
-                        onClick={() => setResumeData(p => ({
-                          ...p,
-                          skills: { ...p.skills, frameworks: [...(p.skills?.frameworks || []), fw] }
-                        }))}
-                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                      >
-                        + {fw}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">Databases & Cloud Infrastructure</label>
-                  <span className="text-[10px] text-slate-400">Click to add</span>
-                </div>
-                <CommaSeparatedInput
-                  category="databases"
-                  placeholder="e.g. PostgreSQL, MongoDB Atlas, Redis, MySQL, Snowflake, BigQuery, AWS, Docker"
-                  value={(resumeData.skills?.databases || []).concat(resumeData.skills?.cloud || [])}
-                  onChange={items => setResumeData(p => ({
-                    ...p,
-                    skills: { ...p.skills, databases: items, cloud: [] }
-                  }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
-                />
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['PostgreSQL', 'MongoDB', 'MySQL', 'Redis', 'AWS', 'Docker', 'Kubernetes', 'Snowflake', 'BigQuery'].map(db => {
-                    const currentList = (resumeData.skills?.databases || []).concat(resumeData.skills?.cloud || []);
-                    if (currentList.some(item => item.toLowerCase() === db.toLowerCase())) return null;
-                    return (
-                      <button
-                        key={db}
-                        type="button"
-                        onClick={() => setResumeData(p => ({
-                          ...p,
-                          skills: { ...p.skills, databases: [...(p.skills?.databases || []), db] }
-                        }))}
-                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                      >
-                        + {db}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-medium text-slate-700">Tools, Analytics & Methodologies</label>
-                  <span className="text-[10px] text-slate-400">Click to add</span>
-                </div>
-                <CommaSeparatedInput
-                  category="tools"
-                  placeholder="e.g. Microsoft Excel, Power BI, Tableau, Git, GitHub Actions, Postman, Jira, CI/CD"
-                  value={(resumeData.skills?.tools || []).concat(resumeData.skills?.otherTechnologies || [])}
-                  onChange={items => setResumeData(p => ({
-                    ...p,
-                    skills: { ...p.skills, tools: items, otherTechnologies: [] }
-                  }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
-                />
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['Microsoft Excel', 'Power BI', 'Tableau', 'Git', 'GitHub Actions', 'Postman', 'Jira', 'Agile / Scrum', 'CI/CD'].map(tool => {
-                    const currentList = (resumeData.skills?.tools || []).concat(resumeData.skills?.otherTechnologies || []);
-                    if (currentList.some(item => item.toLowerCase() === tool.toLowerCase())) return null;
-                    return (
-                      <button
-                        key={tool}
-                        type="button"
-                        onClick={() => setResumeData(p => ({
-                          ...p,
-                          skills: { ...p.skills, tools: [...(p.skills?.tools || []), tool] }
-                        }))}
-                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                      >
-                        + {tool}
-                      </button>
-                    );
-                  })}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => handleAddAllSkillsForRole(activeSkillCategoryTab)}
+                  className="text-xs px-2.5 py-1 rounded bg-brand-500/20 border border-brand-500/40 text-brand-300 hover:text-white hover:bg-brand-500/30 transition-colors font-medium self-start sm:self-auto"
+                >
+                  + Add All {activeSkillCategoryTab} Skills
+                </button>
               </div>
 
-              {/* Dedicated Non-Technical & Core Professional Skills */}
-              <div className="pt-2 border-t border-purple-100">
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold text-slate-800">
-                    Non-Technical & Core Professional Skills
-                  </label>
-                  <span className="text-[10px] text-slate-400">Click to add</span>
+              {/* Role Preset Tabs */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                {Object.keys(roleSkillsCatalog).map(roleKey => (
+                  <button
+                    key={roleKey}
+                    type="button"
+                    onClick={() => setActiveSkillCategoryTab(roleKey)}
+                    className={`text-xs px-3 py-1 rounded-full whitespace-nowrap transition-colors font-medium ${
+                      activeSkillCategoryTab === roleKey
+                        ? 'bg-brand-500 text-white shadow-sm shadow-brand-500/25'
+                        : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {roleKey}
+                  </button>
+                ))}
+              </div>
+
+              {/* Categorized Clickable Skill Badges */}
+              <div className="space-y-3 pt-1">
+                {/* Languages */}
+                <div>
+                  <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">Languages:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {roleSkillsCatalog[activeSkillCategoryTab]?.languages.map((skill, idx) => {
+                      const isAdded = resumeData.skills.programmingLanguages.some(s => s.toLowerCase() === skill.toLowerCase());
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleToggleSkill('programmingLanguages', skill)}
+                          className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                            isAdded
+                              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                              : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-brand-400 hover:text-white'
+                          }`}
+                        >
+                          {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-brand-400 font-bold">+</span>}
+                          <span>{skill}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <CommaSeparatedInput
-                  category="soft"
-                  placeholder="e.g. Microsoft Excel, Data Analysis, Problem Solving, Communication, Project Management"
-                  value={resumeData.softSkills || []}
-                  onChange={items => setResumeData(p => ({
-                    ...p,
-                    softSkills: items
-                  }))}
-                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
-                />
-                <div className="flex flex-wrap gap-1 mt-1.5">
-                  {['Microsoft Excel', 'Data Analysis', 'Problem Solving', 'Business Communication', 'Team Leadership', 'Project Management', 'Critical Thinking', 'Time Management'].map(soft => {
-                    if ((resumeData.softSkills || []).some(s => s.toLowerCase() === soft.toLowerCase())) return null;
-                    return (
-                      <button
-                        key={soft}
-                        type="button"
-                        onClick={() => setResumeData(p => ({
-                          ...p,
-                          softSkills: [...(p.softSkills || []), soft]
-                        }))}
-                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
-                      >
-                        + {soft}
-                      </button>
-                    );
-                  })}
+
+                {/* Frameworks & Libraries */}
+                <div>
+                  <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">Frameworks & Libraries:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {roleSkillsCatalog[activeSkillCategoryTab]?.frameworks.map((skill, idx) => {
+                      const isAdded = (resumeData.skills.frameworks || []).concat(resumeData.skills.libraries || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleToggleSkill('frameworks', skill)}
+                          className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                            isAdded
+                              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                              : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-brand-400 hover:text-white'
+                          }`}
+                        >
+                          {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-brand-400 font-bold">+</span>}
+                          <span>{skill}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Databases & Cloud */}
+                <div>
+                  <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">Databases & Cloud:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {roleSkillsCatalog[activeSkillCategoryTab]?.databases.map((skill, idx) => {
+                      const isAdded = (resumeData.skills.databases || []).concat(resumeData.skills.cloud || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleToggleSkill('databases', skill)}
+                          className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                            isAdded
+                              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                              : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-brand-400 hover:text-white'
+                          }`}
+                        >
+                          {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-brand-400 font-bold">+</span>}
+                          <span>{skill}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Tools & Methodologies */}
+                <div>
+                  <span className="text-[11px] font-semibold text-slate-400 block mb-1.5">Tools & Methodologies:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {roleSkillsCatalog[activeSkillCategoryTab]?.tools.map((skill, idx) => {
+                      const isAdded = (resumeData.skills.tools || []).concat(resumeData.skills.otherTechnologies || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleToggleSkill('tools', skill)}
+                          className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                            isAdded
+                              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-medium'
+                              : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-brand-400 hover:text-white'
+                          }`}
+                        >
+                          {isAdded ? <Check className="w-3 h-3 text-emerald-400" /> : <span className="text-brand-400 font-bold">+</span>}
+                          <span>{skill}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Soft Skills & Competencies */}
+                <div>
+                  <span className="text-[11px] font-semibold text-purple-300/90 block mb-1.5 flex items-center gap-1">
+                    <Users className="w-3.5 h-3.5 text-purple-400" />
+                    Soft Skills & Professional Competencies:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {roleSkillsCatalog[activeSkillCategoryTab]?.softSkills.map((skill, idx) => {
+                      const isAdded = (resumeData.softSkills || []).some(s => s.toLowerCase() === skill.toLowerCase());
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleToggleSkill('softSkills', skill)}
+                          className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                            isAdded
+                              ? 'bg-purple-500/20 border-purple-500/50 text-purple-300 font-medium'
+                              : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-purple-400 hover:text-white'
+                          }`}
+                        >
+                          {isAdded ? <Check className="w-3 h-3 text-purple-400" /> : <span className="text-purple-400 font-bold">+</span>}
+                          <span>{skill}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
+            </div>
+
+            {/* Interactive Inputs for Direct Tag Editing with Comma Support */}
+            <div className="space-y-4 pt-1">
+              <SkillTagInput
+                label="Programming Languages"
+                icon={<Code2 className="w-3.5 h-3.5 text-brand-400" />}
+                skills={resumeData.skills.programmingLanguages}
+                onChange={newSkills => setResumeData(p => ({
+                  ...p,
+                  skills: { ...p.skills, programmingLanguages: newSkills }
+                }))}
+                placeholder="e.g. TypeScript, JavaScript, Python, Java, SQL, Go (press comma or Enter)..."
+                suggestions={roleSkillsCatalog[activeSkillCategoryTab]?.languages || []}
+                badgeVariant="brand"
+              />
+
+              <SkillTagInput
+                label="Frameworks & Libraries"
+                icon={<Layers className="w-3.5 h-3.5 text-emerald-400" />}
+                skills={resumeData.skills.frameworks.concat(resumeData.skills.libraries || [])}
+                onChange={newSkills => setResumeData(p => ({
+                  ...p,
+                  skills: { ...p.skills, frameworks: newSkills, libraries: [] }
+                }))}
+                placeholder="e.g. React, Node.js, Express, Next.js, Redux, Tailwind CSS (press comma or Enter)..."
+                suggestions={roleSkillsCatalog[activeSkillCategoryTab]?.frameworks || []}
+                badgeVariant="emerald"
+              />
+
+              <SkillTagInput
+                label="Databases & Cloud Infrastructure"
+                icon={<Database className="w-3.5 h-3.5 text-cyan-400" />}
+                skills={resumeData.skills.databases.concat(resumeData.skills.cloud || [])}
+                onChange={newSkills => setResumeData(p => ({
+                  ...p,
+                  skills: { ...p.skills, databases: newSkills, cloud: [] }
+                }))}
+                placeholder="e.g. PostgreSQL, MongoDB, Redis, AWS, Docker, Kubernetes (press comma or Enter)..."
+                suggestions={roleSkillsCatalog[activeSkillCategoryTab]?.databases || []}
+                badgeVariant="cyan"
+              />
+
+              <SkillTagInput
+                label="Tools & Methodologies"
+                icon={<Wrench className="w-3.5 h-3.5 text-amber-400" />}
+                skills={resumeData.skills.tools.concat(resumeData.skills.otherTechnologies || [])}
+                onChange={newSkills => setResumeData(p => ({
+                  ...p,
+                  skills: { ...p.skills, tools: newSkills, otherTechnologies: [] }
+                }))}
+                placeholder="e.g. Git, GitHub Actions, CI/CD, Postman, Linux, Agile (press comma or Enter)..."
+                suggestions={roleSkillsCatalog[activeSkillCategoryTab]?.tools || []}
+                badgeVariant="amber"
+              />
+
+              <SkillTagInput
+                label="Soft Skills & Professional Competencies"
+                icon={<Users className="w-3.5 h-3.5 text-purple-400" />}
+                skills={resumeData.softSkills || []}
+                onChange={newSkills => setResumeData(p => ({
+                  ...p,
+                  softSkills: newSkills
+                }))}
+                placeholder="e.g. System Architecture, Agile Leadership, Cross-Functional Collaboration (press comma or Enter)..."
+                suggestions={roleSkillsCatalog[activeSkillCategoryTab]?.softSkills || []}
+                badgeVariant="purple"
+              />
             </div>
           </Card>
 
           {/* Section 5: Technical Projects & Suggestions */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-600" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-400" />
                 Technical Projects
               </h3>
               <Button
@@ -1083,7 +1284,7 @@ export const ResumeBuilderPage: React.FC = () => {
                       technologies: ['React', 'TypeScript', 'Node.js', 'PostgreSQL'],
                       responsibilities: [
                         'Architected high-throughput REST APIs handling 10,000+ daily active user requests.',
-                        'Optimized database queries and added Redis caching, reducing latency by 30%.'
+                        'Optimized database queries and added caching, reducing latency by 30%.'
                       ]
                     }
                   ]
@@ -1097,7 +1298,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
             <div className="space-y-5">
               {resumeData.projects.map((proj, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-purple-50/30 border border-purple-100 space-y-3">
+                <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <input
                       type="text"
@@ -1108,12 +1309,12 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].title = e.target.value;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="font-bold text-sm bg-transparent text-slate-900 placeholder-slate-400 border-b border-purple-200 hover:border-brand-400 focus:border-brand-500 focus:outline-none w-3/4 pb-1"
+                      className="font-bold text-sm bg-transparent text-white placeholder-slate-500 border-b border-slate-800 hover:border-slate-600 focus:border-brand-400 focus:outline-none w-3/4 pb-1"
                     />
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, projects: p.projects.filter((_, i) => i !== idx) }))}
-                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
+                      className="text-slate-500 hover:text-rose-400 p-1 transition-colors"
                       title="Remove Project"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -1121,7 +1322,7 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Project Description / Overview</label>
+                    <label className="block text-xs font-medium text-slate-300 mb-1">Project Description / Overview</label>
                     <input
                       type="text"
                       placeholder="e.g. High-concurrency collaboration engine with live state synchronization and analytics dashboard."
@@ -1131,73 +1332,54 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].description = e.target.value;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="w-full px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                      className="w-full px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                     />
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-medium text-slate-700">Technologies Used (comma separated)</label>
-                      <span className="text-[10px] text-slate-500">Type freely or click tags below</span>
-                    </div>
-                    <CommaSeparatedInput
-                      placeholder="e.g. React, TypeScript, Node.js, WebSockets, Redis, PostgreSQL, AWS"
-                      value={proj.technologies || []}
-                      onChange={items => {
+                    <SkillTagInput
+                      label="Technologies Used"
+                      skills={proj.technologies || []}
+                      onChange={newTech => {
                         const updated = [...resumeData.projects];
-                        updated[idx].technologies = items;
+                        updated[idx].technologies = newTech;
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="w-full px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                      placeholder="e.g. React, TypeScript, PostgreSQL (press comma or Enter)..."
+                      suggestions={[
+                        ...(roleSkillsCatalog[activeSkillCategoryTab]?.languages || []),
+                        ...(roleSkillsCatalog[activeSkillCategoryTab]?.frameworks || []),
+                        ...(roleSkillsCatalog[activeSkillCategoryTab]?.databases || []),
+                        ...(roleSkillsCatalog[activeSkillCategoryTab]?.tools || [])
+                      ]}
+                      badgeVariant="slate"
                     />
-                    {/* Quick Stack Suggestion Pills */}
-                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      <span className="text-[10px] text-slate-500 font-medium">Quick Add Tech / Skills:</span>
-                      {['Python', 'SQL', 'Microsoft Excel', 'Power BI', 'Tableau', 'Pandas', 'Apache Spark', 'React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS', 'Redis', 'MongoDB', 'FastAPI', 'Next.js', 'Git'].map(tech => {
-                        const isAlreadyAdded = (proj.technologies || []).some(t => t.toLowerCase() === tech.toLowerCase());
-                        if (isAlreadyAdded) return null;
-                        return (
-                          <button
-                            key={tech}
-                            type="button"
-                            onClick={() => {
-                              const updated = [...resumeData.projects];
-                              updated[idx].technologies = [...(updated[idx].technologies || []), tech];
-                              setResumeData(p => ({ ...p, projects: updated }));
-                            }}
-                            className="text-[10px] px-2 py-0.5 rounded bg-white hover:bg-purple-50 border border-purple-200 hover:border-brand-400 text-slate-700 hover:text-brand-700 transition-colors shadow-sm"
-                          >
-                            + {tech}
-                          </button>
-                        );
-                      })}
-                    </div>
                   </div>
 
                   {/* Smart Bullet Suggestions for Project */}
-                  <div className="p-2.5 rounded-lg bg-white/80 border border-purple-100">
-                    <span className="text-[11px] font-medium text-slate-600 block mb-1.5">
+                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
+                    <span className="text-[11px] font-medium text-slate-400 block mb-1.5">
                       💡 Suggested Google X-Y-Z Metric Bullets (Click to append):
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         type="button"
                         onClick={() => addProjectBulletSuggestion(idx, 'metric')}
-                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
+                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
                       >
                         + ⚡ Performance Metric (-38% latency)
                       </button>
                       <button
                         type="button"
                         onClick={() => addProjectBulletSuggestion(idx, 'scale')}
-                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
+                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
                       >
                         + 📈 Scalability (15k+ daily requests)
                       </button>
                       <button
                         type="button"
                         onClick={() => addProjectBulletSuggestion(idx, 'security')}
-                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
+                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
                       >
                         + 🔒 Security & RBAC Auth
                       </button>
@@ -1205,19 +1387,19 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
                       Bullet Point Responsibilities & Impact (1 per line)
                     </label>
-                    <MultiLineTextarea
+                    <textarea
                       rows={3}
                       placeholder="e.g. Architected modular REST backend with WebSockets handling 20k+ concurrent connections.&#10;Integrated Redis caching layer, decreasing database query latency by 35%.&#10;Automated CI/CD build pipelines with GitHub Actions and AWS ECS."
-                      value={proj.responsibilities || []}
-                      onChange={items => {
+                      value={proj.responsibilities.join('\n')}
+                      onChange={e => {
                         const updated = [...resumeData.projects];
-                        updated[idx].responsibilities = items;
+                        updated[idx].responsibilities = e.target.value.split('\n').filter(Boolean);
                         setResumeData(p => ({ ...p, projects: updated }));
                       }}
-                      className="w-full p-2.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 font-sans leading-relaxed transition-colors"
+                      className="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 font-sans leading-relaxed"
                     />
                   </div>
                 </div>
@@ -1228,8 +1410,8 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 6: Work Experience & Suggestions */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-600" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-400" />
                 Work Experience
               </h3>
               <Button
@@ -1262,7 +1444,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
             <div className="space-y-5">
               {resumeData.experience.map((exp, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-purple-50/30 border border-purple-100 space-y-3">
+                <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-5/6">
                       <input
@@ -1274,7 +1456,7 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].role = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="font-bold text-sm bg-white border border-purple-100 rounded px-2.5 py-1 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="font-bold text-sm bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                       <input
                         type="text"
@@ -1285,13 +1467,13 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].company = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="text-sm bg-white border border-purple-100 rounded px-2.5 py-1 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="text-sm bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                     </div>
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, experience: p.experience.filter((_, i) => i !== idx) }))}
-                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
+                      className="text-slate-500 hover:text-rose-400 p-1 transition-colors"
                       title="Remove Experience"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -1300,7 +1482,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-[11px] text-slate-500 mb-0.5">Location</label>
+                      <label className="block text-[11px] text-slate-400 mb-0.5">Location</label>
                       <input
                         type="text"
                         placeholder="e.g. New York, NY (Hybrid)"
@@ -1310,11 +1492,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].location = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-500 mb-0.5">Start Date</label>
+                      <label className="block text-[11px] text-slate-400 mb-0.5">Start Date</label>
                       <input
                         type="text"
                         placeholder="e.g. Jun 2023"
@@ -1324,11 +1506,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].startDate = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-500 mb-0.5">End Date</label>
+                      <label className="block text-[11px] text-slate-400 mb-0.5">End Date</label>
                       <input
                         type="text"
                         placeholder="e.g. Present (or Aug 2024)"
@@ -1338,35 +1520,35 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].endDate = e.target.value;
                           setResumeData(p => ({ ...p, experience: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                     </div>
                   </div>
 
                   {/* Smart Bullet Suggestions for Work Experience */}
-                  <div className="p-2.5 rounded-lg bg-white/80 border border-purple-100">
-                    <span className="text-[11px] font-medium text-slate-600 block mb-1.5">
+                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
+                    <span className="text-[11px] font-medium text-slate-400 block mb-1.5">
                       💡 Suggested Achievement Bullets (Click to append):
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         type="button"
                         onClick={() => addExpBulletSuggestion(idx, 'kpi')}
-                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
+                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
                       >
                         + 🚀 Performance & Caching (+40% speed)
                       </button>
                       <button
                         type="button"
                         onClick={() => addExpBulletSuggestion(idx, 'refactor')}
-                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
+                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
                       >
                         + 🧪 Test Coverage & Refactor (94% coverage)
                       </button>
                       <button
                         type="button"
                         onClick={() => addExpBulletSuggestion(idx, 'collab')}
-                        className="text-[10px] px-2 py-1 rounded bg-purple-100/70 hover:bg-purple-200/70 text-brand-700 hover:text-brand-900 transition-colors font-medium"
+                        className="text-[10px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-brand-300 hover:text-white transition-colors"
                       >
                         + 👥 Agile Sprints & Bi-Weekly Releases
                       </button>
@@ -1374,19 +1556,19 @@ export const ResumeBuilderPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
                       Key Accomplishments & Responsibilities (1 per line)
                     </label>
-                    <MultiLineTextarea
+                    <textarea
                       rows={3}
                       placeholder="e.g. Led design of customer-facing dashboard features used by 50k+ daily users.&#10;Refactored core services into TypeScript, increasing code maintainability and test coverage.&#10;Partnered with DevOps to reduce AWS cloud infrastructure expenses by 22%."
-                      value={exp.responsibilities || []}
-                      onChange={items => {
+                      value={exp.responsibilities.join('\n')}
+                      onChange={e => {
                         const updated = [...resumeData.experience];
-                        updated[idx].responsibilities = items;
+                        updated[idx].responsibilities = e.target.value.split('\n').filter(Boolean);
                         setResumeData(p => ({ ...p, experience: updated }));
                       }}
-                      className="w-full p-2.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 font-sans leading-relaxed transition-colors"
+                      className="w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400 font-sans leading-relaxed"
                     />
                   </div>
                 </div>
@@ -1397,8 +1579,8 @@ export const ResumeBuilderPage: React.FC = () => {
           {/* Section 7: Education */}
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-600" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-400" />
                 Education Details
               </h3>
               <Button
@@ -1427,11 +1609,11 @@ export const ResumeBuilderPage: React.FC = () => {
 
             <div className="space-y-4">
               {resumeData.education.map((edu, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-purple-50/30 border border-purple-100 space-y-3">
+                <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-5/6">
                       <div>
-                        <label className="block text-[11px] text-slate-500 mb-0.5">Degree / Major *</label>
+                        <label className="block text-[11px] text-slate-400 mb-0.5">Degree / Major *</label>
                         <input
                           type="text"
                           placeholder="e.g. B.S. in Computer Science"
@@ -1441,11 +1623,11 @@ export const ResumeBuilderPage: React.FC = () => {
                             updated[idx].degree = e.target.value;
                             setResumeData(p => ({ ...p, education: updated }));
                           }}
-                          className="w-full font-semibold text-xs bg-white border border-purple-100 rounded px-2.5 py-1.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                          className="w-full font-semibold text-xs bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-slate-500 mb-0.5">College / University *</label>
+                        <label className="block text-[11px] text-slate-400 mb-0.5">College / University *</label>
                         <input
                           type="text"
                           placeholder="e.g. University of California, Berkeley"
@@ -1455,14 +1637,14 @@ export const ResumeBuilderPage: React.FC = () => {
                             updated[idx].institution = e.target.value;
                             setResumeData(p => ({ ...p, education: updated }));
                           }}
-                          className="w-full text-xs bg-white border border-purple-100 rounded px-2.5 py-1.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                          className="w-full text-xs bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                         />
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, education: p.education.filter((_, i) => i !== idx) }))}
-                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
+                      className="text-slate-500 hover:text-rose-400 p-1 transition-colors"
                       title="Remove Education"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -1471,7 +1653,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-[11px] text-slate-500 mb-0.5">Start Year</label>
+                      <label className="block text-[11px] text-slate-400 mb-0.5">Start Year</label>
                       <input
                         type="text"
                         placeholder="e.g. 2020"
@@ -1481,11 +1663,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].startYear = e.target.value;
                           setResumeData(p => ({ ...p, education: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-500 mb-0.5">End / Graduation Year</label>
+                      <label className="block text-[11px] text-slate-400 mb-0.5">End / Graduation Year</label>
                       <input
                         type="text"
                         placeholder="e.g. 2024"
@@ -1495,11 +1677,11 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].endYear = e.target.value;
                           setResumeData(p => ({ ...p, education: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-500 mb-0.5">CGPA or Percentage</label>
+                      <label className="block text-[11px] text-slate-400 mb-0.5">CGPA or Percentage</label>
                       <input
                         type="text"
                         placeholder="e.g. 3.8 / 4.0 GPA or 85%"
@@ -1509,7 +1691,7 @@ export const ResumeBuilderPage: React.FC = () => {
                           updated[idx].cgpaOrPercentage = e.target.value;
                           setResumeData(p => ({ ...p, education: updated }));
                         }}
-                        className="w-full px-2.5 py-1 bg-white border border-purple-100 rounded text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                        className="w-full px-2.5 py-1 bg-slate-900 border border-slate-800 rounded text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                       />
                     </div>
                   </div>
@@ -1520,25 +1702,25 @@ export const ResumeBuilderPage: React.FC = () => {
 
           {/* Section 8: Certifications & Achievements */}
           <Card className="p-6">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-brand-600" />
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-brand-400" />
               Certifications & Honors
             </h3>
             
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-medium text-slate-700">Certifications</label>
+                  <label className="block text-xs font-medium text-slate-300">Certifications</label>
                   <button
                     type="button"
                     onClick={() => setResumeData(p => ({
                       ...p,
                       certifications: [
                         ...p.certifications,
-                        { name: 'AWS Certified Solutions Architect', issuer: 'Amazon Web Services', issueDate: '2024' }
+                        { name: 'AWS Certified Developer', issuer: 'Amazon Web Services', issueDate: '2025' }
                       ]
                     }))}
-                    className="text-xs text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1 font-medium"
+                    className="text-xs text-brand-400 hover:underline flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" /> Add Certificate
                   </button>
@@ -1554,7 +1736,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].name = e.target.value;
                         setResumeData(p => ({ ...p, certifications: updated }));
                       }}
-                      className="flex-1 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                      className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                     />
                     <input
                       type="text"
@@ -1565,7 +1747,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].issuer = e.target.value;
                         setResumeData(p => ({ ...p, certifications: updated }));
                       }}
-                      className="w-1/3 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                      className="w-1/3 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                     />
                     <input
                       type="text"
@@ -1576,12 +1758,12 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].issueDate = e.target.value;
                         setResumeData(p => ({ ...p, certifications: updated }));
                       }}
-                      className="w-20 px-2 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                      className="w-20 px-2 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                     />
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, certifications: p.certifications.filter((_, i) => i !== idx) }))}
-                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
+                      className="text-slate-500 hover:text-rose-400 p-1"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1591,7 +1773,7 @@ export const ResumeBuilderPage: React.FC = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-medium text-slate-700">Key Achievements / Honors</label>
+                  <label className="block text-xs font-medium text-slate-300">Key Achievements / Honors</label>
                   <button
                     type="button"
                     onClick={() => setResumeData(p => ({
@@ -1601,7 +1783,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         { title: '1st Place Hackathon Winner', description: 'Built an open-source real-time developer tool.' }
                       ]
                     }))}
-                    className="text-xs text-brand-600 hover:text-brand-700 hover:underline flex items-center gap-1 font-medium"
+                    className="text-xs text-brand-400 hover:underline flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" /> Add Achievement
                   </button>
@@ -1617,7 +1799,7 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].title = e.target.value;
                         setResumeData(p => ({ ...p, achievements: updated }));
                       }}
-                      className="flex-1 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                      className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                     />
                     <input
                       type="text"
@@ -1628,12 +1810,12 @@ export const ResumeBuilderPage: React.FC = () => {
                         updated[idx].description = e.target.value;
                         setResumeData(p => ({ ...p, achievements: updated }));
                       }}
-                      className="flex-1 px-3 py-1.5 bg-white border border-purple-100 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                      className="flex-1 px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-400"
                     />
                     <button
                       type="button"
                       onClick={() => setResumeData(p => ({ ...p, achievements: p.achievements.filter((_, i) => i !== idx) }))}
-                      className="text-slate-400 hover:text-rose-500 p-1 transition-colors"
+                      className="text-slate-500 hover:text-rose-400 p-1"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1645,292 +1827,208 @@ export const ResumeBuilderPage: React.FC = () => {
 
         </div>
 
-        {/* Right Column: Live Preview & Dedicated Download Hub directly below it (5 cols) */}
-        <div className="lg:col-span-5 space-y-4">
+        {/* Right Column: Live ATS Compatibility & Live Preview (5 cols) */}
+        <div className="lg:col-span-5 space-y-6">
           
-          {/* View Tab Switcher: Preview vs ATS Breakdown vs Raw Parser */}
-          <div className="flex p-1 rounded-xl bg-white border border-purple-100 shadow-sm no-print">
-            <button
-              type="button"
-              onClick={() => setActiveRightTab('preview')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                activeRightTab === 'preview'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Eye className="w-3.5 h-3.5" />
-              Live Preview
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveRightTab('ats-breakdown')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                activeRightTab === 'ats-breakdown'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              ATS Scanner ({atsScoreData.overallScore}%)
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveRightTab('raw-ats-parser')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                activeRightTab === 'raw-ats-parser'
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Code2 className="w-3.5 h-3.5" />
-              Raw ATS Stream
-            </button>
-          </div>
-
-          {/* ATS Mini Score Pill */}
-          <div className="p-3.5 rounded-xl bg-white border border-purple-100 shadow-sm flex items-center justify-between no-print">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-brand-50 border border-brand-200/60 flex items-center justify-center">
-                <Flame className="w-5 h-5 text-brand-600" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                  <span>ATS Match Score</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-medium ${
-                    atsScoreData.overallScore >= 80 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
-                  }`}>
-                    {atsScoreData.overallScore >= 80 ? 'EXCELLENT' : 'OPTIMIZING'}
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-500">
-                  {atsScoreData.detectedMetricsCount} KPIs • {atsScoreData.detectedVerbsCount} Action Verbs • {atsScoreData.matchedKeywords.length} Stack Keywords
-                </div>
-              </div>
-            </div>
-
-            <div className="text-right font-mono">
-              <span className="text-2xl font-black text-brand-600">{atsScoreData.overallScore}</span>
-              <span className="text-xs text-slate-400">/100</span>
-            </div>
-          </div>
-
-          {/* TAB 1: LIVE PREVIEW CONTAINER + DEDICATED DOWNLOAD ACTION HUB DIRECTLY BELOW */}
-          {activeRightTab === 'preview' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs no-print">
-                <span className="font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <Layout className="w-3.5 h-3.5 text-brand-600" />
-                  Live Resume Preview ({resumeData.templateId})
-                </span>
-                <span className="text-[11px] text-emerald-600 font-medium">100% Download Match</span>
-              </div>
-
-              {/* The Live Document Container */}
-              <div className="max-h-[650px] overflow-y-auto rounded-xl shadow-md border border-purple-100 bg-slate-100/70 p-2">
-                <ResumePreview resumeData={resumeData} />
-              </div>
-
-              {/* ======================================================== */}
-              {/* PRIMARY DOWNLOAD HUB — SITUATED DIRECTLY BELOW PREVIEW   */}
-              {/* ======================================================== */}
-              <Card className="p-4 border-purple-100 shadow-xl space-y-3 no-print">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Download className="w-4 h-4 text-brand-600" />
-                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                      Export & Download Document
-                    </span>
-                  </div>
-                  {!isAuthenticated ? (
-                    <span className="text-[11px] text-amber-700 flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                      <Lock className="w-3 h-3 text-amber-600" />
-                      Sign in required to export
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-emerald-600 flex items-center gap-1 font-medium">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Account Synced
-                    </span>
-                  )}
-                </div>
-
-                {/* Primary Download Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={handleDownloadPDF}
-                    isLoading={isExportingPdf}
-                    className="w-full justify-center shadow-lg shadow-brand-500/20 py-2.5 font-bold text-xs"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download ATS PDF (100% Match)
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={handlePrintToPDF}
-                    className="w-full justify-center py-2.5 text-xs font-semibold text-sky-700 border-sky-200 bg-sky-50/70 hover:bg-sky-100/80"
-                  >
-                    <Printer className="w-4 h-4 text-sky-600" />
-                    Print / Vector PDF
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleDownloadDOCX}
-                    isLoading={isExportingDocx}
-                    className="w-full justify-center text-xs font-medium text-indigo-700 border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100/80"
-                  >
-                    <FileSpreadsheet className="w-4 h-4 text-indigo-600" />
-                    Download Word (.docx)
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleSaveToCloud}
-                    className="w-full justify-center text-xs font-medium text-emerald-700 border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100/80"
-                  >
-                    <Save className="w-4 h-4 text-emerald-600" />
-                    Save & Sync Cloud
-                  </Button>
-                </div>
-
-                <div className="pt-2 border-t border-purple-100 flex items-center justify-between text-[11px] text-slate-500">
-                  <span>📄 Generates exact replica of the preview</span>
-                  <span>ATS Parsable Single-Column</span>
-                </div>
-              </Card>
-            </div>
-          )}
-
-          {/* TAB 2: DETAILED ATS BREAKDOWN */}
-          {activeRightTab === 'ats-breakdown' && (
-            <Card className="p-5 border-purple-100 shadow-xl space-y-4 no-print">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-brand-600" />
-                  Algorithmic ATS Compliance Breakdown
+          {/* ATS Compatibility Meter */}
+          {atsScoreData && (
+            <Card className="p-6 border-brand-500/30 bg-slate-900/90 shadow-xl">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-brand-400" />
+                  ATS Compatibility Meter
                 </h3>
+                <span className="text-2xl font-black text-brand-400 font-mono">
+                  {atsScoreData.overallScore}<span className="text-sm text-slate-500">/100</span>
+                </span>
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-2.5 bg-purple-100/70 rounded-full overflow-hidden border border-purple-200/60">
+              <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden mb-4 border border-slate-800">
                 <div 
-                  className="h-full bg-gradient-to-r from-brand-600 via-purple-500 to-emerald-500 transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-brand-500 via-sky-400 to-emerald-400 transition-all duration-500"
                   style={{ width: `${atsScoreData.overallScore}%` }}
                 />
               </div>
 
-              {/* 5-Metric Breakdown */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
-                  <span className="text-slate-500 block text-[10px]">Contact Info Extraction</span>
-                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.contactCompleteness}/15</span>
+              {/* Breakdown Grid */}
+              <div className="grid grid-cols-2 gap-2 text-xs mb-4">
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[10px]">Section Completeness</span>
+                  <span className="font-semibold text-white">{atsScoreData.scoreBreakdown.sectionCompleteness}/25</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
-                  <span className="text-slate-500 block text-[10px]">Section Structure</span>
-                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.sectionCompleteness}/15</span>
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[10px]">Keyword Relevance</span>
+                  <span className="font-semibold text-white">{atsScoreData.scoreBreakdown.keywordRelevance}/25</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
-                  <span className="text-slate-500 block text-[10px]">Skills Match & Density</span>
-                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.skillsMatch}/25</span>
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[10px]">Skills Depth</span>
+                  <span className="font-semibold text-white">{atsScoreData.scoreBreakdown.skillsMatch}/25</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-purple-50/40 border border-purple-100">
-                  <span className="text-slate-500 block text-[10px]">Role Keyword Alignment</span>
-                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.keywordRelevance}/25</span>
-                </div>
-                <div className="col-span-2 p-2.5 rounded-lg bg-purple-50/40 border border-purple-100 flex justify-between items-center">
-                  <div>
-                    <span className="text-slate-500 block text-[10px]">Action Verbs & Quantified Metrics (Google X-Y-Z)</span>
-                    <span className="text-[11px] text-brand-700 font-medium">{atsScoreData.detectedVerbsCount} strong verbs • {atsScoreData.detectedMetricsCount} quantified impact numbers</span>
-                  </div>
-                  <span className="font-bold text-slate-900 text-sm">{atsScoreData.scoreBreakdown.actionVerbsAndMetrics}/20</span>
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[10px]">Structure & Format</span>
+                  <span className="font-semibold text-white">{atsScoreData.scoreBreakdown.structureAndHeadings + atsScoreData.scoreBreakdown.formattingAndImpact}/25</span>
                 </div>
               </div>
 
-              {/* Matched Keywords */}
-              <div>
-                <div className="text-[11px] font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
-                  <span>Detected Role Keywords ({atsScoreData.matchedKeywords.length}):</span>
-                  <span className="text-[10px] text-emerald-600 font-medium">Passes ATS Filter</span>
-                </div>
+              {/* Matched / Missing Keywords */}
+              <div className="space-y-2 mb-4">
+                <div className="text-[11px] font-semibold text-slate-300">Detected High-Impact Keywords:</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {atsScoreData.matchedKeywords.map((kw, i) => (
+                  {atsScoreData.matchedKeywords.slice(0, 8).map((kw, i) => (
                     <Badge key={i} variant="success" size="sm">✓ {kw}</Badge>
                   ))}
+                  {atsScoreData.missingKeywords.slice(0, 4).map((kw, i) => (
+                    <Badge key={i} variant="danger" size="sm">+ {kw}</Badge>
+                  ))}
                 </div>
               </div>
 
-              {/* Missing High-Frequency Keywords with 1-click Add */}
-              {atsScoreData.missingKeywords.length > 0 && (
-                <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200/80">
-                  <div className="text-[11px] font-semibold text-amber-800 mb-1.5 flex items-center justify-between">
-                    <span>Missing High-Impact Keywords (Click to add):</span>
-                    <span className="text-[10px] text-amber-700 font-medium">Boosts Score</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {atsScoreData.missingKeywords.slice(0, 8).map((kw, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => handleAddMissingKeyword(kw)}
-                        className="text-[10px] px-2 py-1 rounded bg-white border border-amber-300 text-amber-800 hover:bg-amber-100/80 transition-colors flex items-center gap-1 shadow-sm font-medium"
-                      >
-                        <Plus className="w-3 h-3" /> {kw}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Recommendations */}
-              {atsScoreData.recommendations.length > 0 && (
-                <div className="space-y-1.5">
-                  <div className="text-[11px] font-semibold text-slate-700">Actionable ATS Suggestions:</div>
-                  {atsScoreData.recommendations.map((rec, i) => (
-                    <div key={i} className="text-[11px] text-slate-600 flex items-start gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-brand-600 shrink-0 mt-0.5" />
-                      <span>{rec}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <p className="text-[10px] text-slate-500 italic border-t border-purple-100 pt-2">
+              <p className="text-[10px] text-slate-400 italic border-t border-slate-800/80 pt-3">
                 {atsScoreData.disclaimer}
               </p>
             </Card>
           )}
 
-          {/* TAB 3: RAW ATS TEXT STREAM (PARSER SIMULATOR) */}
-          {activeRightTab === 'raw-ats-parser' && (
-            <Card className="p-4 border-purple-100 shadow-xl space-y-3 no-print">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <Code2 className="w-3.5 h-3.5 text-brand-600" />
-                    Simulated ATS Text Extractor
-                  </h3>
-                  <p className="text-[10px] text-slate-500">
-                    This represents exactly how automated parsers (Workday, Taleo, Greenhouse) read your plain text.
-                  </p>
+          {/* Live Single-Column ATS Resume Preview Container */}
+          <div className="sticky top-20">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-brand-400" />
+                Live Single-Column ATS Preview ({resumeData.templateId})
+              </span>
+              <span className="text-[11px] text-emerald-400 font-medium">Parsable Layout</span>
+            </div>
+
+            <div className="bg-white text-slate-900 rounded-xl p-8 shadow-2xl border border-slate-300 font-sans text-xs leading-relaxed max-h-[700px] overflow-y-auto">
+              
+              {/* Header */}
+              <div className="text-center pb-4 border-b border-slate-300">
+                <h2 className="text-lg font-bold tracking-tight text-slate-900 uppercase">
+                  {resumeData.personalInfo.fullName || 'Candidate Name'}
+                </h2>
+                <div className="text-[11px] text-slate-600 mt-1 flex flex-wrap justify-center gap-2">
+                  <span>{resumeData.personalInfo.email}</span>
+                  <span>•</span>
+                  <span>{resumeData.personalInfo.phone}</span>
+                  <span>•</span>
+                  <span>{resumeData.personalInfo.location}</span>
                 </div>
-                <Button variant="secondary" size="sm" onClick={handleCopyRawATS} className="text-xs">
-                  {copiedText ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-600" />}
-                  {copiedText ? 'Copied!' : 'Copy Text'}
-                </Button>
+                {(resumeData.personalInfo.linkedin || resumeData.personalInfo.github) && (
+                  <div className="text-[10px] text-slate-500 mt-0.5 flex justify-center gap-2">
+                    {resumeData.personalInfo.linkedin && <span>{resumeData.personalInfo.linkedin}</span>}
+                    {resumeData.personalInfo.github && <span>• {resumeData.personalInfo.github}</span>}
+                  </div>
+                )}
               </div>
 
-              <pre className="p-3 bg-slate-950 border border-slate-800 rounded-lg text-[10px] font-mono text-emerald-400 max-h-[550px] overflow-y-auto whitespace-pre-wrap leading-relaxed select-text shadow-inner">
-                {atsScoreData.rawTextPreview}
-              </pre>
-            </Card>
-          )}
+              {/* Summary */}
+              {resumeData.professionalSummary && (
+                <div className="mt-4">
+                  <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5 mb-1.5">
+                    Professional Summary
+                  </h4>
+                  <p className="text-[11px] text-slate-700 leading-normal">
+                    {resumeData.professionalSummary}
+                  </p>
+                </div>
+              )}
+
+              {/* Technical Skills */}
+              <div className="mt-4">
+                <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5 mb-1.5">
+                  Technical Skills
+                </h4>
+                <div className="space-y-1 text-[11px] text-slate-700">
+                  {resumeData.skills.programmingLanguages.length > 0 && (
+                    <p><strong className="text-slate-900">Languages:</strong> {resumeData.skills.programmingLanguages.join(', ')}</p>
+                  )}
+                  {resumeData.skills.frameworks.concat(resumeData.skills.libraries || []).length > 0 && (
+                    <p><strong className="text-slate-900">Frameworks & Libraries:</strong> {resumeData.skills.frameworks.concat(resumeData.skills.libraries || []).join(', ')}</p>
+                  )}
+                  {resumeData.skills.databases.concat(resumeData.skills.cloud || []).length > 0 && (
+                    <p><strong className="text-slate-900">Databases & Cloud:</strong> {resumeData.skills.databases.concat(resumeData.skills.cloud || []).join(', ')}</p>
+                  )}
+                  {resumeData.skills.tools.concat(resumeData.skills.otherTechnologies || []).length > 0 && (
+                    <p><strong className="text-slate-900">Tools & Methodologies:</strong> {resumeData.skills.tools.concat(resumeData.skills.otherTechnologies || []).join(', ')}</p>
+                  )}
+                  {resumeData.softSkills && resumeData.softSkills.length > 0 && (
+                    <p><strong className="text-slate-900">Soft Skills & Competencies:</strong> {resumeData.softSkills.join(', ')}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Projects */}
+              {resumeData.projects.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5 mb-1.5">
+                    Technical Projects
+                  </h4>
+                  <div className="space-y-2.5">
+                    {resumeData.projects.map((proj, idx) => (
+                      <div key={idx} className="text-[11px]">
+                        <div className="flex justify-between font-bold text-slate-900">
+                          <span>{proj.title}</span>
+                          <span className="font-normal italic text-slate-600">{proj.technologies.join(', ')}</span>
+                        </div>
+                        {proj.description && <p className="text-slate-700 mt-0.5">{proj.description}</p>}
+                        <ul className="list-disc list-inside text-slate-700 mt-0.5 space-y-0.5">
+                          {proj.responsibilities.map((r, ri) => (
+                            <li key={ri}>{r}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Experience */}
+              {resumeData.experience.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5 mb-1.5">
+                    Work Experience
+                  </h4>
+                  <div className="space-y-2">
+                    {resumeData.experience.map((exp, idx) => (
+                      <div key={idx} className="text-[11px]">
+                        <div className="flex justify-between font-bold text-slate-900">
+                          <span>{exp.role} — {exp.company}</span>
+                          <span className="font-normal text-slate-600">{exp.startDate} - {exp.current ? 'Present' : exp.endDate}</span>
+                        </div>
+                        <ul className="list-disc list-inside text-slate-700 mt-0.5 space-y-0.5">
+                          {exp.responsibilities.map((r, ri) => (
+                            <li key={ri}>{r}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Education */}
+              {resumeData.education.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-0.5 mb-1.5">
+                    Education
+                  </h4>
+                  <div className="space-y-1 text-[11px]">
+                    {resumeData.education.map((edu, idx) => (
+                      <div key={idx} className="flex justify-between">
+                        <div>
+                          <strong className="text-slate-900">{edu.degree}</strong>, {edu.institution}
+                          {edu.cgpaOrPercentage && <span className="text-slate-600"> (CGPA: {edu.cgpaOrPercentage})</span>}
+                        </div>
+                        <span className="text-slate-600">{edu.endYear}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
 
         </div>
 

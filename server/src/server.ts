@@ -1,8 +1,14 @@
+import dns from 'dns';
+// Set public DNS resolvers to handle SRV lookups on Windows
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
+} catch (e) {}
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { ENV } from './config/env';
-import { connectDB } from './config/db';
+import { connectDB, isDbConnected } from './config/db';
 import { globalLimiter } from './middleware/rateLimiter';
 import { errorHandler } from './middleware/error.middleware';
 
@@ -36,7 +42,7 @@ app.get('/api/health', (_req, res) => {
     success: true,
     message: 'Skill2Hire Backend API is operating normally.',
     timestamp: new Date().toISOString(),
-    database: 'MongoDB Atlas Cloud'
+    database: isDbConnected ? 'MongoDB Atlas Cloud' : 'Local High-Resilience Storage'
   });
 });
 
@@ -53,25 +59,14 @@ app.use(errorHandler);
 
 // Start Server & Connect Database
 const startServer = async () => {
-  const server = app.listen(ENV.PORT, () => {
+  await connectDB();
+  
+  app.listen(ENV.PORT, () => {
     console.log(`============================================================`);
     console.log(`🚀 Skill2Hire Backend Server running on port ${ENV.PORT}`);
     console.log(`📡 Client Origin allowed: ${ENV.CLIENT_URL}`);
-    console.log(`🍃 Database configured: MongoDB Atlas`);
+    console.log(`🍃 Database mode: ${isDbConnected ? 'MongoDB Atlas Cloud' : 'Local Resilient Storage'}`);
     console.log(`============================================================`);
-  });
-
-  server.on('error', (err: any) => {
-    if (err.code === 'EADDRINUSE') {
-      console.error(`\n⚠️ [Port Conflict]: Port ${ENV.PORT} is already in use by an active process.`);
-      console.error(`👉 Quick Fix: Close any previous terminal or run: npx kill-port ${ENV.PORT}\n`);
-    } else {
-      console.error('[Server Error]:', err);
-    }
-  });
-
-  connectDB().catch(err => {
-    console.error('[MongoDB Atlas Connect Error]:', err);
   });
 };
 

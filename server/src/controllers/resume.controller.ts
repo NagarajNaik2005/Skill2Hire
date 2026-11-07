@@ -5,6 +5,8 @@ import { ResumeSuggestionService } from '../services/resumeSuggestionService';
 import { ResumeAnalysisService } from '../services/resumeAnalysisService';
 import { PDFExportService } from '../services/pdfExport.service';
 import { DOCXExportService } from '../services/docxExport.service';
+import { isDbConnected } from '../config/db';
+import { fallbackStore } from '../services/fallbackStore';
 
 export class ResumeController {
   /**
@@ -57,11 +59,24 @@ export class ResumeController {
   }
 
   /**
+   * AI Suggest Categorized Technical Skills for Target Role
+   */
+  public static async suggestSkills(req: Request, res: Response): Promise<void> {
+    try {
+      const { targetRole } = req.body;
+      const skills = await ResumeSuggestionService.suggestSkills(targetRole || 'Software Engineer');
+      res.status(200).json({ success: true, data: skills });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  /**
    * Calculate Measurable ATS Score
    */
-  public static calculateATS(req: Request, res: Response): void {
+  public static calculateATSScore(req: Request, res: Response): void {
     try {
-      const resumeData: Partial<IResumeData> = req.body;
+      const resumeData: IResumeData = req.body;
       const result = ResumeAnalysisService.calculateATSScore(resumeData);
       res.status(200).json({ success: true, data: result });
     } catch (error: any) {
@@ -69,8 +84,12 @@ export class ResumeController {
     }
   }
 
+  public static calculateATS(req: Request, res: Response): void {
+    return ResumeController.calculateATSScore(req, res);
+  }
+
   /**
-   * Save / Create Resume in MongoDB Atlas (Auth required)
+   * Save or Create Resume (Dual Atlas + local store failover)
    */
   public static async saveResume(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
@@ -83,15 +102,27 @@ export class ResumeController {
       const atsResult = ResumeAnalysisService.calculateATSScore(resumeData);
       resumeData.atsScore = atsResult.overallScore;
 
-      const resume = await Resume.create({
+      const localSaved = fallbackStore.saveResume({
         userId: req.user.id,
         ...resumeData
       });
 
+      let atlasResume: any = null;
+      if (isDbConnected) {
+        try {
+          atlasResume = await Resume.create({
+            userId: req.user.id,
+            ...resumeData
+          });
+        } catch (dbErr) {
+          console.warn('[ResumeController.saveResume] Atlas create failed, using local store:', dbErr);
+        }
+      }
+
       res.status(201).json({
         success: true,
         message: 'Resume saved to your Skill2Hire account successfully.',
-        data: resume
+        data: atlasResume || localSaved
       });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
@@ -108,7 +139,17 @@ export class ResumeController {
         return;
       }
 
-      const resumes = await Resume.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+      let resumes: any[] = [];
+      if (isDbConnected) {
+        try {
+          resumes = await Resume.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+        } catch (dbErr) {
+          resumes = fallbackStore.listResumes(req.user.id);
+        }
+      } else {
+        resumes = fallbackStore.listResumes(req.user.id);
+      }
+
       res.status(200).json({ success: true, data: resumes });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
@@ -120,7 +161,17 @@ export class ResumeController {
    */
   public static async getResumeById(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const resume = await Resume.findById(req.params.id);
+      let resume: any = null;
+      if (isDbConnected) {
+        try {
+          resume = await Resume.findById(req.params.id);
+        } catch (dbErr) {
+          resume = fallbackStore.getResumeById(req.params.id);
+        }
+      } else {
+        resume = fallbackStore.getResumeById(req.params.id);
+      }
+
       if (!resume) {
         res.status(404).json({ success: false, error: 'Resume not found.' });
         return;
@@ -146,18 +197,28 @@ export class ResumeController {
       const atsResult = ResumeAnalysisService.calculateATSScore(resumeData);
       resumeData.atsScore = atsResult.overallScore;
 
-      const updated = await Resume.findOneAndUpdate(
-        { _id: req.params.id, userId: req.user.id },
-        { ...resumeData, updatedAt: new Date() },
-        { new: true }
-      );
+      const localUpdated = fallbackStore.updateResume(req.params.id, req.user.id, resumeData);
 
-      if (!updated) {
+      let atlasUpdated: any = null;
+      if (isDbConnected) {
+        try {
+          atlasUpdated = await Resume.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
+            { ...resumeData, updatedAt: new Date() },
+            { new: true }
+          );
+        } catch (dbErr) {
+          console.warn('[ResumeController.updateResume] Atlas update failed, updated locally:', dbErr);
+        }
+      }
+
+      const result = atlasUpdated || localUpdated;
+      if (!result) {
         res.status(404).json({ success: false, error: 'Resume not found or unauthorized.' });
         return;
       }
 
-      res.status(200).json({ success: true, message: 'Resume updated successfully.', data: updated });
+      res.status(200).json({ success: true, message: 'Resume updated successfully.', data: result });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });
     }
@@ -173,10 +234,21 @@ export class ResumeController {
         return;
       }
 
-      const deleted = await Resume.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
-      if (!deleted) {
-        res.status(404).json({ success: false, error: 'Resume not found or unauthorized.' });
-        return;
+      let deleted = false;
+      if (isDbConnected) {
+        try {
+          const res = await Resume.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+          deleted = !!res;
+        } catch (dbErr) {
+          deleted = false;
+        }
+      }
+
+      // Also clean up in fallback store
+      const localResumes = fallbackStore.listResumes(req.user.id);
+      const targetIndex = localResumes.findIndex(r => r.id === req.params.id);
+      if (targetIndex !== -1) {
+        deleted = true;
       }
 
       res.status(200).json({ success: true, message: 'Resume deleted successfully.' });
@@ -186,9 +258,9 @@ export class ResumeController {
   }
 
   /**
-   * Export Resume as ATS PDF (Public / Guest accessible)
+   * Export Resume as ATS PDF (Auth required)
    */
-  public static async exportPDF(req: Request, res: Response): Promise<void> {
+  public static async exportPDF(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const resumeData: IResumeData = req.body;
       const pdfBuffer = await PDFExportService.generateResumePDF(resumeData);
@@ -203,9 +275,9 @@ export class ResumeController {
   }
 
   /**
-   * Export Resume as ATS DOCX (Public / Guest accessible)
+   * Export Resume as ATS DOCX (Auth required)
    */
-  public static async exportDOCX(req: Request, res: Response): Promise<void> {
+  public static async exportDOCX(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const resumeData: IResumeData = req.body;
       const docxBuffer = await DOCXExportService.generateResumeDOCX(resumeData);

@@ -58,11 +58,6 @@ export class AIService {
     userPrompt: string,
     fallbackData: T
   ): Promise<T> {
-    if (!ENV.OPENAI_API_KEY) {
-      console.info('[AIService] Running in local/offline mode, using high-fidelity contextual data generator.');
-      return fallbackData;
-    }
-
     const messages: ChatMessage[] = [
       {
         role: 'system',
@@ -83,8 +78,7 @@ export class AIService {
         .replace(/```\s*$/i, '')
         .trim();
 
-      const parsed = JSON.parse(cleaned) as T;
-      return { ...fallbackData, ...parsed };
+      return JSON.parse(cleaned) as T;
     } catch (parseError) {
       console.warn('[AIService] Failed to parse AI JSON response, utilizing fallback data.');
       return fallbackData;
@@ -108,7 +102,18 @@ export class AIService {
       });
     }
 
-    if (lastUserMessage.includes('tailor') || lastUserMessage.includes('tailored')) {
+    if (lastUserMessage.includes('skills across') || lastUserMessage.includes('recommend modern') || lastUserMessage.includes('target job role')) {
+      return JSON.stringify({
+        programmingLanguages: ['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL'],
+        frameworks: ['React', 'Node.js', 'Express', 'Next.js', 'Tailwind CSS'],
+        databases: ['PostgreSQL', 'MongoDB Atlas', 'Redis'],
+        cloud: ['AWS (S3, Lambda, EC2)', 'Docker'],
+        tools: ['Git', 'GitHub Actions', 'Postman', 'VS Code'],
+        otherTechnologies: ['RESTful APIs', 'Microservices Architecture', 'CI/CD']
+      });
+    }
+
+    if (lastUserMessage.includes('tailor') || lastUserMessage.includes('tailored') || lastUserMessage.includes('zero fake skills')) {
       return JSON.stringify({
         tailoredSummary: 'Results-driven software engineer with proven expertise in building high-scale full stack web applications and REST APIs. Adept at leveraging modern frameworks, database optimization, and agile delivery to drive measurable business outcomes.',
         tailoredBullets: [
@@ -120,12 +125,12 @@ export class AIService {
         changesSummary: [
           'Emphasized high-impact metrics (Google X-Y-Z formula)',
           'Aligned technical keywords with target job description requirements',
-          'Identified missing infrastructure skills as dedicated skill gaps'
+          'Identified missing infrastructure skills as dedicated candidate skill gaps'
         ]
       });
     }
 
-    if (lastUserMessage.includes('interview') || lastUserMessage.includes('technical')) {
+    if (lastUserMessage.includes('interview') || lastUserMessage.includes('candidate answer') || lastUserMessage.includes('mock interview')) {
       return JSON.stringify({
         feedback: 'Your answer explains the core concept well. To make it stand out, discuss trade-offs between memory efficiency and execution time.',
         score: 82,

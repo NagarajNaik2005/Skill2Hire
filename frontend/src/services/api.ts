@@ -30,24 +30,5 @@ export const getErrorMessage = (error: any): string => {
     }
     return JSON.stringify(error.response.data.error);
   }
-  if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
-    return 'Unable to reach backend server. Please verify that the backend API server is running on port 5000.';
-  }
   return error.message || 'An unexpected error occurred. Please try again.';
-};
-
-// Helper for requests expecting blobs where error payload may be a Blob containing JSON
-export const getBlobErrorMessage = async (error: any): Promise<string> => {
-  if (error?.response?.data instanceof Blob) {
-    try {
-      const text = await error.response.data.text();
-      const parsed = JSON.parse(text);
-      if (parsed?.error) {
-        return typeof parsed.error === 'string' ? parsed.error : JSON.stringify(parsed.error);
-      }
-    } catch {
-      // not a JSON blob, fallback below
-    }
-  }
-  return getErrorMessage(error);
 };

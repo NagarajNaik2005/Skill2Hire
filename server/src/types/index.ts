@@ -96,27 +96,6 @@ export interface IResumeData {
   languages: string[];
   professionalSummary: string;
   atsScore?: number;
-  isAtsCompliant?: boolean;
-  atsFormatStatus?: 'preserved' | 'converted';
-}
-
-export interface IATSScoreBreakdown {
-  overallScore: number;
-  scoreBreakdown: {
-    contactCompleteness: number;
-    sectionCompleteness: number;
-    skillsMatch: number;
-    keywordRelevance: number;
-    actionVerbsAndMetrics: number;
-  };
-  matchedKeywords: string[];
-  missingKeywords: string[];
-  sectionIssues: string[];
-  recommendations: string[];
-  detectedMetricsCount: number;
-  detectedVerbsCount: number;
-  rawTextPreview: string;
-  disclaimer: string;
 }
 
 export interface IJob {

@@ -89,26 +89,21 @@ export interface IResumeData {
   professionalSummary: string;
   atsScore?: number;
   updatedAt?: string;
-  isAtsCompliant?: boolean;
-  atsFormatStatus?: 'preserved' | 'converted';
 }
 
 export interface IATSScoreBreakdown {
   overallScore: number;
   scoreBreakdown: {
-    contactCompleteness: number;
     sectionCompleteness: number;
-    skillsMatch: number;
     keywordRelevance: number;
-    actionVerbsAndMetrics: number;
+    skillsMatch: number;
+    structureAndHeadings: number;
+    formattingAndImpact: number;
   };
   matchedKeywords: string[];
   missingKeywords: string[];
   sectionIssues: string[];
   recommendations: string[];
-  detectedMetricsCount: number;
-  detectedVerbsCount: number;
-  rawTextPreview: string;
   disclaimer: string;
 }
 
@@ -123,8 +118,6 @@ export interface ITailoredResume {
   missingKeywords: string[];
   skillGaps: string[];
   changesSummary: string[];
-  isAtsCompliant?: boolean;
-  atsFormatStatus?: 'preserved' | 'converted';
   createdAt?: string;
 }
 
@@ -140,8 +133,6 @@ export interface ITailoredResumeRecord {
   missingKeywords: string[];
   skillGaps: string[];
   changesSummary: string[];
-  isAtsCompliant?: boolean;
-  atsFormatStatus?: 'preserved' | 'converted';
   createdAt?: string;
 }
 
