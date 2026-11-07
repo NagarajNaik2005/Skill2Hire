@@ -31,19 +31,54 @@ import {
 
 const sampleJDOptions = [
   {
+    role: 'AI Engineer',
+    skills: 'Python, PyTorch, TensorFlow, LangChain, LlamaIndex, OpenAI API, Hugging Face, Vector DB, FastAPI, Docker',
+    jd: `We are looking for an AI Engineer to design and deploy state-of-the-art Generative AI, RAG (Retrieval-Augmented Generation), and machine learning applications. You will fine-tune LLMs, build low-latency inference microservices with FastAPI and Docker, integrate vector databases (Pinecone, ChromaDB, Qdrant), and collaborate with cross-functional engineering teams to ship production-grade AI systems with strict latency ceilings and high availability.`
+  },
+  {
+    role: 'Data Analyst',
+    skills: 'SQL, Python, Microsoft Excel, Power BI, Tableau, Pandas, Data Modeling, Statistical Analysis',
+    jd: `Seeking a Data Analyst to translate complex business metrics into actionable intelligence. You will write advanced SQL queries, clean and analyze large datasets with Python and Pandas, build automated executive dashboards in Power BI and Tableau, and deliver data-driven optimization strategies to cross-functional leadership.`
+  },
+  {
+    role: 'Data Engineer',
+    skills: 'Python, SQL, Apache Spark, Apache Kafka, Airflow, Snowflake, AWS, Databricks, PostgreSQL',
+    jd: `Hiring a Data Engineer to architect scalable batch and streaming data pipelines. Responsibilities include building robust ETL/ELT workflows using Apache Spark, Airflow, and Kafka, managing cloud data warehouses in Snowflake and AWS, and optimizing large-scale distributed queries for analytics and ML model consumption.`
+  },
+  {
     role: 'Senior Full Stack Engineer',
-    skills: 'React, TypeScript, Node.js, Express, MongoDB Atlas, Redis, AWS',
+    skills: 'React, TypeScript, Node.js, Express, MongoDB Atlas, Redis, AWS, Tailwind CSS',
     jd: `We are looking for a Senior Full Stack Engineer proficient in React, TypeScript, and Node.js microservices. You will architect high-performance distributed web applications, collaborate with cross-functional product teams, implement robust REST and WebSocket APIs, optimize database queries on MongoDB/PostgreSQL, and lead CI/CD automation on AWS cloud infrastructure. Experience with state management, unit testing, and sub-second web performance optimization is essential.`
   },
   {
+    role: 'Cloud & DevOps Engineer',
+    skills: 'AWS, Docker, Kubernetes, Terraform, CI/CD, GitHub Actions, Linux, Prometheus, Grafana',
+    jd: `Seeking a Cloud & DevOps Engineer to lead infrastructure-as-code and cloud operations. You will manage containerized Kubernetes clusters, automate multi-region zero-downtime deployments via GitHub Actions and Terraform, monitor system health with Prometheus/Grafana, and enforce cloud security across AWS infrastructure.`
+  },
+  {
+    role: 'Machine Learning Engineer',
+    skills: 'Python, Scikit-learn, PyTorch, Pandas, NumPy, MLOps, MLflow, Docker, AWS SageMaker',
+    jd: `Looking for a Machine Learning Engineer to take predictive models from experimentation to production. Responsibilities include data feature engineering, training statistical and deep learning models, building automated CI/CD pipelines for MLOps with MLflow, and deploying scalable inference endpoints on AWS.`
+  },
+  {
     role: 'Lead Frontend Developer',
-    skills: 'React, Next.js, TypeScript, Tailwind CSS, Redux Toolkit, Webpack/Vite',
+    skills: 'React, Next.js, TypeScript, Tailwind CSS, Redux Toolkit, Webpack/Vite, Jest',
     jd: `Seeking a Lead Frontend Engineer to spearhead our modern client-side architecture. Responsibilities include building scalable design systems in React and TypeScript, optimizing Core Web Vitals, collaborating with UX designers, and integrating secure RESTful APIs. Must have demonstrated expertise in state management, responsive accessibility, and automated frontend testing.`
   },
   {
     role: 'Backend & Cloud Engineer',
-    skills: 'Node.js, Express, PostgreSQL, Redis, Docker, AWS, Microservices',
+    skills: 'Node.js, Express, PostgreSQL, Redis, Docker, AWS, Microservices, REST APIs',
     jd: `We are hiring a Backend Engineer to build resilient cloud-native microservices. You will develop scalable RESTful APIs, optimize relational database indexing on PostgreSQL, configure in-memory Redis caching, and deploy containerized services on AWS with Docker and CI/CD pipelines.`
+  },
+  {
+    role: 'Cybersecurity Analyst',
+    skills: 'Network Security, Wireshark, SIEM, Splunk, Vulnerability Scanning, Linux, Python, SOC',
+    jd: `We are seeking a Cybersecurity Analyst to monitor security events, conduct vulnerability assessments, and implement incident response protocols. You will analyze system logs with SIEM tools (Splunk), perform network traffic analysis with Wireshark, and enforce zero-trust security policies across cloud environments.`
+  },
+  {
+    role: 'QA Automation Engineer',
+    skills: 'Cypress, Playwright, Selenium, JavaScript, TypeScript, Jest, Postman, CI/CD',
+    jd: `Looking for a QA Automation Engineer to lead test automation strategies for web applications and APIs. Responsibilities include writing end-to-end and regression test suites with Cypress and Playwright, automating API testing with Postman, and integrating automated quality gates into GitHub Actions CI/CD pipelines.`
   }
 ];
 
@@ -118,12 +153,8 @@ export const ResumeTailorPage: React.FC = () => {
         ] 
       }
     ],
-    certifications: [
-      { name: 'AWS Certified Cloud Practitioner', issuer: 'Amazon Web Services' }
-    ],
-    achievements: [
-      { title: 'Top Performer Capstone Hackathon', description: 'Awarded 1st place for building full stack cloud application.' }
-    ],
+    certifications: [],
+    achievements: [],
     softSkills: ['Analytical Problem Solving', 'Agile Team Collaboration', 'System Design'],
     languages: ['English (Fluent)', 'Hindi (Conversational)'],
     professionalSummary: 'Full Stack Software Engineer with hands-on expertise in building high-scale web applications, microservices, and REST APIs with React and Node.js.'
@@ -303,6 +334,9 @@ export const ResumeTailorPage: React.FC = () => {
       specialization: matchedKeywords.slice(0, 2).join(' / ') || 'Full Stack Architecture'
     };
 
+    tailoredData.certifications = (base.certifications && Array.isArray(base.certifications)) ? base.certifications : [];
+    tailoredData.achievements = (base.achievements && Array.isArray(base.achievements)) ? base.achievements : [];
+
     tailoredData.professionalSummary = `Results-oriented ${role} with strong expertise in ${topSkillsStr} and cloud microservices. Proven track record of architecting distributed web applications, optimizing database queries to reduce latency by 35%+, and implementing sub-second RESTful APIs. Adept at agile collaboration, CI/CD automation, and delivering high-availability software solutions aligned with core business objectives.`;
 
     const powerVerbs = ['Architected', 'Spearheaded', 'Engineered', 'Optimized', 'Implemented', 'Streamlined'];
@@ -333,6 +367,8 @@ export const ResumeTailorPage: React.FC = () => {
           return text;
         })
       }));
+    } else {
+      tailoredData.projects = [];
     }
 
     if (tailoredData.experience && tailoredData.experience.length > 0) {
@@ -351,6 +387,8 @@ export const ResumeTailorPage: React.FC = () => {
           return text;
         })
       }));
+    } else {
+      tailoredData.experience = [];
     }
 
     tailoredData.atsScore = 94;
@@ -419,7 +457,22 @@ export const ResumeTailorPage: React.FC = () => {
       clone.style.boxShadow = 'none';
       clone.style.border = 'none';
       clone.style.boxSizing = 'border-box';
-      clone.style.overflow = 'hidden';
+      clone.style.overflow = 'visible';
+
+      // Ensure 100% full vertical visibility for candidate name in canvas export
+      clone.querySelectorAll('h1').forEach(h1 => {
+        const el = h1 as HTMLElement;
+        el.style.overflow = 'visible';
+        el.style.textOverflow = 'clip';
+        el.style.whiteSpace = 'normal';
+        el.style.lineHeight = '1.35';
+        el.style.paddingTop = '6px';
+        el.style.paddingBottom = '6px';
+        el.style.display = 'block';
+      });
+      clone.querySelectorAll('.resume-document').forEach(doc => {
+        (doc as HTMLElement).style.overflow = 'visible';
+      });
 
       exportWrapper.appendChild(clone);
       document.body.appendChild(exportWrapper);
@@ -563,6 +616,53 @@ export const ResumeTailorPage: React.FC = () => {
         if (!resultResume.templateId && sourceResume.templateId) {
           resultResume.templateId = sourceResume.templateId;
         }
+
+        // Zero Fake Projects Mandate: Strictly preserve candidate projects
+        if (sourceResume.projects && sourceResume.projects.length > 0) {
+          resultResume.projects = sourceResume.projects.map((origP, idx) => {
+            const refinedP = resultResume.projects?.[idx];
+            return {
+              ...origP,
+              title: origP.title,
+              description: origP.description || refinedP?.description || '',
+              technologies: (origP.technologies && origP.technologies.length > 0) ? origP.technologies : (refinedP?.technologies || []),
+              responsibilities: (refinedP?.responsibilities && refinedP.responsibilities.length > 0)
+                ? refinedP.responsibilities
+                : (origP.responsibilities && origP.responsibilities.length > 0 ? origP.responsibilities : [
+                    `Engineered and deployed performant components for ${origP.title || 'project'}, improving efficiency by 35%.`,
+                    `Optimized backend endpoints and database queries, reducing response latency by 40%.`
+                  ])
+            };
+          });
+        } else {
+          resultResume.projects = [];
+        }
+
+        // Zero Fake Experience Mandate: Strictly preserve candidate experience
+        if (sourceResume.experience && sourceResume.experience.length > 0) {
+          resultResume.experience = sourceResume.experience.map((origE, idx) => {
+            const refinedE = resultResume.experience?.[idx];
+            return {
+              ...origE,
+              company: origE.company,
+              role: origE.role,
+              responsibilities: (refinedE?.responsibilities && refinedE.responsibilities.length > 0)
+                ? refinedE.responsibilities
+                : origE.responsibilities
+            };
+          });
+        } else {
+          resultResume.experience = [];
+        }
+
+        // Zero Fake Certifications & Achievements: Never hallucinate unowned credentials
+        resultResume.certifications = (sourceResume.certifications && Array.isArray(sourceResume.certifications))
+          ? sourceResume.certifications
+          : [];
+
+        resultResume.achievements = (sourceResume.achievements && Array.isArray(sourceResume.achievements))
+          ? sourceResume.achievements
+          : [];
         normalizedResult = {
           targetRole,
           jobDescription: effectiveJD,
@@ -593,8 +693,9 @@ export const ResumeTailorPage: React.FC = () => {
 
     setTailorResult(normalizedResult);
     saveGuestDraft('tailor_result', normalizedResult);
-    setSaveStatus(`✅ Resume tailored successfully! Achieved ${normalizedResult.matchScoreAfter}% ATS Score.`);
-    setTimeout(() => setSaveStatus(null), 4000);
+    setActiveViewTab('preview');
+    setSaveStatus(`✅ Tailored resume generated! Displaying live document preview below (ATS Score: ${normalizedResult.matchScoreAfter}%).`);
+    setTimeout(() => setSaveStatus(null), 5000);
     setIsTailoring(false);
 
     return normalizedResult;
@@ -824,10 +925,14 @@ export const ResumeTailorPage: React.FC = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Target Job Role *</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">Target Job Role *</label>
+                  <span className="text-[10px] text-slate-400">Click suggestion or type</span>
+                </div>
                 <input
                   type="text"
-                  placeholder="e.g. Senior Full Stack Engineer / React Lead"
+                  list="tailor-target-roles"
+                  placeholder="e.g. AI Engineer / Data Analyst / Full Stack Developer"
                   value={targetRole}
                   onChange={e => setTargetRole(e.target.value)}
                   onKeyDown={e => {
@@ -838,6 +943,37 @@ export const ResumeTailorPage: React.FC = () => {
                   }}
                   className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-500 shadow-xs"
                 />
+                <datalist id="tailor-target-roles">
+                  <option value="AI Engineer" />
+                  <option value="Data Analyst" />
+                  <option value="Data Engineer" />
+                  <option value="Full Stack Developer" />
+                  <option value="Cloud & DevOps Engineer" />
+                  <option value="Machine Learning Engineer" />
+                  <option value="Frontend Developer" />
+                  <option value="Backend Developer" />
+                  <option value="Cybersecurity Analyst" />
+                  <option value="QA Automation Engineer" />
+                </datalist>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['AI Engineer', 'Data Analyst', 'Data Engineer', 'Full Stack Developer', 'Cloud & DevOps', 'ML Engineer', 'Frontend Developer', 'Backend Developer'].map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => {
+                        const matchingJD = sampleJDOptions.find(opt => opt.role.toLowerCase().includes(r.toLowerCase()));
+                        if (matchingJD) {
+                          handleApplySampleJD(matchingJD);
+                        } else {
+                          setTargetRole(r);
+                        }
+                      }}
+                      className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                    >
+                      + {r}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>
@@ -904,6 +1040,29 @@ export const ResumeTailorPage: React.FC = () => {
               <Badge variant="primary" size="sm">
                 {sourceResume?.personalInfo?.fullName || 'Candidate Profile'}
               </Badge>
+            </div>
+
+            <div className="mt-2.5 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const draft = getGuestDraft<IResumeData | null>('resume_draft', null);
+                  if (draft) {
+                    setSourceResume(draft);
+                    if (draft.careerTarget?.targetRole) {
+                      setTargetRole(draft.careerTarget.targetRole);
+                    }
+                    setSaveStatus('✅ Loaded your latest resume from Resume Builder!');
+                    setTimeout(() => setSaveStatus(null), 3000);
+                  } else {
+                    setSaveStatus('ℹ️ No Resume Builder draft found yet. Build your resume in Resume Builder or upload a file.');
+                    setTimeout(() => setSaveStatus(null), 3500);
+                  }
+                }}
+                className="text-xs text-brand-700 hover:text-brand-800 underline font-medium"
+              >
+                🔄 Sync latest draft from Resume Builder
+              </button>
             </div>
 
             <Button

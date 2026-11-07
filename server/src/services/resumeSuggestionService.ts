@@ -6,6 +6,21 @@ export class ResumeSuggestionService {
    * User picks from these — AI does not force or decide.
    */
   public static async suggestSpecializations(targetRole: string): Promise<string[]> {
+    const isAiRole = /ai|artificial|machine learning|ml|deep learning|data/i.test(targetRole);
+
+    const defaultSpecializations = isAiRole ? [
+      'Generative AI & LLM Engineering (RAG / LangChain / OpenAI API)',
+      'Machine Learning & Deep Learning (PyTorch / TensorFlow)',
+      'NLP, Computer Vision & Multimodal Systems',
+      'MLOps, Model Deployment & Cloud Inference (Docker / SageMaker)'
+    ] : [
+      'Full Stack Web Development (React / Node.js / Next.js)',
+      'AI & Machine Learning Engineering (Generative AI / RAG)',
+      'Backend Engineering & Distributed Cloud Microservices',
+      'Cloud Architecture & DevOps (AWS / Docker / Kubernetes)',
+      'Data Engineering & Large-Scale ETL Pipelines'
+    ];
+
     const systemPrompt = `You are a technical career advisor. Given a general target role, return 4-6 industry-standard specializations or technology tracks. Respond with a JSON object: { "specializations": ["track 1", "track 2", ...] }`;
     const userPrompt = `Target Role: "${targetRole}". Provide relevant specialization tracks.`;
 
@@ -13,16 +28,11 @@ export class ResumeSuggestionService {
       systemPrompt,
       userPrompt,
       {
-        specializations: [
-          'Full Stack Web Development (MERN / Next.js)',
-          'Backend Engineering & Distributed Systems',
-          'Frontend Engineering & UI/UX Architecture',
-          'Cloud Architecture & DevOps'
-        ]
+        specializations: defaultSpecializations
       }
     );
 
-    return result.specializations || [];
+    return result.specializations || defaultSpecializations;
   }
 
   /**

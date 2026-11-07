@@ -58,6 +58,11 @@ export class AIService {
     userPrompt: string,
     fallbackData: T
   ): Promise<T> {
+    if (!ENV.OPENAI_API_KEY) {
+      console.info('[AIService] Running in local/offline mode, using high-fidelity contextual data generator.');
+      return fallbackData;
+    }
+
     const messages: ChatMessage[] = [
       {
         role: 'system',
@@ -78,7 +83,8 @@ export class AIService {
         .replace(/```\s*$/i, '')
         .trim();
 
-      return JSON.parse(cleaned) as T;
+      const parsed = JSON.parse(cleaned) as T;
+      return { ...fallbackData, ...parsed };
     } catch (parseError) {
       console.warn('[AIService] Failed to parse AI JSON response, utilizing fallback data.');
       return fallbackData;

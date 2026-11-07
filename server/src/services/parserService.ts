@@ -556,30 +556,7 @@ export class ParserService {
       }
     });
 
-    // Fallback only if no projects exist in source document
-    if (result.length === 0) {
-      result.push(
-        {
-          title: 'EVENTRA - College Event Management System',
-          description: 'Web platform for creating college events, registering participants and managing attendees.',
-          technologies: ['React', 'Node.js', 'MongoDB Atlas'],
-          responsibilities: [
-            'Web platform for creating college events, registering participants and managing attendees.',
-            'Responsive interface designed for easy use on desktop and mobile.'
-          ]
-        },
-        {
-          title: 'Smart Resume Builder - AI Suggestions',
-          description: 'Generates ATS-friendly resume content and suggests improvements using AI.',
-          technologies: ['MongoDB Atlas', 'AI-assisted development tools'],
-          responsibilities: [
-            'Generates ATS-friendly resume content and suggests improvements using AI.',
-            'Includes live resume preview and PDF download; user data stored in MongoDB Atlas.'
-          ]
-        }
-      );
-    }
-
+    // Authentic extraction only: Never invent fake projects (such as EVENTRA) if none found in document
     return result;
   }
 

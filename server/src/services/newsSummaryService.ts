@@ -39,13 +39,13 @@ export class NewsSummaryService {
           title: item.title,
           url: item.url,
           source: 'Dev.to Community',
-          category: item.tag_list?.[0] ? item.tag_list[0].toUpperCase() : (category !== 'All' ? category : 'Tech'),
+          category: category !== 'All' ? category : (item.tag_list?.[0] ? item.tag_list[0].toUpperCase() : 'Tech'),
           publishedDate: item.readable_publish_date || new Date().toLocaleDateString(),
           coverImage: item.cover_image || item.social_image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=60',
           originalSummary: item.description || item.title,
           aiKeyTakeaways: [
             'Provides actionable architecture and developer best practices',
-            'Highlights emerging tools and frameworks for full-stack engineering',
+            'Highlights emerging tools and frameworks for modern engineering',
             'Offers practical insights to accelerate developer productivity'
           ]
         }));
@@ -227,6 +227,6 @@ export class NewsSummaryService {
       return cat.includes(query) || query.includes(cat);
     });
 
-    return filtered.length > 0 ? filtered : articles;
+    return filtered;
   }
 }

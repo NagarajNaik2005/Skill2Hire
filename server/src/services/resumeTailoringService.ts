@@ -101,11 +101,15 @@ export class ResumeTailoringService {
     // 6. Formulate AI Prompt for context-aware tailoring
     const systemPrompt = `You are an elite Senior ATS Resume Optimization Consultant.
 CRITICAL MANDATES:
-1. ZERO FAKE SKILLS RULE: NEVER invent fake degrees, fictitious companies, or hallucinated credentials.
-2. Refine the Professional Summary, Project Bullet Points, and Experience to target the specified Job Role and Job Description.
-3. Every project and experience bullet point MUST start with a strong power action verb (e.g., Architected, Engineered, Optimized, Spearheaded, Implemented) and incorporate quantifiable metrics (e.g., % improvement, scale numbers, latency reduction, user counts) according to the Google X-Y-Z formula.
-4. Place unpossessed requirements in "skillGaps".
-5. Return JSON matching:
+1. STRICT ZERO FAKE CONTENT MANDATE: NEVER invent fake degrees, fictitious companies, hallucinated projects, or fake experiences.
+2. PRESERVE AUTHENTICITY: Strictly preserve the candidate's authentic project titles ('title'), technologies ('technologies'), and links. DO NOT invent new projects.
+3. If the candidate has 0 projects (projects list is empty), 'refinedProjects' MUST be an empty array [].
+4. If the candidate has 0 work experience (experience list is empty), 'refinedExperience' MUST be an empty array [].
+5. Strictly preserve authentic company names ('company') and job titles ('role').
+6. Refine ONLY the wording and impact of the Professional Summary, Project Bullet Points, and Experience Bullet Points to target the specified Job Role and Job Description.
+7. Every project and experience bullet point MUST start with a strong power action verb (e.g., Architected, Engineered, Optimized, Spearheaded, Implemented) and incorporate quantifiable metrics (e.g., % improvement, scale numbers, latency reduction, user counts) according to the Google X-Y-Z formula.
+8. Place unpossessed requirements in "skillGaps".
+9. Return JSON matching:
 {
   "tailoredSummary": "3-4 sentence high-impact summary matching the job requirements and target role with metrics",
   "refinedProjects": [{ "title": "...", "description": "...", "technologies": ["..."], "responsibilities": ["..."] }],
@@ -129,56 +133,36 @@ Experience: ${JSON.stringify(baseResume.experience)}`;
     const topMatchedStr = matchedKeywords.slice(0, 4).join(', ') || 'React, TypeScript, Node.js, REST APIs';
     const fallbackTailoredSummary = `Results-oriented ${targetRole} with strong expertise in ${topMatchedStr} and cloud microservices. Proven track record of architecting distributed web applications, optimizing database performance by 35%+, and implementing sub-second RESTful APIs. Adept at agile collaboration, CI/CD automation, and delivering high-availability software solutions aligned with core business objectives.`;
 
+    // Strictly preserve authentic projects; NEVER invent fake projects if candidate has none
     const fallbackProjects: IProject[] = (baseResume.projects && baseResume.projects.length > 0)
       ? baseResume.projects.map((p, idx) => {
-          const techStack = Array.from(new Set([...(p.technologies || []), ...matchedKeywords.slice(idx * 2, idx * 2 + 2)]));
           const existingResponsibilities = (p.responsibilities && p.responsibilities.length > 0)
             ? p.responsibilities
             : [
-                `Architected and deployed responsive components using ${techStack.slice(0, 2).join(' and ') || 'modern frameworks'}, elevating client performance scores by 38%.`,
+                `Architected and deployed responsive components for ${p.title || 'project'}, elevating client performance scores by 38%.`,
                 `Optimized backend endpoints and database indexing strategies, reducing sub-second API latency by 42% under high traffic.`,
-                `Automated end-to-end CI/CD testing and Docker containerization pipelines, maintaining 99.9% uptime and zero-downtime releases.`
+                `Automated end-to-end testing and containerization pipelines, maintaining 99.9% uptime and zero-downtime releases.`
               ];
 
           return {
-            title: p.title || (idx === 0 ? 'Enterprise Scalable Web Platform' : 'Real-Time Event Processing System'),
-            description: p.description || `Engineered high-throughput software architecture utilizing ${techStack.join(', ')}.`,
-            technologies: techStack,
+            title: p.title || `Technical Project ${idx + 1}`,
+            description: p.description || '',
+            technologies: p.technologies || [],
             liveLink: p.liveLink,
             githubLink: p.githubLink,
             responsibilities: existingResponsibilities
           };
         })
-      : [
-          {
-            title: 'Enterprise Distributed Cloud Platform',
-            description: `Designed and implemented a high-performance web platform utilizing ${topMatchedStr}.`,
-            technologies: matchedKeywords.slice(0, 4),
-            responsibilities: [
-              `Architected scalable microservices and modular UI components with ${matchedKeywords[0] || 'React'} and TypeScript, improving user engagement by 32%.`,
-              `Engineered high-throughput REST APIs and database queries on MongoDB/PostgreSQL, reducing average query latency by 45%.`,
-              `Spearheaded automated CI/CD pipelines and Docker containerization on AWS, achieving 99.95% system uptime.`
-            ]
-          },
-          {
-            title: 'High-Throughput Analytics & Data Engine',
-            description: 'Engineered real-time analytics aggregation service supporting 30,000+ daily events.',
-            technologies: matchedKeywords.slice(2, 6).length > 0 ? matchedKeywords.slice(2, 6) : ['Node.js', 'Redis', 'PostgreSQL', 'Docker'],
-            responsibilities: [
-              `Implemented in-memory Redis caching and message queues, cutting data processing turnaround times by 40%.`,
-              `Designed and documented secure RESTful endpoints with comprehensive unit and integration test coverage reaching 92%.`,
-              `Collaborated in agile sprint cycles to rapidly deploy production features, reducing sprint release overhead by 25%.`
-            ]
-          }
-        ];
+      : [];
 
+    // Strictly preserve authentic experience; NEVER invent fake companies if candidate has none
     const fallbackExperience: IExperience[] = (baseResume.experience && baseResume.experience.length > 0)
       ? baseResume.experience.map(e => ({
-          company: e.company || 'Tech Innovations Inc.',
+          company: e.company,
           role: e.role,
           location: e.location || '',
-          startDate: e.startDate || '2023',
-          endDate: e.endDate || 'Present',
+          startDate: e.startDate || '',
+          endDate: e.endDate || '',
           current: e.current !== false,
           responsibilities: (e.responsibilities && e.responsibilities.length > 0)
             ? e.responsibilities
@@ -238,25 +222,53 @@ Experience: ${JSON.stringify(baseResume.experience)}`;
     // Skills: Ensure rich categorization and highlight matched keywords (25/25)
     tailoredResume.skills = this.enrichSkillsWithMatches(baseResume.skills, matchedKeywords);
 
-    // Projects: Inject Google X-Y-Z and power verbs into projects (Action verbs & metrics 20/20)
-    if (aiResult.refinedProjects && aiResult.refinedProjects.length >= 2) {
-      tailoredResume.projects = aiResult.refinedProjects;
-    } else {
-      tailoredResume.projects = fallbackProjects;
-    }
-    // Guarantee metrics and power verbs in project bullet points
-    this.ensurePowerVerbsAndMetrics(tailoredResume.projects);
+    // Projects: Strictly preserve authentic candidate projects. Only refine responsibilities with power verbs and metrics.
+    // NEVER invent fake projects if candidate has none!
+    if (baseResume.projects && baseResume.projects.length > 0) {
+      tailoredResume.projects = baseResume.projects.map((p, pIdx) => {
+        const matchingRefined = aiResult.refinedProjects?.find(rp =>
+          rp.title && p.title && rp.title.toLowerCase().trim() === p.title.toLowerCase().trim()
+        ) || aiResult.refinedProjects?.[pIdx];
 
-    // Experience: Ensure action verbs and metrics
-    if (aiResult.refinedExperience && aiResult.refinedExperience.length > 0) {
-      tailoredResume.experience = aiResult.refinedExperience;
-    } else if (fallbackExperience.length > 0) {
-      tailoredResume.experience = fallbackExperience;
+        return {
+          title: p.title,
+          description: p.description || '',
+          technologies: p.technologies || [],
+          liveLink: p.liveLink,
+          githubLink: p.githubLink,
+          responsibilities: (matchingRefined?.responsibilities && matchingRefined.responsibilities.length > 0)
+            ? matchingRefined.responsibilities
+            : (fallbackProjects[pIdx]?.responsibilities || p.responsibilities || [])
+        };
+      });
+      this.ensurePowerVerbsAndMetrics(tailoredResume.projects);
     } else {
-      tailoredResume.experience = baseResume.experience || [];
+      tailoredResume.projects = [];
     }
-    if (tailoredResume.experience.length > 0) {
+
+    // Experience: Strictly preserve authentic candidate work experience. Only refine responsibilities with power verbs and metrics.
+    // NEVER invent fake companies or experiences if candidate has none!
+    if (baseResume.experience && baseResume.experience.length > 0) {
+      tailoredResume.experience = baseResume.experience.map((e, eIdx) => {
+        const matchingRefined = aiResult.refinedExperience?.find(re =>
+          re.company && e.company && re.company.toLowerCase().trim() === e.company.toLowerCase().trim()
+        ) || aiResult.refinedExperience?.[eIdx];
+
+        return {
+          company: e.company,
+          role: e.role,
+          location: e.location || '',
+          startDate: e.startDate || '',
+          endDate: e.endDate || '',
+          current: e.current !== false,
+          responsibilities: (matchingRefined?.responsibilities && matchingRefined.responsibilities.length > 0)
+            ? matchingRefined.responsibilities
+            : (fallbackExperience[eIdx]?.responsibilities || e.responsibilities || [])
+        };
+      });
       this.ensurePowerVerbsAndMetrics(tailoredResume.experience);
+    } else {
+      tailoredResume.experience = [];
     }
 
     // Ensure Education is present (Section completeness 15/15)
@@ -353,46 +365,13 @@ Experience: ${JSON.stringify(baseResume.experience)}`;
       otherTechnologies: input.skills?.otherTechnologies?.length ? input.skills.otherTechnologies : defaultSkills.otherTechnologies
     };
 
-    const projects: IProject[] = (input.projects && input.projects.length > 0)
+    const projects: IProject[] = (input.projects && Array.isArray(input.projects))
       ? input.projects
-      : [
-          {
-            title: 'Full Stack Web Platform',
-            description: 'Engineered web services and user interfaces with modern frameworks.',
-            technologies: ['React', 'Node.js', 'Express', 'MongoDB'],
-            responsibilities: [
-              'Architected and implemented responsive full stack web components.',
-              'Engineered RESTful API endpoints and optimized database queries by 35%.',
-              'Integrated automated CI/CD deployment workflows on cloud infrastructure.'
-            ]
-          },
-          {
-            title: 'Distributed Analytics Pipeline',
-            description: 'Built real-time data streaming and processing service.',
-            technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'Redis', 'Docker'],
-            responsibilities: [
-              'Spearheaded the development of real-time data caching, reducing latency by 40%.',
-              'Authored comprehensive test suites and Docker container configurations.'
-            ]
-          }
-        ];
+      : [];
 
-    const experience: IExperience[] = (input.experience && input.experience.length > 0)
+    const experience: IExperience[] = (input.experience && Array.isArray(input.experience))
       ? input.experience
-      : [
-          {
-            company: 'Tech Solutions Corp',
-            role: defaultRole || 'Software Engineer',
-            location: 'San Francisco, CA',
-            startDate: '2023',
-            endDate: 'Present',
-            current: true,
-            responsibilities: [
-              'Engineered modular UI components and scalable backend microservices.',
-              'Optimized API queries reducing average response times by 32%.'
-            ]
-          }
-        ];
+      : [];
 
     const education = (input.education && input.education.length > 0)
       ? input.education
@@ -419,12 +398,8 @@ Experience: ${JSON.stringify(baseResume.experience)}`;
       skills,
       projects,
       experience,
-      certifications: input.certifications || [
-        { name: 'AWS Certified Cloud Practitioner', issuer: 'Amazon Web Services' }
-      ],
-      achievements: input.achievements || [
-        { title: 'Engineering Excellence Award', description: 'Recognized for outstanding capstone system architecture.' }
-      ],
+      certifications: (input.certifications && Array.isArray(input.certifications)) ? input.certifications : [],
+      achievements: (input.achievements && Array.isArray(input.achievements)) ? input.achievements : [],
       softSkills: input.softSkills || ['System Design', 'Agile Collaboration', 'Problem Solving'],
       languages: input.languages || ['English (Fluent)'],
       professionalSummary: input.professionalSummary || `Experienced software engineer with hands-on proficiency in building scalable web applications and distributed systems.`

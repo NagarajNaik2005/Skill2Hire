@@ -23,13 +23,13 @@ export const TechnicalTemplate: React.FC<TemplateProps> = ({ resumeData }) => {
   ].filter(Boolean);
 
   return (
-    <div className="resume-document w-full bg-white text-zinc-950 font-sans px-8 py-7 text-[11px] leading-relaxed select-text box-border max-w-[210mm] mx-auto overflow-hidden">
+    <div className="resume-document w-full bg-white text-zinc-950 font-sans px-8 py-7 text-[11px] leading-relaxed select-text box-border max-w-[210mm] mx-auto overflow-visible">
 
       {/* High-Density Developer Header */}
       <div className="resume-section border-b-2 border-zinc-900 pb-2 mb-3">
         <div className="flex flex-row items-baseline justify-between gap-1">
           <div className="min-w-0 flex-1">
-            <h1 className="text-[24px] font-mono font-bold tracking-tight text-zinc-950 uppercase leading-tight truncate">
+            <h1 className="text-[24px] font-mono font-bold tracking-tight text-zinc-950 uppercase leading-normal py-1 overflow-visible break-words">
               {personalInfo.fullName || 'Candidate Name'}
             </h1>
             <div className="text-[11.5px] font-mono font-semibold text-emerald-800 mt-0.5">
@@ -92,6 +92,12 @@ export const TechnicalTemplate: React.FC<TemplateProps> = ({ resumeData }) => {
               <div className="resume-item grid grid-cols-12 px-2 py-1 bg-zinc-50">
                 <span className="col-span-3 font-mono font-bold text-zinc-900 uppercase">Tools & Infra</span>
                 <span className="col-span-9 font-mono text-zinc-800 break-words">{(skills.tools || []).concat(skills.otherTechnologies || []).join(', ')}</span>
+              </div>
+            )}
+            {resumeData.softSkills && resumeData.softSkills.length > 0 && (
+              <div className="resume-item grid grid-cols-12 px-2 py-1 bg-white">
+                <span className="col-span-3 font-mono font-bold text-zinc-900 uppercase">Core Skills</span>
+                <span className="col-span-9 font-mono text-zinc-800 break-words">{resumeData.softSkills.join(', ')}</span>
               </div>
             )}
           </div>

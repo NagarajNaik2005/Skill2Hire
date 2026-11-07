@@ -23,13 +23,13 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ resumeData }) => {
   ].filter(Boolean);
 
   return (
-    <div className="resume-document w-full bg-white text-slate-900 font-sans px-8 py-7 text-[11px] leading-relaxed select-text box-border max-w-[210mm] mx-auto overflow-hidden">
+    <div className="resume-document w-full bg-white text-slate-900 font-sans px-8 py-7 text-[11px] leading-relaxed select-text box-border max-w-[210mm] mx-auto overflow-visible">
 
       {/* Modern Left-Aligned Header with Accent */}
       <div className="resume-section border-b border-slate-300 pb-2 mb-3">
         <div className="flex flex-row items-baseline justify-between gap-1">
           <div className="min-w-0 flex-1">
-            <h1 className="text-[24px] font-black tracking-tight text-slate-950 uppercase leading-tight truncate">
+            <h1 className="text-[24px] font-black tracking-tight text-slate-950 uppercase leading-normal py-1 overflow-visible break-words">
               {personalInfo.fullName || 'Candidate Name'}
             </h1>
             {careerTarget?.targetRole && (
@@ -98,6 +98,12 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ resumeData }) => {
               <div className="resume-item bg-slate-50 border border-slate-200 rounded px-2.5 py-1 min-w-0">
                 <span className="font-bold block text-[9px] uppercase text-indigo-800">DevOps & Tools</span>
                 <span className="text-slate-700 font-medium break-words">{(skills.tools || []).concat(skills.otherTechnologies || []).join(', ')}</span>
+              </div>
+            )}
+            {resumeData.softSkills && resumeData.softSkills.length > 0 && (
+              <div className="resume-item bg-purple-50/50 border border-purple-200/60 rounded px-2.5 py-1 min-w-0 col-span-2">
+                <span className="font-bold block text-[9px] uppercase text-purple-800">Core & Non-Technical Skills</span>
+                <span className="text-slate-700 font-medium break-words">{resumeData.softSkills.join(', ')}</span>
               </div>
             )}
           </div>

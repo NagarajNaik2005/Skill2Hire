@@ -2,11 +2,11 @@
 
 export const PROGRAMMING_LANGUAGES = [
   'ActionScript', 'Ada', 'Apex', 'Assembly', 'AutoHotkey', 'Bash', 'C', 'C++', 'C#', 'Clojure',
-  'COBOL', 'CoffeeScript', 'Crystal', 'CSS3', 'Dart', 'Elixir', 'Elm', 'Erlang', 'F#', 'Fortran',
+  'COBOL', 'CoffeeScript', 'Crystal', 'CSS3', 'Dart', 'Elixir', 'Elm', 'Erlang', 'Excel VBA', 'F#', 'Fortran',
   'Go / Golang', 'Groovy', 'Haskell', 'HTML5', 'Java', 'JavaScript', 'Julia', 'Kotlin', 'Lisp',
-  'Lua', 'MATLAB', 'Objective-C', 'OCaml', 'Perl', 'PHP', 'PowerShell', 'Prolog', 'Python', 'R',
-  'Racket', 'Ruby', 'Rust', 'Scala', 'Scheme', 'Shell Scripting', 'Solidity', 'SQL', 'Swift',
-  'TypeScript', 'VBScript', 'Verilog', 'VHDL', 'Visual Basic', 'WebAssembly', 'Zig'
+  'Lua', 'MATLAB', 'Objective-C', 'OCaml', 'Perl', 'PHP', 'PL/SQL', 'PowerShell', 'Prolog', 'Python', 'R',
+  'Racket', 'Ruby', 'Rust', 'SAS', 'Scala', 'Scheme', 'Shell Scripting', 'Solidity', 'SQL', 'Swift',
+  'T-SQL', 'TypeScript', 'VBScript', 'Verilog', 'VHDL', 'Visual Basic', 'WebAssembly', 'Zig'
 ];
 
 export const FRAMEWORKS_AND_LIBRARIES = [
@@ -17,18 +17,18 @@ export const FRAMEWORKS_AND_LIBRARIES = [
   'Flutter', 'Framer Motion', 'Gatsby', 'Gin (Go)', 'GraphQL', 'gRPC', 'Hapi.js', 'Headless UI',
   'Hibernate', 'Hono', 'Hugging Face Transformers', 'Ionic', 'Jasmine', 'Jest', 'jQuery',
   'Keras', 'Koa.js', 'Ktor', 'LangChain', 'Laravel', 'LlamaIndex', 'Lodash', 'Material-UI (MUI)',
-  'Micronaut', 'MobX', 'Mocha', 'Mongoose', 'NestJS', 'Next.js', 'Nuxt.js', 'NLTK', 'NumPy',
+  'Matplotlib', 'Micronaut', 'MobX', 'Mocha', 'Mongoose', 'NestJS', 'Next.js', 'Nuxt.js', 'NLTK', 'NumPy',
   'OpenCV', 'Pandas', 'Phaser', 'Playwright', 'Prisma', 'PyTorch', 'Quarkus', 'Radix UI',
   'React', 'React Native', 'React Query / TanStack Query', 'React Router', 'Redux Toolkit',
-  'Relay', 'Remix', 'RxJS', 'Scikit-learn', 'Semantic UI', 'Sequelize', 'Shadcn UI', 'Sinon',
-  'Socket.io', 'Spacy', 'Spring Boot', 'Spring Cloud', 'Spring Security', 'Storybook', 'Struts',
+  'Relay', 'Remix', 'RxJS', 'Scikit-learn', 'SciPy', 'Seaborn', 'Semantic UI', 'Sequelize', 'Shadcn UI', 'Sinon',
+  'Socket.io', 'Spacy', 'Spring Boot', 'Spring Cloud', 'Spring Security', 'Statsmodels', 'Storybook', 'Struts',
   'Svelte', 'SvelteKit', 'Symfony', 'Tailwind CSS', 'TensorFlow', 'Three.js', 'Tornado', 'TRPC',
   'TypeORM', 'TypeGraphQL', 'Unity', 'Unreal Engine', 'Vite', 'Vitest', 'Vue.js', 'Vuex',
   'Vuetify', 'WebSockets', 'WebRTC', 'WPF', 'Xamarin', 'Zod', 'Zustand'
 ];
 
 export const DATABASES_AND_CLOUD = [
-  'Airflow', 'Amazon Web Services (AWS)', 'Apache Cassandra', 'Apache CouchDB', 'Apache Flink',
+  'Airflow', 'Amazon Redshift', 'Amazon Web Services (AWS)', 'Apache Cassandra', 'Apache CouchDB', 'Apache Flink',
   'Apache Hadoop', 'Apache Hbase', 'Apache Hive', 'Apache Kafka', 'Apache Spark', 'ArgoCD',
   'AWS API Gateway', 'AWS CloudFront', 'AWS CloudWatch', 'AWS DynamoDB', 'AWS EC2', 'AWS ECS',
   'AWS EKS', 'AWS Lambda', 'AWS RDS', 'AWS Redshift', 'AWS Route 53', 'AWS S3', 'AWS SQS/SNS',
@@ -40,26 +40,34 @@ export const DATABASES_AND_CLOUD = [
   'GraphQL API', 'Hasura', 'Heroku', 'InfluxDB', 'Istio', 'Kubernetes', 'Linode', 'MariaDB',
   'Memcached', 'Microsoft Azure', 'MongoDB Atlas', 'MySQL', 'Neo4j', 'Netlify', 'OpenSearch',
   'Oracle Cloud', 'Oracle Database', 'Pinecone Vector DB', 'PostgreSQL', 'Prometheus', 'Qdrant Vector DB',
-  'RabbitMQ', 'Redis', 'Redpanda', 'Serverless Framework', 'Snowflake', 'SQLite', 'Supabase',
+  'RabbitMQ', 'Redis', 'Redpanda', 'Serverless Framework', 'Snowflake', 'SQLite', 'SQL Server', 'Supabase',
   'Terraform', 'Upstash', 'Vagrant', 'Vercel', 'Weaviate Vector DB', 'YugabyteDB'
 ];
 
 export const TOOLS_AND_METHODOLOGIES = [
-  'Agile / Scrum', 'Algorithmic Problem Solving', 'Ansible', 'Apache Maven', 'Autodesk Maya',
+  'Advanced Excel', 'Agile / Scrum', 'Algorithmic Problem Solving', 'Ansible', 'Apache Maven', 'Autodesk Maya',
   'Babel', 'Bitbucket', 'Blender', 'Bun', 'Burp Suite', 'CI/CD Pipelines', 'CircleCI',
-  'Code Climate', 'Confluence', 'Data Structures & Algorithms', 'Datadog', 'DevOps Practices',
-  'Design Patterns', 'Distributed Systems Architecture', 'ESLint', 'Event-Driven Architecture',
-  'Figma', 'Flux Architecture', 'Git', 'GitHub Actions', 'GitLab CI', 'Gradle', 'Grafana',
-  'Helm Charts', 'Incident Response', 'Insomnia', 'IntelliJ IDEA', 'Jira', 'JSON Web Tokens (JWT)',
+  'Code Climate', 'Confluence', 'Data Analysis', 'Data Modeling', 'Data Structures & Algorithms', 'Data Visualization', 'Data Warehousing', 'Datadog', 'DAX', 'DevOps Practices',
+  'Design Patterns', 'Distributed Systems Architecture', 'ESLint', 'ETL Pipelines', 'Event-Driven Architecture', 'Excel',
+  'Figma', 'Flux Architecture', 'Git', 'GitHub Actions', 'GitLab CI', 'Google Looker Studio', 'Gradle', 'Grafana',
+  'Helm Charts', 'Incident Response', 'Insomnia', 'IntelliJ IDEA', 'Jira', 'JSON Web Tokens (JWT)', 'Jupyter Notebook',
   'Junit', 'Kafka Connect', 'Kanban', 'Kibana', 'Kubernetes Helm', 'Linux / Unix CLI', 'Load Balancing',
-  'Logstash', 'Micro-Frontends', 'Microservices Architecture', 'New Relic', 'Nginx', 'npm / pnpm / yarn',
-  'OAuth 2.0 / OpenID Connect', 'OpenAPI / Swagger', 'OWASP Top 10 Security', 'Postman', 'Prettier',
+  'Logstash', 'Micro-Frontends', 'Microservices Architecture', 'Microsoft Excel', 'New Relic', 'Nginx', 'npm / pnpm / yarn',
+  'OAuth 2.0 / OpenID Connect', 'OpenAPI / Swagger', 'OWASP Top 10 Security', 'Postman', 'Power BI', 'Power Query', 'Prettier',
   'Prometheus', 'Puppeteer', 'PyTest', 'RESTful API Design', 'Role-Based Access Control (RBAC)',
   'Root Cause Analysis', 'Selenium', 'Semantic Versioning', 'Server-Side Rendering (SSR)',
-  'Single Sign-On (SSO)', 'SonarQube', 'Splunk', 'State Synchronization', 'Storybook',
-  'System Design & Scalability', 'Test-Driven Development (TDD)', 'Travis CI', 'Trello',
+  'Single Sign-On (SSO)', 'SonarQube', 'Splunk', 'State Synchronization', 'Statistical Analysis', 'Storybook',
+  'System Design & Scalability', 'Tableau', 'Test-Driven Development (TDD)', 'Travis CI', 'Trello',
   'Turborepo', 'Unit & Integration Testing', 'Vim / Neovim', 'Visual Studio Code', 'Webpack',
   'Web Performance Optimization', 'Wireshark', 'Zapier'
+];
+
+export const NON_TECHNICAL_AND_CORE_SKILLS = [
+  'Microsoft Excel', 'Data Analysis', 'Problem Solving', 'Critical Thinking', 'Business Communication',
+  'Team Collaboration', 'Team Leadership', 'Project Management', 'Agile / Scrum Leadership',
+  'Stakeholder Management', 'Time Management', 'Analytical Thinking', 'Presentation Skills',
+  'Conflict Resolution', 'Requirements Gathering', 'Technical Documentation', 'Client Interfacing',
+  'Attention to Detail', 'Decision Making', 'Continuous Learning', 'Process Improvement'
 ];
 
 // Master deduplicated list for general tech searching (e.g. Project Technologies)
@@ -81,6 +89,7 @@ export const SKILL_CATEGORIES_MAP: Record<string, string[]> = {
   frameworks: FRAMEWORKS_AND_LIBRARIES,
   databases: DATABASES_AND_CLOUD,
   tools: TOOLS_AND_METHODOLOGIES,
+  soft: NON_TECHNICAL_AND_CORE_SKILLS,
   all: ALL_TECH_SKILLS
 };
 
@@ -93,7 +102,7 @@ export const SKILL_CATEGORIES_MAP: Record<string, string[]> = {
 export const getSkillSuggestions = (
   query: string,
   alreadySelected: string[] = [],
-  category: 'languages' | 'frameworks' | 'databases' | 'tools' | 'all' = 'all',
+  category: 'languages' | 'frameworks' | 'databases' | 'tools' | 'soft' | 'all' = 'all',
   limit: number = 8
 ): string[] => {
   const cleanQuery = query.trim();
