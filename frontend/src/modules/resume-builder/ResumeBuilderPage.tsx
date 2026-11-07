@@ -139,8 +139,20 @@ const defaultResume: IResumeData = {
 // Summary suggestions by role
 const summarySuggestionsByRole = [
   {
+    role: 'AI Engineer',
+    text: 'Innovative AI Engineer specializing in designing and deploying Generative AI systems, LLM fine-tuning, RAG architectures, and scalable inference microservices. Proficient in Python, PyTorch, LangChain, Vector Databases, and cloud-native MLOps pipelines delivering sub-second response times.'
+  },
+  {
     role: 'Full Stack Engineer',
     text: 'Results-driven Full Stack Software Engineer with expertise in architecting high-performance React and Node.js web applications. Demonstrated success in scaling cloud microservices, optimizing database throughput by 35%+, and delivering secure, accessible user experiences.'
+  },
+  {
+    role: 'Data Analyst',
+    text: 'Detail-oriented Data Analyst proficient in SQL, Python, Microsoft Excel, Power BI, and Tableau. Proven track record of transforming complex raw datasets into interactive executive dashboards, driving business intelligence insights, and optimizing reporting workflows with statistical accuracy.'
+  },
+  {
+    role: 'Data Engineer',
+    text: 'Scalable Data Engineer with deep expertise in designing robust ETL/ELT pipelines, distributed data architectures (Apache Spark, Kafka), and cloud data warehouses (Snowflake, BigQuery, AWS). Proven ability to optimize high-throughput data processing and ensure 99.9% data pipeline reliability.'
   },
   {
     role: 'Frontend Specialist',
@@ -149,6 +161,22 @@ const summarySuggestionsByRole = [
   {
     role: 'Backend & Cloud SDE',
     text: 'Performance-focused Backend Engineer with deep knowledge of distributed systems, RESTful & GraphQL APIs, and cloud infrastructure (AWS/Docker). Proven ability to design fault-tolerant microservices handling 20,000+ daily requests with 99.9% uptime.'
+  },
+  {
+    role: 'Cloud & DevOps Engineer',
+    text: 'Solutions-focused Cloud & DevOps Engineer skilled in AWS, Docker, Kubernetes, Terraform, and automated CI/CD pipelines. Adept at implementing zero-downtime deployments, infrastructure-as-code, and resilient observability for high-availability cloud platforms.'
+  },
+  {
+    role: 'Machine Learning / AI Engineer',
+    text: 'Innovative Machine Learning Engineer with strong foundational skills in Python, PyTorch, TensorFlow, and LLM fine-tuning. Experienced in building end-to-end data pipelines, developing NLP/Computer Vision models, and deploying low-latency AI inference microservices.'
+  },
+  {
+    role: 'Cybersecurity Analyst',
+    text: 'Security-driven Cybersecurity Analyst skilled in threat detection, vulnerability assessments, network protocol analysis (Wireshark), and SIEM tooling. Experienced in enforcing zero-trust architectures and SOC compliance across enterprise cloud environments.'
+  },
+  {
+    role: 'QA / Automation Engineer',
+    text: 'Quality-oriented QA Automation Engineer proficient in designing end-to-end test suites using Cypress, Playwright, Jest, and Selenium. Expert in continuous test automation within CI/CD pipelines, increasing software release reliability and defect catch rates by 40%.'
   },
   {
     role: 'Recent Graduate / Entry Level',
@@ -379,6 +407,22 @@ export const ResumeBuilderPage: React.FC = () => {
       clone.style.border = 'none';
       clone.style.transform = 'none';
       clone.style.zoom = '1';
+      clone.style.overflow = 'visible';
+
+      // Ensure 100% full vertical visibility for candidate name in canvas export
+      clone.querySelectorAll('h1').forEach(h1 => {
+        const el = h1 as HTMLElement;
+        el.style.overflow = 'visible';
+        el.style.textOverflow = 'clip';
+        el.style.whiteSpace = 'normal';
+        el.style.lineHeight = '1.35';
+        el.style.paddingTop = '6px';
+        el.style.paddingBottom = '6px';
+        el.style.display = 'block';
+      });
+      clone.querySelectorAll('.resume-document').forEach(doc => {
+        (doc as HTMLElement).style.overflow = 'visible';
+      });
 
       exportWrapper.appendChild(clone);
       document.body.appendChild(exportWrapper);
@@ -617,14 +661,46 @@ export const ResumeBuilderPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Location (City, Country / Remote) *</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-slate-700">Location (City, Country / Remote) *</label>
+                  <span className="text-[10px] text-slate-400">Click suggestion or type</span>
+                </div>
                 <input
                   type="text"
+                  list="resume-builder-locations"
                   placeholder="e.g. San Francisco, CA (or Remote)"
                   value={resumeData.personalInfo.location}
                   onChange={e => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, location: e.target.value } }))}
                   className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
+                <datalist id="resume-builder-locations">
+                  <option value="Remote" />
+                  <option value="Remote (India)" />
+                  <option value="Remote (US / Global)" />
+                  <option value="Bengaluru, India" />
+                  <option value="Hyderabad, India" />
+                  <option value="Pune, India" />
+                  <option value="Mumbai, India" />
+                  <option value="Delhi NCR, India" />
+                  <option value="Chennai, India" />
+                  <option value="San Francisco, CA" />
+                  <option value="New York, NY" />
+                  <option value="Seattle, WA" />
+                  <option value="Austin, TX" />
+                  <option value="London, UK" />
+                </datalist>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['Remote', 'Bengaluru, India', 'Hyderabad, India', 'Pune, India', 'Mumbai, India', 'Delhi NCR, India', 'San Francisco, CA', 'New York, NY'].map(loc => (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => setResumeData(p => ({ ...p, personalInfo: { ...p.personalInfo, location: loc } }))}
+                      className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                    >
+                      + {loc}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-700 mb-1">LinkedIn Profile URL</label>
@@ -664,24 +740,68 @@ export const ResumeBuilderPage: React.FC = () => {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Target Job Title *</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-slate-700">Target Job Title *</label>
+                  <span className="text-[10px] text-slate-400">Click suggestion or type</span>
+                </div>
                 <input
                   type="text"
-                  placeholder="e.g. Senior Full Stack Engineer"
+                  list="resume-builder-target-roles"
+                  placeholder="e.g. Data Analyst / Senior Full Stack Engineer"
                   value={resumeData.careerTarget.targetRole}
                   onChange={e => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, targetRole: e.target.value } }))}
                   className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
+                <datalist id="resume-builder-target-roles">
+                  <option value="AI Engineer" />
+                  <option value="Data Analyst" />
+                  <option value="Data Engineer" />
+                  <option value="Full Stack Developer" />
+                  <option value="Frontend Developer" />
+                  <option value="Backend Developer" />
+                  <option value="Cloud & DevOps Engineer" />
+                  <option value="Machine Learning Engineer" />
+                  <option value="Cybersecurity Analyst" />
+                  <option value="QA / Automation Engineer" />
+                  <option value="Software Engineer" />
+                </datalist>
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['AI Engineer', 'Data Analyst', 'Data Engineer', 'Full Stack Developer', 'Cloud & DevOps Engineer', 'Machine Learning Engineer', 'Frontend Developer', 'Backend Developer', 'Cybersecurity Analyst'].map(roleOption => (
+                    <button
+                      key={roleOption}
+                      type="button"
+                      onClick={() => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, targetRole: roleOption } }))}
+                      className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                    >
+                      + {roleOption}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Specialization Focus</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-slate-700">Specialization Focus</label>
+                  <span className="text-[10px] text-slate-400">Click suggestion or type</span>
+                </div>
                 <input
                   type="text"
-                  placeholder="e.g. Cloud Microservices & Distributed Architecture"
+                  placeholder="e.g. Generative AI & LLMs or Cloud Microservices"
                   value={resumeData.careerTarget.specialization}
                   onChange={e => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, specialization: e.target.value } }))}
                   className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['Generative AI & LLMs', 'RAG & Vector Search', 'MLOps & Deployment', 'Cloud Microservices', 'Distributed Data Pipelines'].map(spec => (
+                    <button
+                      key={spec}
+                      type="button"
+                      onClick={() => setResumeData(p => ({ ...p, careerTarget: { ...p.careerTarget, specialization: spec } }))}
+                      className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                    >
+                      + {spec}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -763,10 +883,13 @@ export const ResumeBuilderPage: React.FC = () => {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Programming Languages</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-slate-700">Programming Languages</label>
+                  <span className="text-[10px] text-slate-400">Click to add</span>
+                </div>
                 <CommaSeparatedInput
                   category="languages"
-                  placeholder="e.g. TypeScript, JavaScript, Python, Java, SQL, Go, C++"
+                  placeholder="e.g. Python, SQL, TypeScript, JavaScript, Java, Go, C++, R"
                   value={resumeData.skills?.programmingLanguages || []}
                   onChange={items => setResumeData(p => ({
                     ...p,
@@ -774,12 +897,34 @@ export const ResumeBuilderPage: React.FC = () => {
                   }))}
                   className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['Python', 'SQL', 'TypeScript', 'JavaScript', 'Java', 'C++', 'Go', 'R', 'C#'].map(lang => {
+                    const isAdded = (resumeData.skills?.programmingLanguages || []).some(l => l.toLowerCase() === lang.toLowerCase());
+                    if (isAdded) return null;
+                    return (
+                      <button
+                        key={lang}
+                        type="button"
+                        onClick={() => setResumeData(p => ({
+                          ...p,
+                          skills: { ...p.skills, programmingLanguages: [...(p.skills?.programmingLanguages || []), lang] }
+                        }))}
+                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                      >
+                        + {lang}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Frameworks & Libraries</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-slate-700">Frameworks & Libraries</label>
+                  <span className="text-[10px] text-slate-400">Click to add</span>
+                </div>
                 <CommaSeparatedInput
                   category="frameworks"
-                  placeholder="e.g. React, Node.js, Express, Next.js, Redux Toolkit, Tailwind CSS, Jest"
+                  placeholder="e.g. React, Node.js, Express, Next.js, Pandas, FastAPI, Django, Redux Toolkit"
                   value={(resumeData.skills?.frameworks || []).concat(resumeData.skills?.libraries || [])}
                   onChange={items => setResumeData(p => ({
                     ...p,
@@ -787,12 +932,34 @@ export const ResumeBuilderPage: React.FC = () => {
                   }))}
                   className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['React', 'Node.js', 'Express', 'Next.js', 'Pandas', 'FastAPI', 'Django', 'Spring Boot', 'Tailwind CSS'].map(fw => {
+                    const currentList = (resumeData.skills?.frameworks || []).concat(resumeData.skills?.libraries || []);
+                    if (currentList.some(item => item.toLowerCase() === fw.toLowerCase())) return null;
+                    return (
+                      <button
+                        key={fw}
+                        type="button"
+                        onClick={() => setResumeData(p => ({
+                          ...p,
+                          skills: { ...p.skills, frameworks: [...(p.skills?.frameworks || []), fw] }
+                        }))}
+                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                      >
+                        + {fw}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Databases & Cloud Infrastructure</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-slate-700">Databases & Cloud Infrastructure</label>
+                  <span className="text-[10px] text-slate-400">Click to add</span>
+                </div>
                 <CommaSeparatedInput
                   category="databases"
-                  placeholder="e.g. PostgreSQL, MongoDB Atlas, Redis, AWS (ECS, S3, Lambda), Docker, Kubernetes, GCP"
+                  placeholder="e.g. PostgreSQL, MongoDB Atlas, Redis, MySQL, Snowflake, BigQuery, AWS, Docker"
                   value={(resumeData.skills?.databases || []).concat(resumeData.skills?.cloud || [])}
                   onChange={items => setResumeData(p => ({
                     ...p,
@@ -800,12 +967,34 @@ export const ResumeBuilderPage: React.FC = () => {
                   }))}
                   className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['PostgreSQL', 'MongoDB', 'MySQL', 'Redis', 'AWS', 'Docker', 'Kubernetes', 'Snowflake', 'BigQuery'].map(db => {
+                    const currentList = (resumeData.skills?.databases || []).concat(resumeData.skills?.cloud || []);
+                    if (currentList.some(item => item.toLowerCase() === db.toLowerCase())) return null;
+                    return (
+                      <button
+                        key={db}
+                        type="button"
+                        onClick={() => setResumeData(p => ({
+                          ...p,
+                          skills: { ...p.skills, databases: [...(p.skills?.databases || []), db] }
+                        }))}
+                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                      >
+                        + {db}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Tools & Methodologies</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-slate-700">Tools, Analytics & Methodologies</label>
+                  <span className="text-[10px] text-slate-400">Click to add</span>
+                </div>
                 <CommaSeparatedInput
                   category="tools"
-                  placeholder="e.g. Git, GitHub Actions, CI/CD, Postman, Linux, Agile/Scrum, Microservices"
+                  placeholder="e.g. Microsoft Excel, Power BI, Tableau, Git, GitHub Actions, Postman, Jira, CI/CD"
                   value={(resumeData.skills?.tools || []).concat(resumeData.skills?.otherTechnologies || [])}
                   onChange={items => setResumeData(p => ({
                     ...p,
@@ -813,6 +1002,63 @@ export const ResumeBuilderPage: React.FC = () => {
                   }))}
                   className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 />
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['Microsoft Excel', 'Power BI', 'Tableau', 'Git', 'GitHub Actions', 'Postman', 'Jira', 'Agile / Scrum', 'CI/CD'].map(tool => {
+                    const currentList = (resumeData.skills?.tools || []).concat(resumeData.skills?.otherTechnologies || []);
+                    if (currentList.some(item => item.toLowerCase() === tool.toLowerCase())) return null;
+                    return (
+                      <button
+                        key={tool}
+                        type="button"
+                        onClick={() => setResumeData(p => ({
+                          ...p,
+                          skills: { ...p.skills, tools: [...(p.skills?.tools || []), tool] }
+                        }))}
+                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                      >
+                        + {tool}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Dedicated Non-Technical & Core Professional Skills */}
+              <div className="pt-2 border-t border-purple-100">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-slate-800">
+                    Non-Technical & Core Professional Skills
+                  </label>
+                  <span className="text-[10px] text-slate-400">Click to add</span>
+                </div>
+                <CommaSeparatedInput
+                  category="soft"
+                  placeholder="e.g. Microsoft Excel, Data Analysis, Problem Solving, Communication, Project Management"
+                  value={resumeData.softSkills || []}
+                  onChange={items => setResumeData(p => ({
+                    ...p,
+                    softSkills: items
+                  }))}
+                  className="w-full px-3 py-2 bg-white border border-purple-100 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
+                />
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {['Microsoft Excel', 'Data Analysis', 'Problem Solving', 'Business Communication', 'Team Leadership', 'Project Management', 'Critical Thinking', 'Time Management'].map(soft => {
+                    if ((resumeData.softSkills || []).some(s => s.toLowerCase() === soft.toLowerCase())) return null;
+                    return (
+                      <button
+                        key={soft}
+                        type="button"
+                        onClick={() => setResumeData(p => ({
+                          ...p,
+                          softSkills: [...(p.softSkills || []), soft]
+                        }))}
+                        className="text-[10px] px-2 py-0.5 rounded bg-purple-50/70 hover:bg-brand-50 border border-purple-100 hover:border-brand-300 text-slate-600 hover:text-brand-700 transition-colors"
+                      >
+                        + {soft}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </Card>
@@ -906,8 +1152,8 @@ export const ResumeBuilderPage: React.FC = () => {
                     />
                     {/* Quick Stack Suggestion Pills */}
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      <span className="text-[10px] text-slate-500 font-medium">Quick Add:</span>
-                      {['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS', 'Redis', 'GraphQL', 'Tailwind CSS', 'Python', 'Next.js', 'MongoDB'].map(tech => {
+                      <span className="text-[10px] text-slate-500 font-medium">Quick Add Tech / Skills:</span>
+                      {['Python', 'SQL', 'Microsoft Excel', 'Power BI', 'Tableau', 'Pandas', 'Apache Spark', 'React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker', 'AWS', 'Redis', 'MongoDB', 'FastAPI', 'Next.js', 'Git'].map(tech => {
                         const isAlreadyAdded = (proj.technologies || []).some(t => t.toLowerCase() === tech.toLowerCase());
                         if (isAlreadyAdded) return null;
                         return (

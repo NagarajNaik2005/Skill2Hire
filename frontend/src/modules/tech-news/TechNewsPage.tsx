@@ -92,6 +92,20 @@ const FALLBACK_ARTICLES: INewsArticle[] = [
     ]
   },
   {
+    id: 'news-cloud-3',
+    title: 'AWS Announces ECS Fargate Micro-VM Cold Start Reductions',
+    url: 'https://aws.amazon.com/blogs/compute/',
+    source: 'AWS Architecture Blog',
+    category: 'Cloud & DevOps',
+    publishedDate: '4 days ago',
+    originalSummary: 'Amazon Web Services cuts serverless container startup overhead by 65% through preemptive container layer caching and optimized kernel hypervisors.',
+    aiKeyTakeaways: [
+      'Near-instant scaling responses during unpredicted traffic spikes',
+      'Eliminates need for artificial warm-up cron triggers across microservices',
+      'Reduces compute spending on idle standby container instances'
+    ]
+  },
+  {
     id: 'news-web-1',
     title: 'TypeScript 5.7 Released with Enhanced Path Resolution & Error Tracking',
     url: 'https://devblogs.microsoft.com/typescript/',
@@ -196,13 +210,35 @@ export const TechNewsPage: React.FC = () => {
     fetchNews();
   }, [selectedCategory]);
 
+  const isCategoryMatch = (articleCat: string, targetCat: string): boolean => {
+    if (!targetCat || targetCat === 'All') return true;
+    const a = (articleCat || '').toLowerCase();
+    const t = targetCat.toLowerCase();
+    if (a === t) return true;
+    if (t.includes('ai') && (a.includes('ai') || a.includes('ml') || a.includes('machine learning') || a.includes('intelligence') || a.includes('llm'))) return true;
+    if (t.includes('cloud') && (a.includes('cloud') || a.includes('devops') || a.includes('kubernetes') || a.includes('docker') || a.includes('aws') || a.includes('terraform'))) return true;
+    if (t.includes('frontend') && (a.includes('frontend') || a.includes('web') || a.includes('react') || a.includes('typescript') || a.includes('css'))) return true;
+    if (t.includes('backend') && (a.includes('backend') || a.includes('systems') || a.includes('database') || a.includes('sql') || a.includes('postgres') || a.includes('go'))) return true;
+    if (t.includes('hiring') && (a.includes('hiring') || a.includes('career') || a.includes('job') || a.includes('resume') || a.includes('ats'))) return true;
+    return a.includes(t) || t.includes(a);
+  };
+
   const fetchNews = async () => {
     setIsLoading(true);
     try {
       const categoryParam = selectedCategory === 'All' ? '' : selectedCategory;
       const res = await api.get(`/news?category=${encodeURIComponent(categoryParam)}`);
       if (res.data?.success && Array.isArray(res.data?.data) && res.data.data.length > 0) {
-        setArticles(res.data.data);
+        // Enforce category adherence
+        const filtered = selectedCategory === 'All'
+          ? res.data.data
+          : res.data.data.filter((item: INewsArticle) => isCategoryMatch(item.category, selectedCategory));
+
+        if (filtered.length > 0) {
+          setArticles(filtered);
+        } else {
+          applyFallback(selectedCategory);
+        }
       } else {
         // Fallback to curated articles matching the category
         applyFallback(selectedCategory);
@@ -219,12 +255,17 @@ export const TechNewsPage: React.FC = () => {
     if (category === 'All') {
       setArticles(FALLBACK_ARTICLES);
     } else {
-      const matched = FALLBACK_ARTICLES.filter(a => a.category.toLowerCase() === category.toLowerCase());
-      setArticles(matched.length > 0 ? matched : FALLBACK_ARTICLES);
+      const matched = FALLBACK_ARTICLES.filter(a => isCategoryMatch(a.category, category));
+      setArticles(matched.length > 0 ? matched : FALLBACK_ARTICLES.filter(a => isCategoryMatch(a.category, category)));
     }
   };
 
   const filteredArticles = articles.filter(a => {
+    // Strict category guard
+    if (selectedCategory !== 'All' && !isCategoryMatch(a.category, selectedCategory)) {
+      return false;
+    }
+    if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     const titleMatch = (a.title || '').toLowerCase().includes(query);
     const summaryMatch = (a.originalSummary || '').toLowerCase().includes(query);
@@ -334,7 +375,17 @@ export const TechNewsPage: React.FC = () => {
               <div>
                 {/* Meta Header */}
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <Badge variant="primary" size="sm">{article.category || 'Tech'}</Badge>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const matchedCat = categories.find(c => isCategoryMatch(article.category, c.label));
+                      setSelectedCategory(matchedCat ? matchedCat.label : article.category);
+                    }}
+                    title={`Filter news by ${article.category}`}
+                    className="focus:outline-none transition-transform hover:scale-105"
+                  >
+                    <Badge variant="primary" size="sm" className="cursor-pointer">{article.category || 'Tech'}</Badge>
+                  </button>
                   <span className="text-[11px] text-slate-500 flex items-center gap-1">
                     <Calendar className="w-3 h-3 text-slate-400" />
                     {article.publishedDate || 'Recent'}

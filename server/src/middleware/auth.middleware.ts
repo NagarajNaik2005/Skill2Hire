@@ -24,3 +24,17 @@ export const requireAuth = (req: AuthenticatedRequest, res: Response, next: Next
     });
   }
 };
+
+export const optionalAuth = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const decoded = verifyToken(token);
+      req.user = decoded;
+    }
+  } catch {
+    // Gracefully proceed as guest without error
+  }
+  next();
+};

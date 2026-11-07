@@ -23,11 +23,11 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ resumeData }) => {
   ].filter(Boolean);
 
   return (
-    <div className="resume-document w-full bg-white text-neutral-950 font-serif px-8 py-7 text-[11px] leading-relaxed select-text box-border max-w-[210mm] mx-auto overflow-hidden">
+    <div className="resume-document w-full bg-white text-neutral-950 font-serif px-8 py-7 text-[11px] leading-relaxed select-text box-border max-w-[210mm] mx-auto overflow-visible">
       
       {/* Centered Classic Ivy League Header */}
       <div className="resume-section text-center mb-3">
-        <h1 className="text-[24px] font-bold uppercase tracking-wider text-neutral-950 font-serif leading-tight m-0 truncate">
+        <h1 className="text-[24px] font-bold uppercase tracking-wider text-neutral-950 font-serif leading-normal py-1 m-0 overflow-visible break-words">
           {personalInfo.fullName || 'Candidate Name'}
         </h1>
         {careerTarget?.targetRole && (
@@ -97,6 +97,12 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ resumeData }) => {
               <p className="resume-item">
                 <strong className="font-bold text-neutral-950">Tools & Technologies: </strong>
                 <span className="break-words">{(skills.tools || []).concat(skills.otherTechnologies || []).join(', ')}</span>
+              </p>
+            )}
+            {resumeData.softSkills && resumeData.softSkills.length > 0 && (
+              <p className="resume-item">
+                <strong className="font-bold text-neutral-950">Core & Non-Technical Skills: </strong>
+                <span className="break-words">{resumeData.softSkills.join(', ')}</span>
               </p>
             )}
           </div>

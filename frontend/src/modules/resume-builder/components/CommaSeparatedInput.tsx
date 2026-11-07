@@ -9,7 +9,7 @@ interface CommaSeparatedInputProps {
   className?: string;
   id?: string;
   showBadges?: boolean;
-  category?: 'languages' | 'frameworks' | 'databases' | 'tools' | 'all';
+  category?: 'languages' | 'frameworks' | 'databases' | 'tools' | 'soft' | 'all';
 }
 
 export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
@@ -32,10 +32,18 @@ export const CommaSeparatedInput: React.FC<CommaSeparatedInputProps> = ({
 
   // Sync external changes (such as load sample, AI suggestions, quick add buttons)
   useEffect(() => {
-    if (!isInternalChange.current) {
+    const currentParsed = text
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+    const areEqual =
+      (value || []).length === currentParsed.length &&
+      (value || []).every((v, i) => v.toLowerCase() === (currentParsed[i] || '').toLowerCase());
+
+    // Only sync from external value if it truly differs from the user's current input
+    if (!areEqual) {
       setText((value || []).join(', '));
     }
-    isInternalChange.current = false;
   }, [value]);
 
   // Extract the current token being typed (the segment after the last comma)

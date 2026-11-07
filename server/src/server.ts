@@ -53,12 +53,21 @@ app.use(errorHandler);
 
 // Start Server & Connect Database
 const startServer = async () => {
-  app.listen(ENV.PORT, () => {
+  const server = app.listen(ENV.PORT, () => {
     console.log(`============================================================`);
     console.log(`🚀 Skill2Hire Backend Server running on port ${ENV.PORT}`);
     console.log(`📡 Client Origin allowed: ${ENV.CLIENT_URL}`);
     console.log(`🍃 Database configured: MongoDB Atlas`);
     console.log(`============================================================`);
+  });
+
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\n⚠️ [Port Conflict]: Port ${ENV.PORT} is already in use by an active process.`);
+      console.error(`👉 Quick Fix: Close any previous terminal or run: npx kill-port ${ENV.PORT}\n`);
+    } else {
+      console.error('[Server Error]:', err);
+    }
   });
 
   connectDB().catch(err => {
