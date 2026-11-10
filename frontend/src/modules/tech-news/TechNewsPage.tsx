@@ -17,7 +17,9 @@ import {
   Server,
   RefreshCw,
   X,
-  Layers
+  Layers,
+  Briefcase,
+  DollarSign
 } from 'lucide-react';
 
 const FALLBACK_ARTICLES: INewsArticle[] = [
@@ -149,20 +151,90 @@ const FALLBACK_ARTICLES: INewsArticle[] = [
   },
   {
     id: 'news-car-1',
-    title: 'Tech Hiring Bar 2025: Why AI Literacy and System Design Dominate Placements',
-    url: 'https://www.hiringtrends.dev',
-    source: 'Tech Talent Insights',
-    category: 'Hiring & Career Trends',
-    publishedDate: 'This week',
-    originalSummary: 'Engineering leaders report moving away from pure trivia leetcode towards architecture trade-offs, real-world debugging, and effective AI pair-programming.',
+    title: 'India Tech Job Market 2026: GCCs and Startups Ramp Up Hiring for Full Stack & Cloud Engineers',
+    url: 'https://economictimes.indiatimes.com/tech',
+    source: 'Economic Times Tech',
+    category: 'Job Market & Hiring',
+    publishedDate: 'Today',
+    originalSummary: 'Global Capability Centers (GCCs) in Bengaluru, Hyderabad, and Pune plan over 150,000 new technical hires in 2026, creating record openings for full-stack developers and DevOps specialists.',
     aiKeyTakeaways: [
-      'Candidates fluent in AI tools and architectural reasoning receive 35% higher offer rates',
-      'Single-column ATS compliant resumes with quantified achievements rank highest',
-      'Interactive mock interviews remain the top differentiator in final rounds'
+      'GCCs offering competitive compensation with 20–35% average salary premiums for MERN and cloud talent',
+      'Enterprise migration to TypeScript, Next.js, and containerized microservices driving strong hiring spikes',
+      'Freshers with verified GitHub portfolios and live deployed projects seeing accelerated hiring timelines'
     ]
   },
   {
     id: 'news-car-2',
+    title: 'Naukri Hiring Pulse Report: IT & Software Sector Records 22% Surge in Active Job Postings',
+    url: 'https://www.naukri.com/blog',
+    source: 'Naukri Hiring Index',
+    category: 'Job Market & Hiring',
+    publishedDate: 'Yesterday',
+    originalSummary: 'Monthly job portal trends show sharp rebound across mid-tier IT services and tier-1 product companies looking for React, Node.js, and Python engineers.',
+    aiKeyTakeaways: [
+      'Software development positions represent over 42% of all new open white-collar postings',
+      'Hybrid work policies remain standard, with 68% of tech companies offering 2-3 days remote flexibility',
+      'Targeted resume tailoring for ATS compatibility increases interview callback rates by over 3x'
+    ]
+  },
+  {
+    id: 'news-car-3',
+    title: 'Global Tech Salary Benchmark 2026: Remote US & European Firms Expand Direct India Hiring',
+    url: 'https://levels.fyi',
+    source: 'Levels.fyi Industry Report',
+    category: 'Job Market & Hiring',
+    publishedDate: '2 days ago',
+    originalSummary: 'Remote international employers are aggressively hiring Indian software talent with competitive dollar-benchmarked compensation packages ranging from ₹18L to ₹45L.',
+    aiKeyTakeaways: [
+      'Strongest international salary growth recorded in Full Stack, Cloud Platform, and ML Engineering',
+      'Async engineering culture emphasizes written RFCs, clean pull requests, and autonomous execution',
+      'Demonstrating end-to-end full-stack ownership gives candidates an immediate upper-hand in compensation negotiations'
+    ]
+  },
+  {
+    id: 'news-car-4',
+    title: 'LinkedIn Workforce Insights: Top 10 High-Demand Skills Companies Are Actively Recruiting For',
+    url: 'https://www.linkedin.com/business/talent/blog',
+    source: 'LinkedIn Talent Solutions',
+    category: 'Job Market & Hiring',
+    publishedDate: '3 days ago',
+    originalSummary: 'LinkedIn Talent analysis ranks React, Node.js, Cloud Architecture, Docker, and AI Integration as the fastest-growing required skills on active job descriptions.',
+    aiKeyTakeaways: [
+      'Full-stack JavaScript/TypeScript proficiency leads technical demand for the 4th consecutive year',
+      'Employers screening out resumes lacking tangible business impact and quantified performance metrics',
+      'Candidates with multi-cloud foundations (AWS/Docker) receive 2.4x more recruiter InMails'
+    ]
+  },
+  {
+    id: 'news-car-5',
+    title: 'Layoffs Stabilize as Big Tech & Startups Re-invest in Core Product Engineering Teams',
+    url: 'https://techcrunch.com',
+    source: 'TechCrunch Enterprise',
+    category: 'Job Market & Hiring',
+    publishedDate: '4 days ago',
+    originalSummary: 'Tech layoff tracking figures hit a 3-year low as enterprise software firms and well-funded startups reopen headcount for mission-critical engineering initiatives.',
+    aiKeyTakeaways: [
+      'Net engineering headcount expansion resumes across SaaS, FinTech, and HealthTech sectors',
+      'Emphasis shifted towards high-impact contributors who understand scalable cloud architectures',
+      'Early-career hiring recovering with new entry-level pipeline programs announced by major employers'
+    ]
+  },
+  {
+    id: 'news-car-6',
+    title: 'The Shift to Practical Technical Assessments: Replacing Whiteboards with Real Codebases',
+    url: 'https://news.ycombinator.com',
+    source: 'Engineering Hiring Review',
+    category: 'Hiring & Career Trends',
+    publishedDate: '3 days ago',
+    originalSummary: 'Tech companies are rapidly moving away from abstract puzzle interviews toward take-home refactoring exercises and realistic pull request evaluations.',
+    aiKeyTakeaways: [
+      'Live pair-programming on modular codebases preferred over memorized algorithm tricks',
+      'Evaluating how candidates test, debug, and communicate architectural trade-offs',
+      'Demonstrating CI/CD and deployment proficiency significantly boosts candidacy'
+    ]
+  },
+  {
+    id: 'news-car-7',
     title: 'How Modern ATS Scanners Parse Work Experience and Project Metrics',
     url: 'https://ats-standards.org',
     source: 'Recruiting Engineering Review',
@@ -185,11 +257,12 @@ export const TechNewsPage: React.FC = () => {
 
   const categories = [
     { label: 'All', icon: Layers },
+    { label: 'Job Market & Hiring', icon: Briefcase },
+    { label: 'Salary & Market Trends', icon: TrendingUp },
     { label: 'AI & ML', icon: Cpu },
     { label: 'Cloud & DevOps', icon: Globe },
     { label: 'Frontend & Web', icon: Terminal },
-    { label: 'Backend & Systems', icon: Server },
-    { label: 'Hiring & Career Trends', icon: TrendingUp }
+    { label: 'Backend & Systems', icon: Server }
   ];
 
   useEffect(() => {
@@ -219,7 +292,15 @@ export const TechNewsPage: React.FC = () => {
     if (category === 'All') {
       setArticles(FALLBACK_ARTICLES);
     } else {
-      const matched = FALLBACK_ARTICLES.filter(a => a.category.toLowerCase() === category.toLowerCase());
+      const query = category.toLowerCase();
+      const matched = FALLBACK_ARTICLES.filter(a => {
+        const cat = a.category.toLowerCase();
+        if ((query.includes('job') || query.includes('market') || query.includes('hiring') || query.includes('salary') || query.includes('career')) &&
+            (cat.includes('job') || cat.includes('market') || cat.includes('hiring') || cat.includes('salary') || cat.includes('trend') || cat.includes('career'))) {
+          return true;
+        }
+        return cat.includes(query) || query.includes(cat);
+      });
       setArticles(matched.length > 0 ? matched : FALLBACK_ARTICLES);
     }
   };
@@ -241,17 +322,17 @@ export const TechNewsPage: React.FC = () => {
           <div className="flex items-center gap-2 mb-2">
             <Badge variant="primary" size="sm">Industry Intelligence</Badge>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Verified Feeds
+              Live Job Market & Tech Trends
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
               Open Public Access
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Tech News & Engineering Radar
+            Tech & Job Market Intelligence
           </h1>
           <p className="text-sm text-slate-600 mt-1">
-            Real-time developer feeds, architectural breakdowns, and AI-generated 3-bullet executive takeaways.
+            Real-time developer feeds, tech job market reports, hiring surges, and AI-generated executive takeaways.
           </p>
         </div>
 
@@ -328,13 +409,27 @@ export const TechNewsPage: React.FC = () => {
           ))}
         </div>
       ) : filteredArticles.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {filteredArticles.map(article => (
-            <Card key={article.id} hoverEffect className="flex flex-col justify-between p-6 bg-white border-purple-100/90 shadow-sm rounded-2xl">
+        <div key={selectedCategory} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6 stage-enter">
+          {filteredArticles.map((article, idx) => (
+            <Card
+              key={article.id}
+              hoverEffect
+              style={{ '--stagger-idx': idx } as React.CSSProperties}
+              className="flex flex-col justify-between p-6 bg-white border-purple-100/90 shadow-sm rounded-2xl stagger-item"
+            >
               <div>
                 {/* Meta Header */}
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <Badge variant="primary" size="sm">{article.category || 'Tech'}</Badge>
+                  {(article.category || '').toLowerCase().includes('job') || 
+                   (article.category || '').toLowerCase().includes('hiring') || 
+                   (article.category || '').toLowerCase().includes('salary') ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">
+                      <Briefcase className="w-3 h-3 text-emerald-600" />
+                      {article.category}
+                    </span>
+                  ) : (
+                    <Badge variant="primary" size="sm">{article.category || 'Tech'}</Badge>
+                  )}
                   <span className="text-[11px] text-slate-500 flex items-center gap-1">
                     <Calendar className="w-3 h-3 text-slate-400" />
                     {article.publishedDate || 'Recent'}

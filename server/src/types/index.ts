@@ -131,6 +131,7 @@ export interface IJob {
   skills: string[];
   source: string;
   applicationUrl: string;
+  companyUrl?: string;
   postedDate: string;
   matchPercentage?: number;
   matchingSkills?: string[];
@@ -140,9 +141,34 @@ export interface IJob {
 
 export interface IAptitudeQuestion {
   id: number;
-  category: 'Quantitative' | 'Logical Reasoning' | 'Verbal Ability' | 'Data Interpretation';
+  category: 'Quantitative' | 'Logical Reasoning' | 'Verbal Ability' | 'Data Interpretation' | 'Technical Aptitude';
   question: string;
   options: string[];
   correctAnswer: number; // 0-indexed
   explanation: string;
+}
+
+export interface ITechnicalAnswerEvaluation {
+  score: number;
+  verdict: string;
+  technicalAccuracy: string;
+  strengths: string[];
+  improvements: string[];
+  resumeAndSkillImprovements?: string[];
+  idealModelAnswer?: string;
+  feedback: string;
+}
+
+export interface IQuestionImprovementDetail {
+  questionNumber: number;
+  question: string;
+  candidateAnswer: string;
+  score: number;
+  verdict: string;
+  technicalAccuracy: string;
+  strengths: string[];
+  improvements: string[];
+  resumeAndSkillImprovements: string[];
+  idealModelAnswer?: string;
+  feedback: string;
 }

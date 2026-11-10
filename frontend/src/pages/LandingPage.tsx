@@ -201,13 +201,14 @@ export const LandingPage: React.FC = () => {
 
         {/* Rich Feature Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-          {modules.map((m) => {
+          {modules.map((m, mIdx) => {
             const Icon = m.icon;
             return (
               <Card
                 key={m.title}
                 hoverEffect
-                className="flex flex-col justify-between p-7 relative group"
+                style={{ '--stagger-idx': mIdx } as React.CSSProperties}
+                className="flex flex-col justify-between p-7 relative group stagger-item"
               >
                 <div>
                   {/* Top Bar: Icon & Category Badge */}
@@ -275,7 +276,11 @@ export const LandingPage: React.FC = () => {
             {platformPillars.map((pillar, idx) => {
               const Icon = pillar.icon;
               return (
-                <div key={idx} className="p-6 rounded-2xl bg-purple-50/40 border border-purple-100/80 shadow-xs space-y-3">
+                <div
+                  key={idx}
+                  style={{ '--stagger-idx': idx } as React.CSSProperties}
+                  className="p-6 rounded-2xl bg-purple-50/40 border border-purple-100/80 shadow-xs space-y-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-purple-200 stagger-item"
+                >
                   <div className="w-11 h-11 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center mb-4">
                     <Icon className="w-5 h-5" />
                   </div>

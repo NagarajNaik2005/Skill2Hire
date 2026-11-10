@@ -17,7 +17,7 @@ export const Card: React.FC<CardProps> = ({
     <div
       className={twMerge(
         clsx(
-          'glass-panel rounded-2xl p-6 transition-all duration-300',
+          'glass-panel rounded-2xl p-6 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
           hoverEffect && 'glass-panel-hover',
           className
         )

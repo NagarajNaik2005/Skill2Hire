@@ -3,7 +3,13 @@ import { ENV } from './env';
 
 export const connectDB = async (): Promise<void> => {
   try {
-    const conn = await mongoose.connect(ENV.MONGODB_URI);
+    // Fail fast on buffering if connection is not ready
+    mongoose.set('bufferTimeoutMS', 2500);
+
+    const conn = await mongoose.connect(ENV.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000
+    });
     console.log(`[MongoDB Atlas] Successfully connected to database: ${conn.connection.name} at host: ${conn.connection.host}`);
   } catch (error) {
     console.error('[MongoDB Atlas] Connection Error:', error);

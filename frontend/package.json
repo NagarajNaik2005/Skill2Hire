@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.1.6",
+    "@tensorflow-models/coco-ssd": "^2.2.3",
+    "@tensorflow/tfjs": "^4.22.0",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",

@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-[#f5f4fc] text-slate-900 antialiased font-sans selection:bg-brand-500 selection:text-white min-h-screen relative overflow-x-hidden;
     background-color: #f5f4fc;
@@ -10,6 +14,24 @@
 }
 
 /* Ambient Glossy Mesh / Soft Lavender Glow Backgrounds */
+@keyframes auroraDriftPrimary {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(-28px, 18px, 0) scale(1.06);
+  }
+}
+
+@keyframes auroraDriftSecondary {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(26px, -22px, 0) scale(1.05);
+  }
+}
+
 .aurora-canvas {
   position: relative;
 }
@@ -25,6 +47,8 @@
   pointer-events: none;
   z-index: 0;
   filter: blur(20px);
+  will-change: transform;
+  animation: auroraDriftPrimary 16s ease-in-out infinite alternate;
 }
 
 .aurora-canvas::after {
@@ -38,6 +62,8 @@
   pointer-events: none;
   z-index: 0;
   filter: blur(20px);
+  will-change: transform;
+  animation: auroraDriftSecondary 18s ease-in-out infinite alternate;
 }
 
 /* High-End Glossy White Card & Glassmorphism Utilities */
@@ -55,7 +81,8 @@
 }
 
 .glass-panel-hover {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.34s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, background-color 0.25s ease;
+  will-change: transform;
 }
 
 .glass-panel-hover:hover {
@@ -65,7 +92,7 @@
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
     0 24px 48px -12px rgba(124, 58, 237, 0.16),
     0 8px 20px -4px rgba(15, 23, 42, 0.05);
-  transform: translateY(-2px);
+  transform: translate3d(0, -3px, 0);
 }
 
 /* Glossy Badge Pill */
@@ -223,21 +250,165 @@ select:focus {
   background: #a78bfa;
 }
 
-/* Custom animation */
+/* Buttery GPU-Accelerated Spring Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translate3d(0, 8px, 0);
   }
-
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes moduleEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.module-enter {
+  animation: moduleEnter 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes stageEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stage-enter {
+  animation: stageEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes questionSlide {
+  from {
+    opacity: 0;
+    transform: translate3d(14px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-questionSlide {
+  animation: questionSlide 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes modalBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-modalBackdrop {
+  animation: modalBackdrop 0.22s ease-out both;
+}
+
+@keyframes modalPanel {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-modalPanel {
+  animation: modalPanel 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes drawerSlideDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-drawerSlideDown {
+  animation: drawerSlideDown 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes routeSweep {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+    opacity: 1;
+  }
+  70% {
+    transform: translate3d(0%, 0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+}
+
+.route-sweep-bar {
+  animation: routeSweep 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes staggerFadeUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.stagger-item {
+  animation: staggerFadeUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(min(var(--stagger-idx, 0), 8) * 50ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .aurora-canvas::before,
+  .aurora-canvas::after,
+  .animate-fadeIn,
+  .module-enter,
+  .stage-enter,
+  .animate-questionSlide,
+  .animate-modalBackdrop,
+  .animate-modalPanel,
+  .animate-drawerSlideDown,
+  .route-sweep-bar,
+  .stagger-item {
+    animation: none !important;
+  }
+  .glass-panel-hover {
+    transition: none !important;
+  }
 }
 
 /* ============================================================ */
@@ -277,6 +448,15 @@ select:focus {
     overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  .module-enter,
+  .stage-enter,
+  .stagger-item,
+  .animate-fadeIn {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 
   /* Hide navigation, modals, buttons, backgrounds, and side panels */

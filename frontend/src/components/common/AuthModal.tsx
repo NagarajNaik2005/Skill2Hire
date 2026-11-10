@@ -46,8 +46,8 @@ export const AuthModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-md bg-white border border-purple-100 rounded-2xl shadow-2xl shadow-purple-500/15 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-modalBackdrop">
+      <div className="relative w-full max-w-md bg-white border border-purple-100 rounded-2xl shadow-2xl shadow-purple-500/15 overflow-hidden animate-modalPanel">
         {/* Header decoration */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-500 via-purple-500 to-fuchsia-500" />
 

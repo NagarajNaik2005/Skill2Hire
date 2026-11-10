@@ -157,6 +157,7 @@ export interface IJob {
   skills: string[];
   source: string;
   applicationUrl: string;
+  companyUrl?: string;
   postedDate: string;
   matchPercentage?: number;
   matchingSkills?: string[];
@@ -166,9 +167,35 @@ export interface IJob {
 
 export interface IAptitudeQuestion {
   id: number;
-  category: 'Quantitative' | 'Logical Reasoning' | 'Verbal Ability' | 'Data Interpretation';
+  category: 'Quantitative' | 'Logical Reasoning' | 'Verbal Ability' | 'Data Interpretation' | 'Technical Aptitude' | string;
   question: string;
   options: string[];
+  questionText?: string;
+}
+
+export interface ITechnicalAnswerEvaluation {
+  score: number;
+  verdict: string;
+  technicalAccuracy: string;
+  strengths: string[];
+  improvements: string[];
+  resumeAndSkillImprovements?: string[];
+  idealModelAnswer?: string;
+  feedback: string;
+}
+
+export interface IQuestionImprovementDetail {
+  questionNumber: number;
+  question: string;
+  candidateAnswer: string;
+  score: number;
+  verdict: string;
+  technicalAccuracy: string;
+  strengths: string[];
+  improvements: string[];
+  resumeAndSkillImprovements: string[];
+  idealModelAnswer?: string;
+  feedback: string;
 }
 
 export interface IInterviewReport {
@@ -186,6 +213,7 @@ export interface IInterviewReport {
     logical: number;
     verbal: number;
     dataInterpretation: number;
+    technical?: number;
     passed: boolean;
   };
   technicalScore: number;
@@ -207,6 +235,7 @@ export interface IInterviewReport {
     url: string;
     type: string;
   }[];
+  questionImprovements?: IQuestionImprovementDetail[];
   overallResult: 'Passed' | 'Needs Improvement';
   createdAt?: string;
 }

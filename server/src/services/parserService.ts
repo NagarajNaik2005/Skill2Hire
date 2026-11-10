@@ -28,37 +28,90 @@ export class ParserService {
   }
 
   /**
-   * Extract basic heuristic sections from raw text
+   * Extract strictly authentic skills and projects present inside the uploaded resume text
    */
   public static parseSectionsFromText(text: string): {
     extractedEmail?: string;
     extractedPhone?: string;
     extractedSkills: string[];
+    authenticProjects: { title: string; description: string; technologies: string[] }[];
     rawText: string;
   } {
     const emailMatch = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i);
     const phoneMatch = text.match(/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
 
-    const commonTechSkills = [
-      'JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#', 'Go', 'Rust',
-      'React', 'Node.js', 'Express', 'Next.js', 'Angular', 'Vue.js', 'Spring Boot', 'Django', 'FastAPI', 'Flask',
-      'MongoDB', 'MongoDB Atlas', 'PostgreSQL', 'MySQL', 'Redis', 'Firebase', 'SQLite',
-      'Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'Git', 'GitHub', 'CI/CD', 'GraphQL', 'REST API',
-      'Tailwind CSS', 'HTML5', 'HTML', 'CSS3', 'CSS', 'Jest', 'Mocha', 'Postman', 'VS Code'
+    const commonSkillsDictionary = [
+      'JavaScript', 'TypeScript', 'Python', 'Java', 'C', 'C++', 'C#', '.NET', 'ASP.NET', 'Go', 'Golang', 'Rust',
+      'PHP', 'Ruby', 'Swift', 'Kotlin', 'Dart', 'Flutter', 'Scala', 'R',
+      'React', 'React.js', 'ReactJS', 'Next.js', 'NextJS', 'Angular', 'Vue.js', 'VueJS', 'Svelte', 'Redux',
+      'Node.js', 'NodeJS', 'Express', 'Express.js', 'Spring Boot', 'Django', 'FastAPI', 'Flask', 'Laravel',
+      'HTML5', 'HTML', 'CSS3', 'CSS', 'Tailwind CSS', 'Bootstrap', 'Sass', 'SCSS',
+      'SQL', 'NoSQL', 'MongoDB', 'MongoDB Atlas', 'PostgreSQL', 'MySQL', 'Redis', 'Firebase', 'SQLite', 'Oracle', 'DynamoDB',
+      'Data Structures', 'Algorithms', 'DSA', 'OOP', 'Object-Oriented Programming', 'Object Oriented Programming',
+      'DBMS', 'Operating Systems', 'Computer Networks', 'System Design', 'Microservices',
+      'REST API', 'REST APIs', 'RESTful API', 'GraphQL', 'WebSockets',
+      'Docker', 'Kubernetes', 'AWS', 'Azure', 'GCP', 'Git', 'GitHub', 'GitLab', 'CI/CD', 'Linux',
+      'Jest', 'Mocha', 'Postman', 'VS Code', 'Selenium', 'JUnit', 'Cypress',
+      'Machine Learning', 'Deep Learning', 'TensorFlow', 'PyTorch', 'Scikit-Learn', 'Pandas', 'NumPy', 'NLP', 'OpenCV',
+      'Power BI', 'Tableau', 'Excel', 'Figma', 'Photoshop', 'Illustrator', 'UI/UX', 'AutoCAD', 'MATLAB', 'SolidWorks', 'Tally', 'Salesforce', 'SAP'
     ];
 
+    const seenLower = new Set<string>();
     const extractedSkills: string[] = [];
-    for (const skill of commonTechSkills) {
-      const regex = new RegExp(`\\b${skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+
+    const addSkill = (raw: string) => {
+      const cleaned = raw.trim().replace(/^[-•*\u2022\u25cf\u00b7\s]+/, '').replace(/[.;]+$/, '').trim();
+      if (!cleaned) return;
+      const lower = cleaned.toLowerCase();
+      if (seenLower.has(lower)) return;
+      seenLower.add(lower);
+      extractedSkills.push(cleaned);
+    };
+
+    // 1. Scan full resume text with exact token boundaries so e.g. "C" never matches "React" and "Java" never matches "JavaScript"
+    for (const skill of commonSkillsDictionary) {
+      const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(?<![a-zA-Z0-9+.#])${escaped}(?![a-zA-Z0-9+.#])`, 'i');
       if (regex.test(text)) {
-        extractedSkills.push(skill);
+        addSkill(skill);
       }
     }
+
+    // 2. Also parse explicit Skills section lines for domain-specific / non-dictionary skills written by the candidate
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const secMap = ParserService.mapSections(lines);
+    const skillSectionLines = secMap.get('skills') || [];
+    const skipWords = new Set([
+      'skills', 'technical skills', 'core skills', 'languages', 'programming languages',
+      'frameworks', 'libraries', 'databases', 'tools', 'cloud', 'other', 'technologies',
+      'competencies', 'none', 'and', 'etc', 'basic', 'intermediate', 'advanced'
+    ]);
+
+    for (const line of skillSectionLines) {
+      const withoutLabel = line.replace(/^[A-Za-z\s&/]+:\s*/, '');
+      const tokens = withoutLabel.split(/[,|•;/]+/);
+      for (const tok of tokens) {
+        const cleaned = tok.trim().replace(/^[-•*\u2022\u25cf\u00b7\s]+/, '').trim();
+        if (
+          cleaned.length >= 1 &&
+          cleaned.length <= 32 &&
+          cleaned.split(/\s+/).length <= 4 &&
+          !/^\d+$/.test(cleaned) &&
+          !skipWords.has(cleaned.toLowerCase())
+        ) {
+          addSkill(cleaned);
+        }
+      }
+    }
+
+    // 3. Extract ONLY authentic projects present in the resume (never invent dummy projects)
+    const authenticProjects = ParserService.extractAuthenticProjects(secMap.get('projects'));
 
     return {
       extractedEmail: emailMatch ? emailMatch[0] : undefined,
       extractedPhone: phoneMatch ? phoneMatch[0] : undefined,
       extractedSkills,
+      authenticProjects,
       rawText: text
     };
   }
@@ -362,18 +415,29 @@ export class ParserService {
     map.set(currentSection, []);
 
     const headerPatterns: [string, RegExp][] = [
-      ['summary', /^(?:professional\s+)?summary|profile|about\s+me|career\s+objective$/i],
-      ['experience', /^(?:work\s+)?experience|employment(?:\s+history)?|professional\s+experience|career\s+history$/i],
-      ['projects', /^(?:technical\s+|academic\s+|personal\s+|key\s+)?projects$/i],
-      ['skills', /^(?:technical\s+|core\s+)?skills|skills\s+&\s+competencies|technologies$/i],
-      ['education', /^education|academic(?:\s+background|\s+history)?|qualifications$/i],
-      ['certifications', /^certifications(?:\s+&\s+licenses)?|licenses$/i],
-      ['achievements', /^achievements|awards(?:\s+&\s+honors)?|honors$/i]
+      ['summary', /^(?:(?:professional\s+)?summary|profile|about\s+me|career\s+objective)[:\s]*$/i],
+      ['experience', /^(?:(?:work\s+|professional\s+)?experience|employment(?:\s+history)?|career\s+history)[:\s]*$/i],
+      ['projects', /^(?:(?:technical|academic|personal|key)\s+)?projects[:\s]*$/i],
+      ['skills', /^(?:(?:technical|core|key|software|professional)\s+)?(?:skills|competencies|technologies|skills\s*&\s*competencies|tools\s*&\s*technologies|areas\s+of\s+expertise)[:\s]*$/i],
+      ['education', /^(?:education|academic(?:\s+background|\s+history)?|qualifications)[:\s]*$/i],
+      ['certifications', /^(?:certifications(?:\s*&\s*licenses)?|licenses)[:\s]*$/i],
+      ['achievements', /^(?:achievements|awards(?:\s*&\s*honors)?|honors)[:\s]*$/i]
     ];
 
     for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed) continue;
+
+      // Support inline skills headers like "Skills: Python, SQL, React"
+      const inlineSkillsMatch = trimmed.match(/^(?:(?:technical|core|key|software|professional)\s+)?skills\s*[:\-]\s*(.+)$/i);
+      if (inlineSkillsMatch && inlineSkillsMatch[1]) {
+        currentSection = 'skills';
+        if (!map.has(currentSection)) {
+          map.set(currentSection, []);
+        }
+        map.get(currentSection)!.push(inlineSkillsMatch[1].trim());
+        continue;
+      }
 
       let matchedHeader = false;
       for (const [sectionName, pattern] of headerPatterns) {
@@ -396,6 +460,43 @@ export class ParserService {
     }
 
     return map;
+  }
+
+  /**
+   * Extract strictly authentic project entries from resume projects section without dummy fallbacks
+   */
+  private static extractAuthenticProjects(
+    sectionLines: string[] | undefined
+  ): { title: string; description: string; technologies: string[] }[] {
+    if (!sectionLines || sectionLines.length === 0) return [];
+    const projects: { title: string; description: string; technologies: string[] }[] = [];
+    let current: { title: string; description: string; technologies: string[] } | null = null;
+
+    for (const line of sectionLines) {
+      const isBullet = /^[-•*–\u2022\u25cf\u00b7]\s+/.test(line);
+      const isTechLine = /^(?:Technologies|Tech\s+Stack|Tools|Built\s+with|Frameworks)[:\s]/i.test(line);
+
+      if (isTechLine && current) {
+        const cleaned = line.replace(/^(?:Technologies|Tech\s+Stack|Tools|Built\s+with|Frameworks)[:\s]*/i, '').replace(/[\[\]]/g, '');
+        const techs = cleaned.split(/[,|•]/).map(t => t.trim()).filter(Boolean);
+        current.technologies = Array.from(new Set([...current.technologies, ...techs]));
+      } else if (isBullet && current) {
+        const bulletText = line.replace(/^[-•*–\u2022\u25cf\u00b7]\s+/, '').trim();
+        current.description = current.description ? `${current.description} ${bulletText}` : bulletText;
+      } else if (!isBullet && !isTechLine && line.length > 2 && line.length < 90 && !line.startsWith('http')) {
+        if (current) projects.push(current);
+        let title = line;
+        let inlineTech: string[] = [];
+        if (line.includes('|')) {
+          const parts = line.split('|');
+          title = parts[0].trim();
+          inlineTech = parts.slice(1).join(',').split(',').map(s => s.trim()).filter(Boolean);
+        }
+        current = { title, description: '', technologies: inlineTech };
+      }
+    }
+    if (current) projects.push(current);
+    return projects;
   }
 
   /**

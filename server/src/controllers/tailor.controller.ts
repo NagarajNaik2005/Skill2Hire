@@ -26,7 +26,8 @@ export class TailorController {
         message: 'Resume file parsed successfully.',
         data: parsedResume,
         rawText: extractedText,
-        extractedSkills: sectionData.extractedSkills
+        extractedSkills: sectionData.extractedSkills,
+        authenticProjects: sectionData.authenticProjects
       });
     } catch (error: any) {
       console.error('[Upload & Parse Error]:', error);

@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import { JobPreference } from '../models/JobPreference';
 import { SavedJob } from '../models/SavedJob';
 import { AuthenticatedRequest } from '../types';
@@ -17,19 +18,24 @@ export class JobController {
 
       const { role, location, workMode, experienceLevel, skills } = req.body;
 
-      // Save/Update user's search preferences in MongoDB Atlas
-      await JobPreference.findOneAndUpdate(
-        { userId: req.user.id },
-        {
-          userId: req.user.id,
-          targetRole: role || 'Software Developer',
-          preferredLocation: location || '',
-          workMode: workMode || 'Any',
-          experienceLevel: experienceLevel || 'Fresher',
-          skills: Array.isArray(skills) ? skills : []
-        },
-        { upsert: true, new: true }
-      );
+      // Save/Update user's search preferences in MongoDB Atlas asynchronously (non-blocking)
+      // Never let database preference saving block or crash the job discovery process
+      if (mongoose.connection.readyState === 1) {
+        JobPreference.findOneAndUpdate(
+          { userId: req.user.id },
+          {
+            userId: req.user.id,
+            targetRole: role || 'Software Developer',
+            preferredLocation: location || '',
+            workMode: workMode || 'Any',
+            experienceLevel: experienceLevel || 'Fresher',
+            skills: Array.isArray(skills) ? skills : []
+          },
+          { upsert: true, new: true }
+        ).catch(err => {
+          console.warn('[JobPreference Save Warning]:', err.message);
+        });
+      }
 
       const results = await JobAggregatorService.searchJobs({
         role,
@@ -60,7 +66,15 @@ export class JobController {
         return;
       }
 
-      const pref = await JobPreference.findOne({ userId: req.user.id });
+      let pref: any = null;
+      if (mongoose.connection.readyState === 1) {
+        try {
+          pref = await JobPreference.findOne({ userId: req.user.id });
+        } catch (err: any) {
+          console.warn('[JobPreference getRecommendations Warning]:', err.message);
+        }
+      }
+
       const results = await JobAggregatorService.searchJobs({
         role: pref?.targetRole || 'Software Engineer',
         location: pref?.preferredLocation || '',
@@ -101,6 +115,14 @@ export class JobController {
         missingSkills,
         matchReason
       } = req.body;
+
+      if (mongoose.connection.readyState !== 1) {
+        res.status(503).json({
+          success: false,
+          error: 'Database connection is temporarily unavailable. Please verify MongoDB Atlas IP whitelist (0.0.0.0/0).'
+        });
+        return;
+      }
 
       const saved = await SavedJob.findOneAndUpdate(
         { userId: req.user.id, jobId },
@@ -144,6 +166,11 @@ export class JobController {
         return;
       }
 
+      if (mongoose.connection.readyState !== 1) {
+        res.status(200).json({ success: true, data: [] });
+        return;
+      }
+
       const savedJobs = await SavedJob.find({ userId: req.user.id }).sort({ savedAt: -1 });
       res.status(200).json({ success: true, data: savedJobs });
     } catch (error: any) {
@@ -161,7 +188,9 @@ export class JobController {
         return;
       }
 
-      await SavedJob.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+      if (mongoose.connection.readyState === 1) {
+        await SavedJob.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+      }
       res.status(200).json({ success: true, message: 'Saved job removed from dashboard.' });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });

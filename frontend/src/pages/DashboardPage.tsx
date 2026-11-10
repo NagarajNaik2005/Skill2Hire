@@ -175,7 +175,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Tab Content: Resumes */}
         {activeTab === 'resumes' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div key="resumes" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stage-enter">
             {resumes.map(r => (
               <Card key={r._id} className="p-5 flex flex-col justify-between bg-white border border-purple-100 shadow-sm">
                 <div>
@@ -202,7 +202,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Tab Content: Tailored Resumes */}
         {activeTab === 'tailored' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div key="tailored" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stage-enter">
             {tailoredResumes.map(t => (
               <Card key={t._id} className="p-5 flex flex-col justify-between bg-white border border-purple-100 shadow-sm">
                 <div>
@@ -229,7 +229,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Tab Content: Saved Jobs */}
         {activeTab === 'jobs' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div key="jobs" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stage-enter">
             {savedJobs.map(j => (
               <Card key={j._id} className="p-5 flex flex-col justify-between bg-white border border-purple-100 shadow-sm">
                 <div>
@@ -258,7 +258,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Tab Content: Mock Interview Reports */}
         {activeTab === 'interviews' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div key="interviews" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stage-enter">
             {interviewReports.map(rep => (
               <Card key={rep._id} className="p-5 flex flex-col justify-between bg-white border border-purple-100 shadow-sm">
                 <div>
